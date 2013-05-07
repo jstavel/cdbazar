@@ -1,0 +1,17 @@
+{% load i18n %}
+{% if error %}
+<p class="well text-error">{{ error }}</p>
+{% endif %}
+
+<table class="table">
+  <tbody>
+    {% for result in results %}
+    <tr>
+      <td>{{ result.1 }}</td> 
+      <td>
+	<a class="new-window" href="http://www.audio3.cz/goods.asp?gid={{ result.0 }}">detail na audio3</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

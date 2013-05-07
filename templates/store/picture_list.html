@@ -1,0 +1,8 @@
+{% load i18n %}
+<div class="picture_list">
+<h2>{% trans "Picture List" %}</h2>
+{% for picture in object_list %}
+{% include "store/picture_detail.html" %}
+{% endfor %}
+{% include "paginator.html" %}
+</div>

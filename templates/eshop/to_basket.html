@@ -1,0 +1,14 @@
+{% extends "eshop.html" %}
+{% load i18n %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){
+{% include "eshop/to_basket/js.js" %}
+});
+</script>
+{% endblock %}
+{% block title %}{% endblock %}
+{% block messages %}<div class="messages">{% include "eshop/to_basket/done.html" %}</div>{% endblock %}
+{% block content %}{% endblock %}
+{% block left_column %}{% include "eshop/mediatype_choose.html" %}{% endblock %}
+{% block right_column %}{% include "eshop/basket.html" %}{% endblock %}

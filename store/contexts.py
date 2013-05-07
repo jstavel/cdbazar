@@ -1,0 +1,6 @@
+
+contexts = {
+    'article_list' : {
+        
+        }
+}

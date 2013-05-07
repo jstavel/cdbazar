@@ -1,0 +1,25 @@
+{% load i18n %}
+<h4 class="title">{% trans "Basket" %}</h4>
+{% if basket.items %}
+<table class="items table table-condensed table-hover">
+  <tbody>
+  {% for item in basket.items %}
+  <tr>
+    <td><a class="from-basket icon-trash" href="/store/item/{{item.id}}/from-basket/"></a></td>
+    <td>{{ item.article }}</td>
+    <td>{{ item.price }} Kč</td>
+  </tr>
+  {% endfor %}
+  <tr class="total">
+    <td></td>
+    <td></td>
+    <td>{{ basket.total_price|floatformat }} Kč</td>
+  </tbody>
+</table>
+<div class="tools">
+  <a class="btn btn-primary btn-normal" href="/store/sell">{% trans 'Sell' %}</a>
+  <a class="btn btn-secondary btn-normal" href="/store/item/">{% trans 'Back to store' %}</a>
+</div>
+{% else %}
+<div class="no-item">{% trans 'No item in basket' %}</div>
+{% endif %}

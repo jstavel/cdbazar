@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){  
+  {% include "store/basket_review/js.js" %}
+});
+</script>
+{% endblock %}
+{% block title %}{% trans "Basket Review" %}{% endblock %}
+{% block left_column %}
+{% include "store/mediatype_choose.html" %}
+{% endblock %}
+{% block content %}
+<span class="basket-review">{% include "store/basket_review/list.html" %}</span>
+{% endblock %}

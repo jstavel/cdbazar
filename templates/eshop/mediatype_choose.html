@@ -1,0 +1,8 @@
+{% load i18n %}
+<ul class="nav nav-list">
+  <li class="nav-header">{% trans 'Choose media type' %}</li>
+  {% for type in mediatypes %}
+  <li {% if mediatype == type.name %} class="active" {% endif %}><a href="?mediaType={{ type.name }}">{{ type.desc }}</a></li>
+  {% endfor %}
+</ul>
+

@@ -1,0 +1,16 @@
+{% extends "eshop.html" %}
+{% load i18n %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){
+{% include "eshop/basket_review/js.js" %}
+});
+</script>
+{% endblock %}
+{% block title %}{% trans 'Basket Review' %}{% endblock %}
+{% block content %}
+<div class="review well">{% include "eshop/basket_review/review.html" %}</div>
+<div class="order well">{% include "eshop/basket_review/order.html" %}</div>
+{% endblock %}
+{% block left_column %}{% include "eshop/basket_review/order_links.html" %}{% endblock %}
+{% block right_column %}{% include "eshop/basket.html" %}{% endblock %}

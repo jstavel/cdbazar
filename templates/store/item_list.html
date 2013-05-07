@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Goods" %}{% endblock %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){
+{% include "store/item_list/js.js" %}
+});
+</script>
+{% endblock %}
+{% block navigation %}
+{% include "store/basket.html" %}
+{% endblock %}
+{% block content %}
+<div class="item_edit modal hide fade">
+  <div class="modal-header">
+  </div>
+  <div class="modal-body">
+  </div>
+</div>
+<div class="item_list">
+<h2>{% trans "Goods" %}</h2>
+<div class="tools"><a class="add btn btn-secondary btn-normal pull-right" href="/store/item/add/">+</a></div>
+<div class="pagination">{% include "paginator.html" %}</div>
+<div class="list">{% include "store/item_list/list.html" %}</div>
+<div class="pagination">{% include "paginator.html" %}</div>
+</div>
+{% endblock %}
+{% block left_column %}{% include "store/mediatype_choose.html" %}{% endblock %}
+{% block right_column %}{% endblock %}

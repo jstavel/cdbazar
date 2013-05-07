@@ -1,0 +1,6 @@
+{% load i18n %}
+<div class="search">
+  <form action="{{ request.path }}" method="get">
+    <input type="text" value="hledat" name="search" onclick="if( this.value=='hledat' ) { this.value='';}" onblur="if(this.value=''){ this.value='hledat'; }"></input>
+  </form>
+</div>

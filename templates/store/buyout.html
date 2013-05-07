@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){  
+  {% include "store/buyout/js.js" %}
+});
+</script>
+{% endblock %}
+{% block title %}{% endblock %}
+{% block content %}{% include "store/buyout/form.html" %}{% endblock %}

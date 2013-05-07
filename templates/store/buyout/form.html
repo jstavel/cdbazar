@@ -1,0 +1,43 @@
+{% load i18n bootstrap_tags %}
+
+{% if form %}
+<form class="buyout form-inline" title='{% trans "Buyout" %}' action="{{ request.path }}" method="post">
+  <legend>{{ form.legend }}</legend>
+  {% csrf_token %}
+  {{ form|as_bootstrap }}
+  <input class="btn" type="submit" name="form-ok" value="ok"></input>
+</form>
+{% endif %}
+
+{% if form2_message %}
+<p class="form2-message well text-info">{{ form2_message }}</p>
+{% endif %}
+
+{% if form2 %}
+<form class="form2 form-vertical" title='{% trans "Choose form" %}' action="{{ request.path }}" method="post">
+{% csrf_token %}
+<legend>{{ form2.legend }}</legend>
+{{ form2|as_bootstrap }}
+<input class="btn" type="submit" name="form2-ok" value="ok"></input>
+<input class="btn" type="submit" name="form2-cancel" value="cancel"></input>
+</form>
+{% endif %}
+
+{% if items %}
+<h4>Přehled zboží</h4>
+{% for item  in items %}
+{% endfor %}
+{% else %}
+{% if barcode %}
+<p class="text-info">Zboží se ještě neprodávalo</p>
+{% endif %}
+{% endif %}
+
+{% if barcode %}
+<h4>Audio3</h4>
+<p class="audio3-info">
+  <span class="barcode">{{ barcode }}</span> <span class="well text-info">načítám informace z audio3.</span>
+</p>
+</div>
+{% endif %}
+

@@ -1,0 +1,66 @@
+{% load i18n thumbnail %}
+<div class="article" title='{% trans "article" %}' id="article_detail_{{ article.id }}">
+  {% thumbnail article.picture "170x170" as im %}
+  <img class="picture" src="/media/{{im.url}}" width="{{ im.width }}" height="{{ im.height }}"></img>
+  {% endthumbnail %}
+  <span class="tools">
+    <a class="edit" href="{{request.path}}{{ article.id }}/edit/">{% trans 'edit' %}</a>
+  </span>
+  <div class="detail" title='{% trans "detail" %}'>
+    <span class="header">{{ article }}</span>
+    <table>
+      <tbody>
+	<tr class="interpret">
+	  <th class="label">{% trans "interpret" %}</th>
+	  <td class="value">{{ article.interpret }}</td>
+	</tr>
+	<tr class="title">
+	  <th class="label">{% trans "title" %}</th>
+	  <td class="value">{{ article.title }}</td>
+	</tr>
+	<tr class="year">
+	  <th class="label">{% trans "year" %}</th>
+	  <td class="value">{{ article.year }}</td>
+	</tr>
+	<tr class="publisher">
+	  <th class="label">{% trans "publisher" %}</th>
+	  <td class="value">{{ article.publisher }}</td>
+	</tr>
+	<tr class="media-type">
+	  <th class="label">{% trans "media type" %}</th>
+	  <td class="value">{{ article.mediaType.name }}</td>
+	</tr>
+	<tr class="barcode">
+	  <th class="label">{% trans "barcode" %}</th>
+	  <td class="value">{{ article.barcode }}</td>
+	</tr>
+	<tr class="packnumber">
+	  <th class="label">{% trans "packnumber" %}</th>
+	  <td class="value">{{ article.packnumber }}</td>
+	</tr>
+	<tr class="price">
+	  <th class="label">{% trans "price" %}</th>
+	  <td class="value">{{ article.price }}</td>
+	</tr>
+	<tr class="last-sold-price">
+	  <th class="label">{% trans "last sold price" %}</th>
+	  <td class="value">{{ article.lastSold }}</td>
+	</tr>
+      </tbody>
+    </table>
+  </div>
+  <table>
+    <tbody>
+      {% autoescape off %}
+      <tr class="specification">
+	<th class="label">{% trans "specification" %}</th>
+	<td class="value">{{ article.specification }}</td>
+      </tr>
+      <tr class="tracklist">
+	<th class="label">{% trans "tracklist" %}</th>
+	<td class="value">{{ article.tracklist }}</td>
+      </tr>
+      {% endautoescape %}
+    </tbody>
+  </table>
+</div>

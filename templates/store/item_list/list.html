@@ -1,0 +1,33 @@
+{% load i18n %}
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>{% trans "Interpret" %}</th>
+      <th>{% trans "Title" %}</th>
+      <th>{% trans "Year" %}</th>
+      <th>{% trans "Media Type" %}</th>
+      <th></th>
+      <th>{% trans "Barcode" %}</th>
+      <th>{% trans "Pack Number" %}</th>
+      <th>{% trans "Commentary" %}</th>
+      <th>{% trans "Price" %}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in object_list %}
+    <tr class="item-detail" title='{% trans "Goods" %}' id="item_detail_{{ item.id }}">
+      <td class="interpret">{{ item.article.interpret }}</td>
+      <td class="title">{{ item.article.title }}</td>
+      <td class="year">{{ item.article.year|default:"" }}</td>
+      <td class="mediatype">{{ item.article.mediaType.name }}</td>
+      <td><a class="to-basket btn btn-secondary btn-small" href="/store/item/{{ item.id }}/to-basket/">{% trans "sell" %}</a></td>
+      <td class="barcode">{{ item.barcode }}</td>
+      <td class="packnumber">{{ item.packnumber }}</td>
+      <td class="commentary">{{ item.commentary }}</td>
+      <td class="price">{{ item.price }}</td>
+      <td><a class="edit btn btn-secondary btn-small" href="/store/item/{{ item.id }}/edit/">{% trans "edit" %}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

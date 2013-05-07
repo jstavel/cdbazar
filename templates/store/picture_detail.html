@@ -1,0 +1,10 @@
+{% load i18n %}
+<div class="picture" title='{% trans "picture" %}' id="picture_detail_{{ picture.id }}">
+  <div class="detail" title='{% trans "detail" %}'>
+    {{ picture }}
+    <div class="path">
+      <span class="label">{% trans "path" %}</span>
+      <span class="value">{{ picture.img }}</span>
+    </div>
+  </div>
+</div>

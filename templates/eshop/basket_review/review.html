@@ -1,0 +1,28 @@
+{% load i18n %}
+<h2 class="title">{% trans "Basket Review" %}</h2>
+{% if basket.items %}
+<table class="items table table-condensed">
+  {% for item in basket.items %}
+  <tbody>
+  <tr>
+    <td><a class="from-basket" href="/eshop/item/{{item.id}}/from-basket/"><img src="/media/img/admin/icon_deletelink.gif"></img></a>
+    <td>{{ item.article }}</td>
+    <td style="text-align:right">{{ item.price|floatformat }} </td>
+    <td>Kč</td>
+  </tr>
+  {% endfor %}
+  <tr class="total info">
+    <td></td>
+    <td class="total">celkem:</td>
+    <td style="text-align:right">{{ basket.total_price|floatformat }}</td>
+    <td>Kč</td>
+  </tr>
+</table>
+
+<div class="">
+  <a class="btn" href="/eshop/">{% trans 'Back to Eshop' %}</a>
+</div>
+
+{% else %}
+<div class="no-item">{% trans 'No item in basket' %}</div>
+{% endif %}
