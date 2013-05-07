@@ -105,7 +105,8 @@ class BasketView(TemplateView):
         self.userform = UserForm(request.POST)
         self.orderform.is_valid()
         self.userform.is_valid()
-        return super(BasketView).post(self, request, *args, **kwargs)
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
 
 class BuyView(TemplateView, JSONTemplateResponse):
     model = Item
