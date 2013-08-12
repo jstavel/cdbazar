@@ -1,0 +1,22 @@
+{% extends "eshop.html" %}
+{% load i18n %}
+{% block title %}{% trans "Order Detail" %}{% endblock %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){
+{% include "eshop/order/js.js" %}
+});
+</script>
+{% endblock %}
+{% block navigation %}{% include "eshop/basket.html" %}{% endblock %}
+{% block content %}
+<div class="article_list">
+<h2>{% trans "E-Shop" %}</h2>
+<div class="pagination">{% include "paginator.html" %}</div>
+<div class="list clearfix">{% include "eshop/article_list/list.html" %}</div>
+<div class="pagination">{% include "paginator.html" %}</div>
+</div>
+{% endblock %}
+{% block left_column %}
+{% include "eshop/mediatype_choose.html" %}
+{% endblock %}

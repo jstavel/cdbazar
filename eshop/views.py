@@ -5,6 +5,8 @@ from django import forms
 from cdbazar.views import JSONTemplateResponse, prepare_render_to_response
 from cdbazar.store.models import Article, Picture, Item, Basket, MediaType
 from django.forms.models import modelformset_factory
+from django.shortcuts import render_to_response
+from django.template import RequestContext, loader
 
 from .forms import UserForm, OrderForm
 
@@ -71,9 +73,8 @@ class ToBasketView(DetailView, JSONTemplateResponse):
 
 class FromBasketView(DetailView, JSONTemplateResponse):
     model = Item
-    template_name = "eshop/to_basket.html"
-    
-    page_includes = ['eshop/basket/summary.html','eshop/to_basket/done.html', 'eshop/to_basket/js.js', 'eshop/basket/js.js', 'eshop/basket_review/list.html', 'eshop/basket_review/js.js']
+    template_name = "eshop/from_basket.html"
+    page_includes = ['eshop/basket/summary.html','eshop/from_basket/done.html', 'eshop/from_basket/js.js', 'eshop/basket/js.js', 'eshop/basket_review/review.html', 'eshop/basket_review/js.js']
     
     def get_context_data(self,**kwargs):
         context = super(DetailView,self).get_context_data(**kwargs)
@@ -103,8 +104,21 @@ class BasketView(TemplateView):
     def post(self, request, *args, **kwargs):
         self.orderform = OrderForm(request.POST)
         self.userform = UserForm(request.POST)
-        self.orderform.is_valid()
-        self.userform.is_valid()
+        if self.orderform.is_valid() and  self.userform.is_valid():
+            # ulozeni objednavky
+            order = self.orderform.save()
+            user = self.userform.save()
+            # ulozeni uzivatele do objednavky, pokud existuje TODO
+            if user:
+                order.user = user
+                order.save()
+            # import pdb; pdb.set_trace()
+            # redirect na podekovani
+            context = self.get_context_data(**kwargs)
+            context['order'] = order
+            context['user'] = user
+            return render_to_response("eshop/order_thanks.html", context, context_instance=RequestContext(request))
+            
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
@@ -124,3 +138,16 @@ class BuyView(TemplateView, JSONTemplateResponse):
         return context
 
     
+class OrderView(DetailView, JSONTemplateResponse):
+    model = Order
+    template_name = "eshop/order.html"
+    page_includes = ['eshop/order/detail.html','eshop/order/js.js',]
+    
+    def get_context_data(self,**kwargs):
+        context = super(OrderView,self).get_context_data(**kwargs)
+        basket = Basket(self.request)
+        context['basket'] = basket
+        context['mediatypes'] = MediaType.objects.all()
+        return context
+    
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, OrderView)

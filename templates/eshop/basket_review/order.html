@@ -25,7 +25,7 @@
 	  </div>
 	</div>
 	{% endif %}
-	<fieldset>
+	<fieldset class="">
 	  <caption>{% trans 'Invocing Address' %}</caption>
 	  <div class="row-fluid">
 	    <div class="span12">
@@ -139,37 +139,39 @@
 	  </div>
 	</fieldset>
 
+	<div class="row-fluid">
+	  <div class="span12">
+	    {% with field=orderform.delivery_is_the_same_as_invoicing %}
+	    <div class="control-group {% if field.errors %} error {% endif %}">
+	      <div class="controls">
+		<input type="checkbox" name="{{field.html_name}}" class="span2" value={{ field.value|default:"" }}>{{ field.label }}</input>
+		{% if field.errors %}<div class="help-block">{{ field.errors }}</div>{% endif %}
+	      </div>
+	    </div>
+	    {% endwith %}
+	  </div>
+	</div>
 	<fieldset>
-	  <caption></caption>
+	  <caption>{% trans 'Deliverance' %}</caption>
 	  <div class="row-fluid">
 	    <div class="span12">
 	      {% with field=orderform.delivery_way %}
 	      <div class="control-group {% if field.errors %} error {% endif %}">
 		<label class="control-label" for="{{ field.html_name }}">{{ field.label }}</label>
 		<div class="controls">
-		  <input type="select" name="{{field.html_name}}" class="span11" value={{ field.value|default:"" }}></input>
+		  <select name="{{field.html_name}}" class="span11" value={{ field.value|default:"" }}>
+		    {% for key,desc in field.field.choices %}
+		    <option value="{{ key }}" selected="">{{ desc }}</option>
+		    {% endfor %}
+		  </select>
+		  <!-- <input type="select" name="{{field.html_name}}" class="span11" value={{ field.value|default:"" }}></input> -->
 		  {% if field.errors %}<div class="help-block">{{ field.errors }}</div>{% endif %}
 		</div>
 	      </div>
 	      {% endwith %}
 	    </div>
 	  </div>
-	</fieldset>
 
-	<fieldset>
-	  <caption>{% trans 'Delivery Address' %}</caption>
-	  <div class="row-fluid">
-	    <div class="span12">
-	      {% with field=orderform.delivery_is_the_same_as_invoicing %}
-	      <div class="control-group {% if field.errors %} error {% endif %}">
-		<div class="controls">
-		  <input type="checkbox" name="{{field.html_name}}" class="span2" value={{ field.value|default:"" }}>{{ field.label }}</input>
-		  {% if field.errors %}<div class="help-block">{{ field.errors }}</div>{% endif %}
-		</div>
-	      </div>
-	      {% endwith %}
-	    </div>
-	  </div>
 	  <div class="row-fluid">
 	    <div class="span12">
 	      {% with field=orderform.delivery_firm %}
@@ -256,23 +258,29 @@
 	    </div>
 	  </div>
 	</fieldset>
-	<fieldset>
-	  <caption>{% trans 'Other Informations' %}</caption>
-
+	<fieldset class="">
+	  <caption>{% trans 'Payment' %}</caption>
 	  <div class="row-fluid">
 	    <div class="span12">
-	      {% with field=userform.username %}
+	      {% with field=orderform.payment_way %}
 	      <div class="control-group {% if field.errors %} error {% endif %}">
 		<label class="control-label" for="{{ field.html_name }}">{{ field.label }}</label>
 		<div class="controls">
-		  <input type="text" name="{{field.html_name}}" class="" value={{ field.value|default:"" }}></input>
-		  <div class="help-block">{{ field.help_text }} {% if field.errors %}{{ field.errors }}{% endif %}</div>
+		  <select name="{{field.html_name}}" class="span11" value={{ field.value|default:"" }}>
+		    {% for key,desc in field.field.choices %}
+		    <option value="{{ key }}" selected="">{{ desc }}</option>
+		    {% endfor %}
+		  </select>
+		  {% if field.errors %}<div class="help-block">{{ field.errors }}</div>{% endif %}
 		</div>
 	      </div>
 	      {% endwith %}
 	    </div>
 	  </div>
+	</fieldset>
 
+	<fieldset>
+	  <caption>{% trans 'Contact' %}</caption>
 	  <div class="row-fluid">
 	    <div class="span6">
 	      {% with field=orderform.contact_email %}
@@ -299,6 +307,31 @@
 	  </div>
 
 	  <div class="row-fluid">
+	    <div class="span12">
+	      {% with field=userform.with_registration %}
+	      <div class="control-group">
+		<div class="controls">
+		  <input type="checkbox" name="{{ field.html_name }}" class="span2" id="id_{{field.html_name}}" {% if field.value %} checked="checked" {% endif %}>{{ field.label }}</input>
+		</div>
+	      </div>
+	      {% endwith %}
+	    </div>
+	  </div>
+
+	  <div class="row-fluid">
+	    <div class="span12">
+	      {% with field=userform.username %}
+	      <div class="control-group {% if field.errors %} error {% endif %}">
+		<label class="control-label" for="{{ field.html_name }}">{{ field.label }}</label>
+		<div class="controls">
+		  <input type="text" name="{{field.html_name}}" class="" value={{ field.value|default:"" }}></input>
+		  <div class="help-block">{{ field.help_text }} {% if field.errors %}{{ field.errors }}{% endif %}</div>
+		</div>
+	      </div>
+	      {% endwith %}
+	    </div>
+	  </div>
+	  <div class="row-fluid">
 	    <div class="span6">
 	      {% with field=userform.password1 %}
 	      <div class="control-group {% if field.errors %} error {% endif %}">
@@ -322,6 +355,8 @@
 	      {% endwith %}
 	    </div>
 	  </div>
+
+
 	</fieldset>
       </div>
     </div>

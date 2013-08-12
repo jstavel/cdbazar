@@ -3,9 +3,10 @@ $("a.from-basket").click(function(){
 		type: 'GET',
 		url: $(this).attr('href'),
 		success: function(data){ 
-			$('.basket').html(data['eshop/basket/summary.html']);
-			eval(data['eshop/to_basket/js.js']);
+			$('.review').html(data['eshop/basket_review/review.html']);
+			eval(data['eshop/from_basket/js.js']);
 			eval(data['eshop/basket/js.js']);
+			eval(data['eshop/basket_rewiew/js.js']);
 		},
 	});
 	return false;
