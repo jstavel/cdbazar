@@ -142,7 +142,7 @@ INSTALLED_APPS = (
     'cdbazar.store',
     'cdbazar.eshop',
     'sorl.thumbnail',
-    'rosetta',
+    #'rosetta',
     'history',
     #'categories',
     #'categories.editor',

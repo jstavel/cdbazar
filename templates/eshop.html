@@ -46,25 +46,28 @@
   </div>
 </div>
 
-{% block branding %}<h1>CD Bazar</h1>{% endblock %}
-
+{% block branding %}
+<!-- <h1>CD Bazar</h1> -->
+{% endblock %}
 <div class="container-fluid">
-  <div class="row-fluid clearfix">
-    <div class="span2">
-      <div class="well sidebar-nav">
+  <div class="row-fluid">
+    <div class="span3">
+      <div class="sidebar-nav">
 	{% block left_column %}{% endblock %}
       </div>
     </div>
-    <div class="span10">
-      {% block pretitle %}{% endblock %}
-      {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
-      {% block object-tools %}{% endblock %}
-      {% block messages %}{% endblock %}
-      {% block content %}{% endblock %}
+    <div class="span9">
+      <div class="">
+	{% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block object-tools %}{% endblock %}
+	{% block messages %}{% endblock %}
+        {% block content %}{% endblock %}
+      </div>
     </div>
-  </div>
-  {% block footer %}<div id="footer"></div>{% endblock %}
+    {% block footer %}<div id="footer"></div>{% endblock %}
 </div>
+
 <script src="/media/js/bootstrap.min.js"></script>
 </body>
 </html>

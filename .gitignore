@@ -6,3 +6,4 @@ media/*
 .git-old
 *.py~
 audio3/*.pickle
+manage.py

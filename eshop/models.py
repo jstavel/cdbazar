@@ -54,7 +54,7 @@ class Basket(object):
             for item in results:
                 item.state = Item.state_sold
                 item.save()
-            return
+            return results
                 
 DELIVERY_WAYS = (
     (1,_('Czech Post')),
@@ -95,3 +95,8 @@ class Order(models.Model):
     delivery_address_country = models.CharField(_("Country"), max_length = 30, blank=True, null=True)
 
     payment_way = models.PositiveSmallIntegerField(_("Payment way"), choices=PAYMENT_WAYS, default=1)
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order)
+    

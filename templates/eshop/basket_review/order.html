@@ -2,7 +2,7 @@
 <div class="container-fluid">
   <form method="post" class="form-horizontal" action="">
     {% csrf_token %}
-    <legend class="">{% trans "Order Form" %}</legend>
+    <!-- <legend class="">{% trans "Order Form" %}</legend> -->
     <div class="row-fluid">
       <div class="span8">
 	{% if orderform.non_field_errors %}
@@ -25,7 +25,7 @@
 	  </div>
 	</div>
 	{% endif %}
-	<fieldset class="">
+	<fieldset class="" id="invoicing-address">
 	  <caption>{% trans 'Invocing Address' %}</caption>
 	  <div class="row-fluid">
 	    <div class="span12">
@@ -151,7 +151,7 @@
 	    {% endwith %}
 	  </div>
 	</div>
-	<fieldset>
+	<fieldset id="deliverance">
 	  <caption>{% trans 'Deliverance' %}</caption>
 	  <div class="row-fluid">
 	    <div class="span12">
@@ -258,7 +258,7 @@
 	    </div>
 	  </div>
 	</fieldset>
-	<fieldset class="">
+	<fieldset class="" id="payment">
 	  <caption>{% trans 'Payment' %}</caption>
 	  <div class="row-fluid">
 	    <div class="span12">
@@ -279,7 +279,7 @@
 	  </div>
 	</fieldset>
 
-	<fieldset>
+	<fieldset id="contact">
 	  <caption>{% trans 'Contact' %}</caption>
 	  <div class="row-fluid">
 	    <div class="span6">

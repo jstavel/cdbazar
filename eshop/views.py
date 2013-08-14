@@ -9,6 +9,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 
 from .forms import UserForm, OrderForm
+from .models import Order
 
 class ArticleList(ListView,JSONTemplateResponse):
     model=Article
@@ -104,8 +105,10 @@ class BasketView(TemplateView):
     def post(self, request, *args, **kwargs):
         self.orderform = OrderForm(request.POST)
         self.userform = UserForm(request.POST)
-        if self.orderform.is_valid() and  self.userform.is_valid():
+        import pdb; pdb.set_trace()
+        if self.orderform.is_valid() and self.userform.is_valid():
             # ulozeni objednavky
+            basket = Basket(request)
             order = self.orderform.save()
             user = self.userform.save()
             # ulozeni uzivatele do objednavky, pokud existuje TODO
@@ -150,4 +153,4 @@ class OrderView(DetailView, JSONTemplateResponse):
         context['mediatypes'] = MediaType.objects.all()
         return context
     
-    render_to_response = prepare_render_to_response(JSONTemplateResponse, OrderView)
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)

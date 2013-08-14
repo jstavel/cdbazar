@@ -1,0 +1,17 @@
+<div class="container-fluid">
+  <div class="row-fluid clearfix">
+    <div class="span3">
+      <div class="well sidebar-nav">
+	{% block left_column %}{% endblock %}
+      </div>
+    </div>
+    <div class="spa9">
+      {% block pretitle %}{% endblock %}
+      {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+      {% block object-tools %}{% endblock %}
+      {% block messages %}{% endblock %}
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+  {% block footer %}<div id="footer"></div>{% endblock %}
+</div>
