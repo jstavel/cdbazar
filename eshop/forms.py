@@ -7,6 +7,26 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
 
+class OrderInvoicingForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [ii for ii in Order._meta.get_all_field_names() if 'invoicing_' in ii]
+
+class OrderContactForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [ii for ii in Order._meta.get_all_field_names() if 'contact_' in ii]
+
+class OrderDeliveryForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [ii for ii in Order._meta.get_all_field_names() if 'delivery_' in ii]
+
+class OrderPaymentForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [ii for ii in Order._meta.get_all_field_names() if 'payment_' in ii]
+
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
@@ -77,5 +97,3 @@ class UserForm(forms.ModelForm):
                 user.save()
             return user
         return None
-
-

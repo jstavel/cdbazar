@@ -1,0 +1,14 @@
+{% load i18n %}
+Dobrý den,
+děkujeme Vám za vaši registraci.
+
+Registraci je potřeba dokončit potvrzením emailu.
+
+To provedete tím, že kliknete na potvrzovací linku:
+
+http://{{ site }}/accounts/activate/{{ activation_key }}
+
+Máte na to {{ expiration_days }} dní.
+
+Váš,
+CD Bazar

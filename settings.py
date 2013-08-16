@@ -8,7 +8,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Jan Stavel', 'stavel.jan@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -141,13 +141,17 @@ INSTALLED_APPS = (
     'south',
     'cdbazar.store',
     'cdbazar.eshop',
+    'cdbazar.accounts',
     'sorl.thumbnail',
     #'rosetta',
     'history',
     #'categories',
     #'categories.editor',
     'django_forms_bootstrap',
+    'registration',
 )
+
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

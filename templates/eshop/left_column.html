@@ -1,0 +1,17 @@
+{% load i18n %}
+{% if user.is_authenticated %}
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#mediatypes" data-toggle="tab">Media</a></li>
+  <li><a href="#profile" data-toggle="tab">My Profile</a></li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane active" id="mediatypes">
+{% include "eshop/mediatype_choose.html" %}
+</div>
+<div class="tab-pane" id="profile">
+{% include "accounts/profile_choose.html" %}
+</div>
+</div>
+{% else %}
+{% include "eshop/mediatype_choose.html" %}
+{% endif %}

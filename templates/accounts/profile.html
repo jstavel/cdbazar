@@ -1,0 +1,38 @@
+{% extends "eshop.html" %}
+{% load i18n %}
+{% load bootstrap_tags %}
+{% block extrastyle %}{% endblock %}
+{% block title %}{% trans 'Registration' %}{% endblock %}
+{% block content %}
+<h1>{% trans "User Profile" %}</h1>
+<div class="user-profile-update well">
+  <form method="post" class="form-horizontal" action="">
+    {% csrf_token %}
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#form_authentication" data-toggle="pill">{% trans "User" %}</a></li>
+      <li><a href="#form_invoicing" data-toggle="tab">{% trans "Invoicing Address" %}</a></li>
+      <li><a href="#form_delivery" data-toggle="tab">{% trans "Delivery Address" %}</a></li>
+      <li><a href="#form_payment" data-toggle="tab">{% trans "Payment" %}</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="form_authentication">
+	{{ form_authentication | as_bootstrap }}
+      </div>
+      <div class="tab-pane" id="form_invoicing">
+	{{ form_invoicing | as_bootstrap }}
+      </div>
+      <div class="tab-pane" id="form_delivery">
+	{{ form_delivery | as_bootstrap }}
+      </div>
+      <div class="tab-pane" id="form_payment">
+	{{ form_payment | as_bootstrap }}
+	<div class="form-actions">
+	  <button type="submit" class="btn" value="cancel">{% trans "Cancel" %}</button>
+	  <button type="submit" class="btn btn-success" value="submit">{% trans "Submit" %}</button>
+	</div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block left_column %}{% include "accounts/left_column.html" %}{% endblock %}

@@ -33,8 +33,8 @@
       <div class="navbar-inner">
         <a class="brand" href="/">CD Bazar</a>
         <p class="navbar-text pull-right">
+          <a href="/accounts/profile/" class="navbar-link">přihlášen/a jako {{ user }}</a>
 	  <span>{% block navigation %}{% endblock %}</span>
-          {% comment %}Logged in as <a href="#" class="navbar-link">{{ user }}</a>{% endcomment %}
         </p>
 	<form class="navbar-search pull-right" method="get" action="{{ request.path }}">
 	  <input type="text" class="search-query" placeholder="Search" name="search">

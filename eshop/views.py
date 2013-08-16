@@ -8,7 +8,7 @@ from django.forms.models import modelformset_factory
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 
-from .forms import UserForm, OrderForm
+from .forms import *
 from .models import Order
 
 class ArticleList(ListView,JSONTemplateResponse):
@@ -98,15 +98,28 @@ class BasketView(TemplateView):
         basket = Basket(self.request)
         context['basket'] = basket
         context['mediatypes'] = MediaType.objects.all()
-        context['orderform'] = getattr(self,'orderform',OrderForm())
+        #context['orderform'] = getattr(self,'orderform',OrderForm())
+        context['order_invoicing_form'] = getattr(self,'order_invoicing_form',OrderInvoicingForm())
+        context['order_contact_form'] = getattr(self,'order_invoicing_form',  OrderContactForm())
+        context['order_delivery_form'] = getattr(self,'order_invoicing_form', OrderDeliveryForm())
+        context['order_payment_form'] = getattr(self,'order_invoicing_form',  OrderPaymentForm())
         context['userform'] = getattr(self,'userform',UserForm())
         return context
 
     def post(self, request, *args, **kwargs):
-        self.orderform = OrderForm(request.POST)
+        self.order_invoicing_form = OrderInvoicingForm(request.POST)
+        self.order_contact_form = OrderContactForm(request.POST)
+        self.order_delivery_form = OrderDeliveryForm(request.POST)
+        self.order_payment_form = OrderPaymentForm(request.POST)
         self.userform = UserForm(request.POST)
-        import pdb; pdb.set_trace()
-        if self.orderform.is_valid() and self.userform.is_valid():
+        self.orderform = OrderForm(request.POST)
+        #import pdb; pdb.set_trace()
+        if self.order_invoicing_form.is_valid() and \
+                self.order_invoicing_form.is_valid() and \
+                self.order_contact_form.is_valid() and \
+                self.order_delivery_form.is_valid() and \
+                self.order_payment_form.is_valid() and \
+                self.orderform.is_valid() and self.userform.is_valid():
             # ulozeni objednavky
             basket = Basket(request)
             order = self.orderform.save()
@@ -115,7 +128,7 @@ class BasketView(TemplateView):
             if user:
                 order.user = user
                 order.save()
-            # import pdb; pdb.set_trace()
+
             # redirect na podekovani
             context = self.get_context_data(**kwargs)
             context['order'] = order
