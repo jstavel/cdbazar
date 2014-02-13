@@ -1,0 +1,11 @@
+{% load i18n %}
+{% if form.is_bound and form.is_valid %}
+{{ object }}: hotovo
+{% else %}
+<h2>{{ object }}</h2>
+<form class="tradeaction-add" title='{% trans "Trade Action" %}' action="{{ request.path }}" method="post">{% csrf_token %}
+  {{ form.as_p }}
+  {{ success_url_form }}
+  <p><input type="submit" value="submit"></input></p>
+</form>
+{% endif %}

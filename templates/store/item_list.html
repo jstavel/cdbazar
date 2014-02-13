@@ -20,7 +20,10 @@ $(function(){
 </div>
 <div class="item_list">
 <h2>{% trans "Goods" %}</h2>
-<div class="tools"><a class="add btn btn-secondary btn-normal pull-right" href="/store/item/add/">+</a></div>
+
+<div class="tools"><a class="add btn btn-secondary btn-normal
+                             pull-right" href="/store/item/add/">+</a>
+</div>
 <div class="pagination">{% include "paginator.html" %}</div>
 <div class="list">{% include "store/item_list/list.html" %}</div>
 <div class="pagination">{% include "paginator.html" %}</div>

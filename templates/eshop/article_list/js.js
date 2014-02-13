@@ -12,3 +12,16 @@ $("a.to-basket").click(function(){
 	});
 	return false;
 });
+$("a.paginate").click(function(){
+	$.ajax({
+		type: 'GET',
+		url: $(this).attr('href'),
+		success: function(data){ 
+			$('.pagination').html(data['paginator.html']); 
+			$('.article_list .list').html(data['eshop/article_list/list.html']); 
+			$('.article_list .list-shortly').html(data['eshop/article_list/list_shortly.html']); 
+			eval(data['eshop/article_list/js.js']);
+		},
+	});
+	return false;
+});

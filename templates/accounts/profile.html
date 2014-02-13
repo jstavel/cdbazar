@@ -4,7 +4,7 @@
 {% block extrastyle %}{% endblock %}
 {% block title %}{% trans 'Registration' %}{% endblock %}
 {% block content %}
-<h1>{% trans "User Profile" %}</h1>
+<h1>Moje údaje</h1>
 <div class="user-profile-update well">
   <form method="post" class="form-horizontal" action="">
     {% csrf_token %}
@@ -26,10 +26,10 @@
       </div>
       <div class="tab-pane" id="form_payment">
 	{{ form_payment | as_bootstrap }}
-	<div class="form-actions">
-	  <button type="submit" class="btn" value="cancel">{% trans "Cancel" %}</button>
-	  <button type="submit" class="btn btn-success" value="submit">{% trans "Submit" %}</button>
-	</div>
+      </div>
+      <div class="form-actions">
+	<button type="submit" class="btn" value="cancel">{% trans "Cancel" %}</button>
+	<button type="submit" class="btn btn-success" value="submit">{% trans "Submit" %}</button>
       </div>
     </div>
   </form>

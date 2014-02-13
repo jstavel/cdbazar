@@ -7,3 +7,4 @@ media/*
 *.py~
 audio3/*.pickle
 manage.py
+*.html~

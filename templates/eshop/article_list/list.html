@@ -1,11 +1,11 @@
 {% load i18n thumbnail %}
 <div class="row-fluid">
 {% for article in object_list %}
-<span class="article span4 well row-fluid" title='{% trans "article" %}' id="article_detail_{{ article.id }}">
+<span class="article span4 well well-small row-fluid" title='{% trans "article" %}' id="article_detail_{{ article.id }}">
   {% thumbnail article.picture "60x60" as im %}
   <img class="picture img-polaroid span4" src="/media/{{im.url}}" width="{{ im.width }}" height="{{ im.height }}"></img>
   {% endthumbnail %}
-  <span class="span8 pull-right">
+<span class="span8 pull-right">
     <h5>{{ article }}</h5>
     <p class="">
       <span class="span4">vydavatel:</span>
@@ -23,7 +23,9 @@
 	{% endwith %}
       </span>
     </p>
-    <a class="to-basket btn btn-small pull-right" href="/eshop/article/{{ article.id }}/to-basket/"> <span class="add-on"><i class="icon-inbox"></i></span> do košíku </a>
+    <a class="to-basket btn btn-small pull-right"
+       href="/eshop/article/{{ article.id  }}/to-basket/"> <span class="add-on"><i class="icon-inbox"></i></span>do košíku</a>
+    {% if article.discount %}<span class="badge badge-success">akce</span>{% endif %}
   </span>
 </span>
 {% if forloop.counter|divisibleby:"3" %}

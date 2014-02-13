@@ -1,0 +1,111 @@
+{% load i18n %}
+<div class="">
+<table width="100%" style="">
+  <tr>
+    <td width="50%">
+      <h2>Dodavatel</h2>
+      <p>CD Bazar</p>
+      <table style="border: none">
+	<tr><td>IČO:</td><td>43714897</td></tr>
+	<tr><td>není plátce DPH</td></tr>
+      </table>
+      <h3>adresa</h3>
+      <div>CD Bazar</div>
+      <div>Školská 36</div>
+      <div>Praha 1 11000, Česká republika</div>
+    </td>
+    <td width="50%">
+      <h2>Zákazník</h2>
+      <div style="float:left">
+        
+	<p>{{ object.invoicing_name }} {{ object.invoicing_surname }}</p>
+	<div>{{ object.invoicing_address_street }}</div>
+	<div> {{ object.invoicing_address_zip }} {{ object.invoicing_address_city }}, {{ object.invoicing_address_country }}</div>
+	<h3>Doručovací adresa</h3>
+	{% if not object.delivery_is_the_same_as_invoicing %}
+	<div>{{ object.deliveryaddresshead }}</div>
+	<div>{{ object.individual.deliveryAddress.street }} {{ object.individual.deliveryAddress.streetnumber }}</div>
+	<div>{{ object.individual.deliveryAddress.city }} {{ object.individual.deliveryAddress.zipcode }} {{ object.individual.deliveryAddress.country }}</div>
+	{% else %}
+        stejná jako fakturační adresa
+        {% endif %}
+	<h3>Kontakt</h3>
+	<div>telefon: {{ object.contact_phonenumber }}</div>
+	<div>email: {{ object.contact_email }}</div>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tbody>
+    <tr><th>Způsob platby a dodání</th>
+      <td>
+        {% for choice in PAYMENTS %}
+        {% ifequal choice.0 object.payment %}
+        {% ifequal choice.0 1 %}
+        <img src="/media/img/briefcase.png" alt="payment at delivery"/>
+        {{ choice.1 }}
+        {% endifequal %}
+        {% ifequal choice.0 2 %}
+        <img src="/media/img/computer-edit.png" alt="payment by bank order"/>
+        <span style="color:red;">{{ choice.1 }}</span>
+        {% endifequal %}
+        {% endifequal %}
+        {% endfor %};
+        {% for choice in DELIVERY %}
+        {% ifequal choice.0 object.delivery %}
+        {{ choice.1 }}
+        {% endifequal %}
+        {% endfor %}
+      </td>
+    </tr>
+    <tr><th>Datum vystavení</th><td>{{ object.created|date:"j. N Y, l" }}</td></tr>
+  </tbody>
+</table>
+
+<div class="module">
+  <h2>Zboží</h2>
+  <table class="table" style="border: 1px solid gray">
+    <tbody>
+      <thead>
+        <tr>
+          <th>Titul</th>
+          <th>Čárový kód</th>
+          <th>Komentář</th>
+          <th>Cena</th>
+        </tr>
+      </thead>
+      {% for item in object.orderitem_set.all %}
+      <tr>
+        <td><a href="/eshop/">{{ item.item.article }}</a></td>
+        <td>{{ item.item.barcode }}</td>
+        <td>{{ item.item.commentary }}</td>
+        <td align="right">{{ item.item.price }} Kč</td>
+      </tr>
+      {% endfor %}
+      
+      {% for item in object.orderadditionalitem_set.all %}
+      <tr style="border-bottom: gray solid  1px">
+        <td colspan="3">{{ item.description }}</td>
+        <td align="right">{{ item.price }} Kč</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="3">celkem</th>
+        <th align="right">{{ object.total_price }} Kč</th>
+      </tr>
+    </tfoot>
+  </table>
+  <div class="module" media="screen">
+    <h3>Komentáře</h4>
+{% for comment in comment_list %}
+<div class="comment_{% cycle odd,even %} {% cycle row1,row2 %}" id="c{{ comment.id }}">
+  <p><b>{{ comment.person_name|escape }}</b> {{ comment.submit_date|date:"F j, Y" }} at {{ comment.submit_date|date:"P" }}:</p>
+  {{ comment.comment|escape|urlizetrunc:40|linebreaks }}
+</div>
+{% endfor %}
+</div>
+</div>

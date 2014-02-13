@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}Přehled objednávek{% endblock %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){
+{% include "eshop/order_list/js.js" %}
+});
+</script>
+{% endblock %}
+{% block navigation %}
+{% include "store/basket.html" %}
+{% endblock %}
+{% block content %}
+<div class="order_edit modal hide fade">
+  <div class="modal-header">
+  </div>
+  <div class="modal-body">
+  </div>
+</div>
+<div class="order_list">
+<h2>Přehled objednávek</h2>
+<div class="pagination">{% include "paginator.html" %}</div>
+<div class="list">{% include "eshop/order_list/list.html" %}</div>
+<div class="pagination">{% include "paginator.html" %}</div>
+</div>
+{% endblock %}
+{% block left_column %}{% include "store/mediatype_choose.html" %}{% endblock %}
+{% block right_column %}{% endblock %}

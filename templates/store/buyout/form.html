@@ -14,12 +14,14 @@
 {% endif %}
 
 {% if form2 %}
-<form class="form2 form-vertical" title='{% trans "Choose form" %}' action="{{ request.path }}" method="post">
+<form class="form2 well form-vertical" title='{% trans "Choose form" %}' action="{{ request.path }}" method="post">
 {% csrf_token %}
 <legend>{{ form2.legend }}</legend>
 {{ form2|as_bootstrap }}
-<input class="btn" type="submit" name="form2-ok" value="ok"></input>
-<input class="btn" type="submit" name="form2-cancel" value="cancel"></input>
+<div class="form-actions">
+  <input class="btn" type="submit" name="form2-cancel" value="cancel"></input>
+  <input class="btn btn-primary" type="submit" name="form2-ok" value="ok"></input>
+</div>
 </form>
 {% endif %}
 

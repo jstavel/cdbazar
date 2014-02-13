@@ -1,13 +1,49 @@
 {% load i18n %}
 {% load bootstrap_tags %}
-<form method="post" class="form-horizontal" action="">
+<form method="post" class="form-horizontal order" action="">
   {% csrf_token %}
+  {{ order_stage_form }}
+
+  {% if order_stage_form.stage.value == 1 %}
+
+  <fieldset class="invoicing">
+  <legend>{% trans 'Contact' %}</legend>
+  {{ order_contact_form | as_bootstrap }}
+  </fieldset>
+
+  <fieldset class="invocing">
+  <legend>{% trans 'Invoicing' %}</legend>
+  {{ order_invoicing_form | as_bootstrap }}
+  </fieldset>
+
+  <fieldset class="delivery">
+  <legend>{% trans 'Delivery' %}</legend>
+  {{ order_delivery_form | as_bootstrap }}
+  </fieldset>
+
+  <fieldset class="payment">
+  <legend>{% trans 'Payment' %}</legend>
+  {{ order_payment_form | as_bootstrap }}
+  </legend>
+  
+  <fieldset>
+  {{ userform | as_bootstrap }}
+  </fieldset>
+
+  <div class="form-actions">
+    <input type="submit" name="cancel" class="btn" value="{% trans 'Cancel' %}"/>
+    <input type="submit" name="back-to-order" class="btn" value="{% trans 'Back to order' %}"/>
+    <input type="submit" name="submit-order" class="btn btn-success" value="{% trans 'Submit Order' %}"/>
+  </div>
+
+  {% else %}
+
   <ul class="nav nav-tabs">
     <li class="active"><a href="#order_contact" data-toggle="tab">{% trans "Contact" %}</a></li>
-    <li><a href="#order_invoicing" data-toggle="tab">{% trans "Invoicing Address" %}</a></li>
-    <li><a href="#order_delivery" data-toggle="tab">{% trans "Delivery Address" %}</a></li>
+    <li><a href="#order_invoicing" data-toggle="tab">{% trans "Invoicing" %}</a></li>
+    <li><a href="#order_delivery" data-toggle="tab">{% trans "Delivery" %}</a></li>
     <li><a href="#order_payment" data-toggle="tab">{% trans "Payment" %}</a></li>
-    <li><a href="#user" data-toggle="pill">{% trans "User" %}</a></li>
+    <li><a href="#user" data-toggle="tab">{% trans "User" %}</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="order_contact">
@@ -24,10 +60,12 @@
     </div>
     <div class="tab-pane" id="user">
       {{ userform | as_bootstrap }}
-      <div class="form-actions">
-	<button type="submit" class="btn" value="cancel">{% trans "Cancel" %}</button>
-	<button type="submit" class="btn btn-success" value="submit">{% trans "Submit" %}</button>
-      </div>
+    </div>
+    <div class="form-actions">
+      <input type="submit" name="cancel" class="btn" value="{% trans 'Cancel' %}"/>
+      <input type="submit" name="review-order" class="btn btn-success" value="{% trans 'Review Order' %}"/>
     </div>
   </div>
+
+  {% endif %}
 </form>

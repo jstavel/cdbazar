@@ -1,16 +1,19 @@
 {% load i18n %}
+{% autoescape off %}
+<div class="news-banner well well-condensed">{% include "eshop/news_banner.html"%}</div>
+{% endautoescape %}
 {% if user.is_authenticated %}
 <ul class="nav nav-tabs">
   <li class="active"><a href="#mediatypes" data-toggle="tab">Media</a></li>
-  <li><a href="#profile" data-toggle="tab">My Profile</a></li>
+  <li><a href="#categories" data-toggle="tab">Kategorie</a></li>
 </ul>
 <div class="tab-content">
-<div class="tab-pane active" id="mediatypes">
-{% include "eshop/mediatype_choose.html" %}
-</div>
-<div class="tab-pane" id="profile">
-{% include "accounts/profile_choose.html" %}
-</div>
+  <div class="tab-pane active" id="mediatypes">
+    {% include "eshop/mediatype_choose.html" %}
+  </div>
+  <div class="tab-pane" id="categories">
+    {% include "eshop/category_choose.html" %}
+  </div>
 </div>
 {% else %}
 {% include "eshop/mediatype_choose.html" %}

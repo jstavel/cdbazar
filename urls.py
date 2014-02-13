@@ -6,6 +6,7 @@ from django.views.generic import TemplateView, ListView, DetailView, FormView, C
 from cdbazar.store.views import ArticleList, ArticleUpdateView
 from cdbazar.store.models import Article, Picture
 from cdbazar.accounts.views import UserProfileView
+from cdbazar.flatpages.views import FlatPageEditView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -27,4 +28,14 @@ urlpatterns = patterns('',
                        
                        # Uncomment the next line to enable the admin:
                        url(r'^admin/', include(admin.site.urls)),
+                       (r'^inplaceeditform/', include('inplaceeditform.urls'))
 )
+
+# staticke stranky
+urlpatterns += patterns('django.contrib.flatpages.views',
+                        url(r'^o-nas/$',   'flatpage', {'url': '/o-nas/'}, name='about'),
+                        #url(r'^o-nas/edit-$', FlatPageEdit.as_view( url='/o-nas/'),
+                        url(r'^licence/$', 'flatpage', {'url': '/licence/'}, name='license'),
+                        url(r'^kontakt/$', 'flatpage', {'url': '/kontakt/'}, name='contact'),
+)
+                        

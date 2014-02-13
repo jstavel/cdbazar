@@ -5,8 +5,16 @@
   {% for item in basket.items %}
   <tbody>
   <tr>
-    <td><a class="from-basket" href="/eshop/item/{{item.id}}/from-basket/"><img src="/media/img/admin/icon_deletelink.gif"></img></a>
+    <td><a class="from-basket" href="/eshop/item/{{item.id}}/from-basket/"><img src="/media/img/admin/icon_deletelink.gif"></img></a></td>
     <td>{{ item.article }}</td>
+    <td>{{ item.price }} </td>
+  </tr>
+  {% endfor %}
+  {% for item in basket.additional_items %}
+  <tbody>
+  <tr>
+    <td></td>
+    <td>{{ item.name }}</td>
     <td>{{ item.price }} </td>
   </tr>
   {% endfor %}

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from django.db import models, transaction
+from django.db import models, transaction, connection
 from django.utils.translation import ugettext_lazy as _, ugettext
 from datetime import datetime
 from history.models import HistoricalRecords
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+from django_extensions.db.models import TimeStampedModel
 
 # Create your models here.
 
@@ -17,7 +18,7 @@ ARTICLE_TYPES = (
     ('Playstation 3','Playstation 3'),
     ('XBox 360','XBox 360'),
     ('PC hry','PC hry'),
-    ('BlueRay disk','BlueRay disk'),
+    ('Blu-Ray disk','Blu-Ray disk'),
     ('PSP','PSP'),
     )
 
@@ -42,6 +43,13 @@ class Picture(models.Model):
     def __unicode__(self):
         return unicode(self.img)
         
+class ForEShopManager(models.Manager):
+    def get_queryset(self):
+        return super(ForEShopManager, self).get_queryset().filter(eshop=True)
+
+class AtActionManager(models.Manager):
+    def get_queryset(self):
+        return super(AtActionManager, self).get_queryset().filter(eshop=True)
 
 class Article(models.Model):
     title = models.CharField(_('Title'),max_length=222)
@@ -55,10 +63,37 @@ class Article(models.Model):
     barcode = models.CharField(max_length=32, db_index=True, blank=True, null=True)
     pictureSource = models.TextField(_("Picture source"), blank=True, null=True)
     picture = models.ForeignKey(Picture, blank=True, null=True)
-    slug = models.SlugField(max_length=126,blank=True,null=True) # will be created before save
-    eshop = models.BooleanField(_("For E-Shop?"), help_text=_("Has items for sale in an eshop?"), default=False)
+    slug = models.SlugField(max_length=126,blank=True,null=True) # will be created aftersave
+    eshop = models.BooleanField(_("For E-Shop?"), 
+                                help_text=_("Has items for sale in an eshop?"), 
+                                default=False)
+    to_store = models.DateTimeField(_("To store date of an item"), auto_now=True)
+    discount = models.BooleanField(_("Has discount?"), 
+                                   help_text=_("Has discount?"), 
+                                   default=False)
+    
     #history = HistoricalRecords()
 
+    objects = models.Manager()
+    objectsForEShop = ForEShopManager()
+    objectsAtAction = AtActionManager()
+
+    def hasItemsForShop(self):
+        return self.item_set.all().filter(state__in = (Item.state_at_stock, Item.state_for_sale)).exists()
+    
+    @classmethod
+    def updateEShop(cls):
+        cursor = connection.cursor()
+        cursor.execute("update store_article set eshop=True where id in (select distinct article_id from store_item where state in (%s,%s))",[Item.state_at_stock, Item.state_for_sale])
+        cursor.execute("update store_article set eshop=False where id not in (select distinct article_id from store_item where state in (%s,%s))",[Item.state_at_stock, Item.state_for_sale])
+
+    @classmethod
+    def updateDiscount(cls):
+        cursor = connection.cursor()
+        cursor.execute("update store_article set discount=True where id in (select distinct article_id from store_item where id in (select distinct item_id from eshop_tradeaction))")
+        cursor.execute("update store_article set discount=False where id not in (select distinct article_id from store_item where id in (select distinct item_id from eshop_tradeaction))")
+
+            
     def _createSlug(self):
         title = self.title or 'unknown'
         interpret = self.interpret or 'unknown'
@@ -82,7 +117,7 @@ class Article(models.Model):
         return [0.0, None] # cena a datum
 
     def _for_sale_price_range(self):
-        prices = [ ii['price'] for ii in self.item_set.filter(state=Item.state_for_sale).values('price')] or [0]
+        prices = [ ii['price'] for ii in self.item_set.filter(state__in=[Item.state_for_sale,Item.state_at_stock]).values('price')] or [0]
         return (min(prices), max(prices))
 
     lastSold = property(_last_sold)
@@ -132,8 +167,10 @@ class Item(models.Model):
     price = models.DecimalField(_('Price'), max_digits=7,decimal_places=2, blank=True, default=0.0)
     state = models.PositiveSmallIntegerField(_("State"), choices=STATES, default=1)
     last_modified = models.DateTimeField(_("Last modified"), auto_now=True)
+    to_store = models.DateTimeField(_("To store date"), auto_now=True)
+    home_page = models.BooleanField(_("Show at home page"), default=False)
 
-    history = HistoricalRecords()
+    #history = HistoricalRecords()
     
     # def changeState(self,previous_state=None,target_state=None,**kwargs):
     #     ItemAction( item=self, action=ItemAction.STATES['change state'],  **kwargs).save()
@@ -151,12 +188,23 @@ class Item(models.Model):
     #     #     ItemAction(item=self, action=ItemAction.STATES['init state']).save()
     #     super(Item,self).save(*args,**kwargs)
 
+    def has_tradeaction(self):
+        return bool(len(self.tradeaction_set.all()))
+
     def __unicode__(self):
-        return u"/".join([ii for ii in [unicode(self.article),self.barcode] if ii]) + " " + unicode(self.price) + u" Kč"
+        result = u"/".join([ii for ii in [ unicode(self.article),unicode(self.barcode)] if ii]) \
+                 + " | " \
+                 + unicode(self.price) + u" Kč"
+        return result
 
     class Meta:
         verbose_name = _('Item')
         verbose_name_plural = _('Items')
+        
+    @property
+    def state_name(self):
+        state = [s for s in Item.STATES if s[0] == self.state] or [(0,'unknown state'),]
+        return state[0][1]
 
 for state in Item.STATES:
     name = "state_" + state[1].lower().replace(" ","_")
@@ -248,3 +296,6 @@ class Basket(object):
                 item.save()
             return
                 
+class ItemAction(TimeStampedModel):
+    item = models.ForeignKey(Item)
+    

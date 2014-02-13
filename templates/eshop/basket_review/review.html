@@ -5,12 +5,22 @@
   {% for item in basket.items %}
   <tbody>
   <tr>
-    <td><a class="from-basket" href="/eshop/item/{{item.id}}/from-basket/"><img src="/media/img/admin/icon_deletelink.gif"></img></a>
+    <td><a class="from-basket" href="/eshop/item/{{item.id}}/from-basket/"><img src="/media/img/admin/icon_deletelink.gif"></img></a></td>
     <td>{{ item.article }}</td>
     <td style="text-align:right">{{ item.price|floatformat }} </td>
     <td>Kč</td>
   </tr>
   {% endfor %}
+  {% for item in basket.additional_items %}
+  <tbody>
+  <tr>
+    <td></td>
+    <td>{{ item.desc }}</td>
+    <td style="text-align:right">{{ item.price|floatformat }} </td>
+    <td>Kč</td>
+  </tr>
+  {% endfor %}
+
   <tr class="total info">
     <td></td>
     <td class="total">celkem:</td>

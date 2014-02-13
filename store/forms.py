@@ -58,19 +58,22 @@ class BuyoutToStoreForm(forms.Form):
     def clean(self):
         article = Article.objects.get(id=self.cleaned_data['article_id']) 
         packnumber = self.cleaned_data['packnumber']
-        itemsInStore = Items.objects.filter(article__mediaType = article.mediaType, 
-                                            packnumber = packnumber, 
-                                            state__in=( Item.state_at_stock,
-                                                        Item.state_at_cleaning,
-                                                        Item.state_for_sale )
-                                            )
+        itemsInStore = Item.objects.filter(article__mediaType = article.mediaType, 
+                                           packnumber = packnumber, 
+                                           state__in=( Item.state_at_stock,
+                                                       Item.state_cleaning,
+                                                       Item.state_for_sale )
+                                           )
         if packnumber.strip().isdigit() and len(itemsInStore) > 0:
             raise forms.ValidationError(unicode(_('Item with given packnumber is already used.')) + "&nbsp;".join(['<a href="/store/item/%s">%s</a>' % (aa.id,unicode(aa)) for aa in itemsInStore]))
         return self.cleaned_data
     
     def save(self):
         article = Article.objects.get(id=self.cleaned_data['article_id'])
-        item = article.item_set.create(price = article.lastSold[0], barcode=barcode, state = Item.state_at_stock)
+        item = article.item_set.create(price = article.lastSold[0], 
+                                       barcode=article.barcode, 
+                                       state = Item.state_at_stock,
+                                       )
 
 # to clean:
 # cislo obalky - nepovinne, 

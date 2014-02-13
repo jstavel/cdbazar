@@ -1,0 +1,23 @@
+<span class="span8 pull-right">
+    <h5>{{ article }}</h5>
+    <p class="">
+      <span class="span4">vydavatel:</span>
+      <span class="span8">{{ article.publisher }}</span>
+    </p>
+    <p class="row-fluid">
+      <span class="span4">cena:</span>
+      <span class="span8">
+	{% with priceRange=article.forSalePriceRange %}
+	{% if priceRange.0 != priceRange.1 %}
+	{{ priceRange.0 }} Kč - {{ priceRange.1 }} Kč
+	{% else %}
+	{{ priceRange.0 }} Kč
+	{% endif %}
+	{% endwith %}
+      </span>
+    </p>
+    <a class="to-basket btn btn-small pull-right"
+       href="/eshop/article/{{ article.id  }}/to-basket/"> <span class="add-on"><i class="icon-inbox"></i></span>
+    do košíku </a>
+    <span class="badge badge-success">30% sleva</span>
+  </span>

@@ -11,11 +11,74 @@ $(function(){
 {% block navigation %}{% include "eshop/basket.html" %}{% endblock %}
 {% block content %}
 <div class="article_list">
-<h2>{% trans "E-Shop" %}</h2>
-<div class="pagination">{% include "paginator.html" %}</div>
-<div class="list clearfix">{% include "eshop/article_list/list.html" %}</div>
-<div class="pagination">{% include "paginator.html" %}</div>
+<!-- <h2>{% trans "E-Shop" %}</h2> -->
+<div class="heading well well-condensed clearfix">
+  <i class="icon-wrench text-large"></i>na pockani opravime Vase poskrabane CD a DVD na profesionalnim stroji TDR <br/>
+  od 49KC
+</div>
+<div class="banners clearfix">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tradeaction-banner" data-toggle="tab">Akce</a></li>
+    <li class=""><a href="#new-articless-banner" data-toggle="tab">Nové zboží</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active tradeaction-banner" id="tradeaction-banner">
+      {% include "eshop/article_list/tradeaction_banner.html" %}
+    </div>
+    <div class="tab-pane new-articles-banner" id="new-articles-banner">
+      {% include "eshop/article_list/tradeaction_banner.html" %}
+    </div>
+  </div>
+</div>
+<div class="eshop-lists well clearfix">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#list" data-toggle="tab">Zboží</a></li>
+    <li class=""><a href="#list-shortly" data-toggle="tab">Tabulkový přehled</a></li>
+    <li class=""><a href="#list-with-tradeaction" data-toggle="tab">V akci</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active list-with-goods" id="list">
+      <div class="row-fluid">
+        <div class="pagination span4">{% include "paginator.html" %}</div>
+        <ul class="order-by span8 nav nav-tabs">
+          <li class="active"><a href="#">Od nejnovějšího</a></li>
+          <li><a href="#">Od nejlevnějšího</a></li>
+          <li><a href="#">Podle abecedy</a></li>
+        </ul>
+      </div>
+      <div class="list clearfix">{% include "eshop/article_list/list.html" %}</div>
+      <div class="pagination clearfix">{% include "paginator.html" %}</div>
+    </div>
+    <div class="tab-pane" id="list-shortly">
+      <div class="row-fluid">
+        <div class="pagination span4">{% include "paginator.html" %}</div>
+        <ul class="order-by span8 nav nav-tabs">
+          <li class="active"><a href="#">Od nejnovějšího</a></li>
+          <li><a href="#">Od nejlevnějšího</a></li>
+          <li><a href="#">Podle abecedy</a></li>
+        </ul>
+      </div>
+      <div class="list-shortly clearfix">{% include "eshop/article_list/list_shortly.html" %}</div>
+      <div class="pagination clearfix">{% include "paginator.html" %}</div>
+    </div>
+    <div class="tab-pane list-with-tradeaction" id="list-with-tradeaction">
+      <div class="row-fluid">
+        <div class="pagination span4">{% include "paginator.html" %}</div>
+        <ul class="order-by span8 nav nav-tabs">
+          <li class="active"><a href="#">Od nejnovějšího</a></li>
+          <li><a href="#">Od nejlevnějšího</a></li>
+          <li><a href="#">Podle abecedy</a></li>
+        </ul>
+      </div>
+      <div class="list-with-tradeaction">{% include "eshop/article_list/list_with_tradeaction.html" %}</div>
+      <div class="pagination clearfix">{% include "paginator.html" %}</div>
+    </div>
+  </div>
 </div>
 {% endblock %}
-{% block left_column %}{% include "eshop/left_column.html" %}{% endblock %}
+{% block left_column %}
+<div class="left-column well">
+  {% include "eshop/left_column.html" %}
+</div>
+{% endblock %}
 

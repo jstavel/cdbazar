@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Trade Action" %}{% endblock %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){
+{% include "eshop/tradeaction_add/js.js" %}
+});
+</script>
+{% endblock %}
+{% block navigation %}{% endblock %}
+{% block content %}{% include "eshop/tradeaction_add/form.html" %}{% endblock %}
+{% block left_column %}{% endblock %}
+{% block right_column %}{% endblock %}

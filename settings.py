@@ -142,15 +142,19 @@ INSTALLED_APPS = (
     'cdbazar.store',
     'cdbazar.eshop',
     'cdbazar.accounts',
+    'cdbazar.flatpages',
     'sorl.thumbnail',
     #'rosetta',
     'history',
     #'categories',
     #'categories.editor',
+    'django_extensions',
     'django_forms_bootstrap',
     'registration',
+    #'tinymce',
+    'inplaceeditform',    
+    'inplaceeditform_extra_fields',
 )
-
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 
 # A sample logging configuration. The only tangible logging

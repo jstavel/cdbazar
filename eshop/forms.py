@@ -1,31 +1,61 @@
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
-from .models import DELIVERY_WAYS, Order, PAYMENT_WAYS
+from .models import *
 import django.forms as forms
 
+class OrderStageForm(forms.Form):
+    stage = forms.IntegerField(label="stage", 
+                               initial=0,
+                               widget=forms.HiddenInput()
+                               )
+
+class SuccessURLForm(forms.Form):
+    success_url = forms.CharField(label="success url",
+                                  max_length = 120,
+                                  widget=forms.HiddenInput()
+                                  )
+
 class OrderForm(forms.ModelForm):
+    """ kompletni formular objednavky """
     class Meta:
         model = Order
+
+    def getAdditionalItems(self):
+        data = self.cleaned_data
+        additionalItems = []
+        additionalItems += [DeliveryPrice.asAdditionalItemForBasket(data['delivery_way'])]
+        additionalItems += [PaymentPrice.asAdditionalItemForBasket(data['payment_way'])]
+        return additionalItems
+    
+    # def save(self):
+    #     order = super(OrderForm,self).save(self)
+    #     for additionalItem in self.getAdditionalItems():
+    #         orderAdditionalItem = OrderAdditionalItem(order = order,
+    #                                                   description = additionalItem.desc,
+    #                                                   meta = additionalItem.type,
+    #                                                   price = additionalItem.price)
+    #         orderAdditionalItem.save()
+    #     return order
 
 class OrderInvoicingForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = [ii for ii in Order._meta.get_all_field_names() if 'invoicing_' in ii]
+        fields = [ff.name for ff in Order._meta.fields if 'invoicing_' in ff.name]
 
 class OrderContactForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = [ii for ii in Order._meta.get_all_field_names() if 'contact_' in ii]
+        fields = [ff.name for ff in Order._meta.fields if 'contact_' in ff.name]
 
 class OrderDeliveryForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = [ii for ii in Order._meta.get_all_field_names() if 'delivery_' in ii]
+        fields = [ff.name for ff in Order._meta.fields if 'delivery_' in ff.name]
 
 class OrderPaymentForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = [ii for ii in Order._meta.get_all_field_names() if 'payment_' in ii]
+        fields = [ff.name for ff in Order._meta.fields if 'payment_' in ff.name]
 
 class UserForm(forms.ModelForm):
     class Meta:
@@ -37,7 +67,10 @@ class UserForm(forms.ModelForm):
         'password_mismatch': _("The two password fields didn't match."),
         'no username':_("Username is required"),
     }
-    with_registration = forms.BooleanField(label=_("With registration"), required=False)
+    with_registration = forms.BooleanField(label=_("With registration"), 
+                                           initial=True,
+                                           required=False,
+                                           )
     username = forms.RegexField(label=_("Username"), max_length=30,
                                 required = False,
                                 regex=r'^[\w.@+-]+$',
@@ -54,9 +87,6 @@ class UserForm(forms.ModelForm):
                                 widget=forms.PasswordInput,
                                 help_text = _("Enter the same password as above, for verification."))
     
-    # def clean_contact_phonenumber (self):
-    #     pass
-
     # def clean(self):
     #      """ at least one of email or phone number must be filled """
     #      cleaned_data = super(UserForm,self).clean()
@@ -79,7 +109,6 @@ class UserForm(forms.ModelForm):
         
 
     def clean_password2(self):
-        #import pdb; pdb.set_trace()
         password1 = self.cleaned_data.get("password1", "")
         password2 = self.cleaned_data["password2"]
         if password1 != password2:
@@ -89,7 +118,6 @@ class UserForm(forms.ModelForm):
 
     
     def save(self, commit=True):
-        #import pdb; pdb.set_trace()
         if self.cleaned_data['with_registration']:
             user = super(UserForm, self).save(commit=False)
             user.set_password(self.cleaned_data["password1"])

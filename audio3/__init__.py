@@ -200,4 +200,4 @@ if __name__ == "__main__":
     detail = Detail(gid)
     import pdb; pdb.set_trace()
     print detail.title
-    print str(detail.__dict__)
+    #print str(detail.__dict__)

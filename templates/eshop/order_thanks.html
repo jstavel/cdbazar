@@ -4,11 +4,14 @@
 {% endblock %}
 {% block title %}{% trans 'Thank you for your order' %}{% endblock %}
 {% block content %}
-Linka k Vaší objednávce je:
+<div>
+<h2>Děkujeme za objednávku</h2>
 
-{{ user }}
-{{ order }}
+Linka k Vaší objednávce je:  /eshop/order/{{ order.uuid }}/
 
+<div>Ve schránce máte email s podrobnostmi k objednávce.</div>
+
+</div>
 {% endblock %}
 {% block left_column %}
 <ul class="nav nav-list">

@@ -1,0 +1,41 @@
+{% load i18n %}
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Čislo</th>
+      <th>Ze dne</th>
+      <th>Zákazník</th>
+      <th>Cena</th>
+      <th>Stav</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in object_list %}
+    <tr class="order-detail" title='Objednávka' id="order_detail_{{ order.id }}">
+      <td class="id">{{ order.id }}</td>
+      <td class="created">{{ order.created|date:"j. N Y, l" }}</td>
+      <td class="customer">{{ order.user }}</td>
+      <td class="total-price">{{ order.total_price }} Kč</td>
+      <td class="state">{{ order.state }}</td>
+      <td>
+        <div class="btn-group">
+          <a id="order-{{ order.id }}-actions" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            {% trans "Action" %}<span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="order-{{ order.id }}-actions">
+            <li>
+              <a class="btn btn-secondary btn-small"
+                 href="/eshop/item/{{ item.item.id }}/add-tradeaction/?success_url=/eshop/tradeaction/">{% trans "update" %}</a>
+            </li>
+            <li>
+              <a class="edit btn btn-secondary btn-small"
+                 href="/eshop/order/{{ item.id }}/delete/">{% trans "delete" %}</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

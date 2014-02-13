@@ -5,8 +5,10 @@
 <meta charset="utf-8"/>
 <meta name="description" content="video audio cdbazar bazar Prague"/>
 <meta name="author" content="Jan Stavel"/>
-<script src="/media/js/jquery-1.8.0.min.js"></script>
+<!-- <script src="/media/js/jquery-1.8.0.min.js"></script> -->
+<script src="/media/js/jquery-1.10.2.min.js"></script>
 <link href="/media/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="/media/css/eshop.css" rel="stylesheet"/>
 <style type="text/css">
   body {
   padding-top: 60px;
@@ -30,7 +32,7 @@
   <div class="container-fluid">
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
-        <a class="brand" href="/">CD Bazar</a>
+        <a class="brand" href="/" title="Výkup a prodej originálních médií - buy and sale original data media">bazar-cd.cz</a>
         <p class="navbar-text pull-right">
 	  <span>{% block navigation %}{% endblock %}</span>
           {% comment %}Logged in as <a href="#" class="navbar-link">{{ user }}</a>{% endcomment %}
@@ -38,20 +40,23 @@
 	<form class="navbar-search pull-right" method="get" action="{{ request.path }}">
 	  <input type="text" class="search-query" placeholder="Search" name="search">
 	</form>
+        
         <ul class="nav">
           <li {% if "/store/buyout/" in request.path %} class="active" {% endif %} class="dropdown">
-	      <a  id="menu-hromadeni" class="dropdown-toggle" data-toggle="dropdown" href="#">{% trans 'Buyout' %}</a>
-	      <ul class="dropdown-menu" role="menu" aria-labelledby="menu-hromadeni">
-		<li><a href="/store/buyout/">{% trans 'Buyout' %}</a></li>
-		<li class="divider"></li>
-	      	<li><a href="/store/buyout/to-stock/" tabindex="-1">{% trans 'At stock' %}</a></li>
-	      	<li><a href="/store/buyout/to-store/" tabindex="-1">{% trans 'To store' %}</a></li>
-	      	<li><a href="/store/buyout/to-clean/" tabindex="-1">{% trans 'To clean' %}</a></li>
-	      </ul>
+	    <a  id="menu-hromadeni" class="dropdown-toggle" data-toggle="dropdown" href="#">{% trans 'Buyout' %}</a>
+	    <ul class="dropdown-menu" role="menu" aria-labelledby="menu-hromadeni">
+	      <li><a href="/store/buyout/">{% trans 'Buyout' %}</a></li>
+	      <li class="divider"></li>
+	      <li><a href="/store/buyout/to-stock/" tabindex="-1">{% trans 'At stock' %}</a></li>
+	      <li><a href="/store/buyout/to-store/" tabindex="-1">{% trans 'To store' %}</a></li>
+	      <li><a href="/store/buyout/to-clean/" tabindex="-1">{% trans 'To clean' %}</a></li>
+	    </ul>
 	  </li>
           <li {% if "/store/article/" in request.path %} class="active" {% endif %} ><a href="/store/article/">{% trans 'Articles' %}</a></li>
           <li {% if "/store/item/" in request.path %} class="active" {% endif %} ><a href="/store/item/">{% trans 'Goods' %}</a></li>
-          <li {% if "/eshop/" in request.path %} class="active" {% endif %} ><a href="/eshop/">{% trans 'E-Shop' %}</a></li>
+          <li {% if "/eshop/tradeaction/" in request.path %}  class="active" {% endif %} ><a href="/eshop/tradeaction/">{% trans 'Trade Actions' %}</a></li>
+          <li {% if "/eshop/order/" in request.path %} class="active" {% endif %} ><a href="/eshop/order/">Objednávky</a></li>
+          <li {% if "/eshop/" = request.path %} class="active" {% endif %} ><a href="/eshop/">{% trans 'E-Shop' %}</a></li>
         </ul>
       </div>
     </div>
@@ -61,23 +66,25 @@
   <!-- <h1>CD Bazar</h1> -->
 {% endblock %}
 
+
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span3">
       <div class="sidebar-nav">
-	{% block left_column %}{% endblock %}
+        {% block left_column %}{% endblock %}
       </div>
     </div>
     <div class="span9">
       <div class="">
-	{% block pretitle %}{% endblock %}
+        {% block pretitle %}{% endblock %}
         {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
         {% block object-tools %}{% endblock %}
-	{% block messages %}{% endblock %}
+        {% block messages %}{% endblock %}
         {% block content %}{% endblock %}
       </div>
     </div>
-    {% block footer %}<div id="footer"></div>{% endblock %}
+  </div>
+  {% block footer %}<div id="footer"></div>{% endblock %}
 </div>
 <!-- END Container -->
 <script src="/media/js/bootstrap.min.js"></script>

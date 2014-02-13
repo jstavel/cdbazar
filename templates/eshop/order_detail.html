@@ -4,19 +4,18 @@
 {% block extrastyle %}
 <script type="text/javascript">
 $(function(){
-{% include "eshop/order/js.js" %}
+{% include "eshop/order_detail/js.js" %}
 });
 </script>
 {% endblock %}
 {% block navigation %}{% include "eshop/basket.html" %}{% endblock %}
 {% block content %}
-<div class="article_list">
-<h2>{% trans "E-Shop" %}</h2>
-<div class="pagination">{% include "paginator.html" %}</div>
-<div class="list clearfix">{% include "eshop/article_list/list.html" %}</div>
-<div class="pagination">{% include "paginator.html" %}</div>
+<div class="order_detail">
+<h2>Detail objednávky</h2>
+<div class="detail clearfix">{% include "eshop/order_detail/detail.html" %}</div>
 </div>
 {% endblock %}
 {% block left_column %}
-{% include "eshop/mediatype_choose.html" %}
+{% include "accounts/left_column.html" %}
 {% endblock %}
+

@@ -9,8 +9,11 @@
       <th></th>
       <th>{% trans "Barcode" %}</th>
       <th>{% trans "Pack Number" %}</th>
+      <th>{% trans "To Store Date" %}</th>
+      <th>{% trans "At home page" %}</th>
       <th>{% trans "Commentary" %}</th>
       <th>{% trans "Price" %}</th>
+      <th></th>
       <th></th>
     </tr>
   </thead>
@@ -24,9 +27,33 @@
       <td><a class="to-basket btn btn-secondary btn-small" href="/store/item/{{ item.id }}/to-basket/">{% trans "sell" %}</a></td>
       <td class="barcode">{{ item.barcode }}</td>
       <td class="packnumber">{{ item.packnumber }}</td>
+      <td class="to_store">{{ item.to_store }}</td>
+      <td class="home_page">{{ item.home_page }}</td>
       <td class="commentary">{{ item.commentary }}</td>
       <td class="price">{{ item.price }}</td>
-      <td><a class="edit btn btn-secondary btn-small" href="/store/item/{{ item.id }}/edit/">{% trans "edit" %}</a></td>
+      <td>
+        {% if item.has_tradeaction %}
+        <a class="add-tradeaction btn btn-primary btn-small"
+           href="/eshop/item/{{ item.id }}/add-tradeaction/?success_url=/store/item/">{% trans "Trade Action" %}</a>
+        {% endif %}
+      </td>
+      <td>
+        <div class="btn-group">
+          <a id="item-{{ item.id }}-actions" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            {% trans "Action" %}<span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="item-{{ item.id }}-actions">
+            <li>
+              <a class="add-tradeaction btn btn-secondary btn-small"
+                 href="/eshop/item/{{ item.id }}/add-tradeaction/?success_url=/store/item/">{% trans "Trade Action" %}</a>
+            </li>
+            <li>
+              <a class="edit btn btn-secondary btn-small"
+                 href="/store/item/{{ item.id }}/edit/">{% trans "edit" %}</a>
+            </li>
+          </ul>
+        </div>
+      </td>
     </tr>
     {% endfor %}
   </tbody>

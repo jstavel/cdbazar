@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Potvrzení</h1>
+
+<h2>Opravdu chcete smazat: <em>{{ object }}</em>?</h2>
+
+<form class="wide" action="." method="post">
+  {% csrf_token %}
+  <p class="submit"><input type="submit" value="Ano, smaž to ..."></p>
+</form>
+{% endblock %}

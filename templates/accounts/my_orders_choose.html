@@ -1,8 +1,9 @@
 {% load i18n %}
 <ul class="nav nav-list">
-  <li class="nav-header">{% trans 'Choose some order' %}</li>
-  <li class="active"><a href="?id=10">objednavka č. 1</a></li>
-  <li class=""><a href="?id=10">objednavka č. 2</a></li>
-  <li class=""><a href="?id=10">objednavka č. 3</a></li>
+  {% for order in my_orders %}
+  <li {% if order_id == order.id %} class="active" {% endif %} >
+    <a href="/eshop/order/{{ order.pk }}/">ze dne: {{ order.created|date:"j. N Y, l" }}</a>
+  </li>
+  {% endfor %}
 </ul>
 

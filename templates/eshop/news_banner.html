@@ -1,0 +1,9 @@
+{% for item in news_list %}
+<div class="news">
+  <h4>{{ item.title }}</h4>
+  <div class="text">
+    {{ item.text }}
+  </div>
+</div>
+<hr/>
+{% endfor %}

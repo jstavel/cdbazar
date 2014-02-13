@@ -1,18 +1,28 @@
+#-*- coding: utf-8 -*-
 from django.db import models
+from django.db import transaction
 from cdbazar.store.models import Item, Article
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
+from decimal import Decimal
+from collections import namedtuple
+from django_extensions.db.fields import UUIDField
 
-def calculateTotalPrice(items):
-    totalPrice = float(sum([ii.price for ii in items])) 
+def calculateTotalPrice(items, additional_items):
+    totalPrice = float(sum([ii.price for ii in items])) \
+        + float(sum([ii.price for ii in additional_items]))
     return totalPrice
 
+# polozka reprezentuje dodatecne polozky v kosiku
+additionalItem = namedtuple('additionalItem',['desc','price','type'])
+
 class Basket(object):
-    BASKET_NAME="basket"
+    BASKET_NAME="eshop-basket"
+
     def __init__(self,request):
         object.__init__(self)
         self.request = request
-        
+        self.additional_items = []
         if self.BASKET_NAME not in self.request.session:
             self.request.session[self.BASKET_NAME]=[]
             self.request.session.save()
@@ -23,9 +33,10 @@ class Basket(object):
         basket = self.request.session[self.BASKET_NAME]
         results = Item.objects.filter(id__in=basket, state=Item.state_for_sale)
         self.items = results
+        self.additional_items = self.request.session.get('additional_items-for-' + self.BASKET_NAME,[])
         self.total = len(self.items)
-        self.total_price = calculateTotalPrice(self.items)
-        return 
+        self.total_price = calculateTotalPrice(self.items, self.additional_items)
+        return
 
     def addItem(self,item):
         results = Item.objects.filter(id__in=[item.id,] + [ii.id for ii in self.items], state=Item.state_for_sale)
@@ -35,7 +46,7 @@ class Basket(object):
             
             self.items = results
             self.total = len(self.items)
-            self.total_price = calculateTotalPrice(self.items)
+            self.total_price = calculateTotalPrice(self.items, self.additional_items)
         return
 
     def removeItem(self,item):
@@ -45,17 +56,29 @@ class Basket(object):
         self._update()
         return
     
+    def addAdditionalItem(self, item):
+        self.additional_items.append(item)
+        self.request.session['additional_items-for-' + self.BASKET_NAME] = self.additional_items
+        self.request.session.save()
+        self.total_price = calculateTotalPrice(self.items, self.additional_items)
+        
+    def removeAdditionalItem(self, toBeRemoved=lambda item: False):
+        old_additional_items = self.additional_items
+        self.additional_items = [ item for item in old_additional_items if not toBeRemoved(item) ]
+
     def articleInBasket(self,article_id):
         return article_id in [item.article_id for item in self.items]
 
+    def getItemsForSale(self):
+        return [ii for ii in self.items if ii.state == Item.state_for_sale]
+            
     def sell(self):
-        with transaction.commit_on_success():
-            results = [ii for ii in self.items if ii.state == Item.state_for_sale]
-            for item in results:
-                item.state = Item.state_sold
-                item.save()
-            return results
-                
+        results = self.getItemsForSale()
+        for item in results:
+            item.state = Item.state_sold
+            item.save()
+        return results
+            
 DELIVERY_WAYS = (
     (1,_('Czech Post')),
     (2,_('DHL')),
@@ -69,18 +92,20 @@ PAYMENT_WAYS = (
 )
 
 class Order(models.Model):
-    invoicing_firm = models.CharField(_('Firm'), max_length = 30, blank=True, null=True )
-    invoicing_name = models.CharField(_('Name'), max_length = 30, blank=True, null=True)
+    uuid = UUIDField()
+
+    invoicing_firm = models.CharField(_('Firm'), max_length = 30, blank=True, null=True)
+    invoicing_name = models.CharField(_('Name'), max_length = 30, default="")
     invoicing_surname = models.CharField(_('Surname'), max_length = 30, blank=True, null=True)
-    invoicing_address_street = models.CharField(_("Street"), max_length = 30, blank=True, null=True)
-    invoicing_address_zip = models.CharField(_("ZIP code"), max_length = 30, blank=True, null=True)
-    invoicing_address_city = models.CharField(_("City"), max_length = 30, blank=True, null=True)
+    invoicing_address_street = models.CharField(_("Street"), max_length = 30, default="")
+    invoicing_address_zip = models.CharField(_("ZIP code"), max_length = 30, default="")
+    invoicing_address_city = models.CharField(_("City"), max_length = 30, default="")
     invoicing_address_country = models.CharField(_("Country"), max_length = 30, blank=True, null=True)
     invoicing_address_ico = models.CharField(_("ICO"), max_length = 30, blank=True, null=True)
     invoicing_address_dic = models.CharField(_("VAT number"), max_length = 30, blank=True, null=True)
     
-    contact_email = models.EmailField(_("Email"), max_length=30, blank=True, null=True)
-    contact_phonenumber = models.CharField(_("Phone number"), max_length=30, blank=True, null=True)
+    contact_email = models.EmailField(_("Email"), max_length=30, default="")
+    contact_phonenumber = models.CharField(_("Phone number"), max_length=30)
     user = models.ForeignKey(User, blank=True, null=True)
 
     delivery_way = models.PositiveSmallIntegerField(_("Delivery way"), choices=DELIVERY_WAYS, default=1)
@@ -96,7 +121,108 @@ class Order(models.Model):
 
     payment_way = models.PositiveSmallIntegerField(_("Payment way"), choices=PAYMENT_WAYS, default=1)
 
+    created = models.DateTimeField(_("To store date of an item"), auto_now=True)
 
+    def __unicode__(self):
+        return u"Objednávka č.%d | cena: %d | zákazník: %s | ve stavu: %s" % (self.id,
+                                                                              self.total_price,
+                                                                              self.user,
+                                                                              "hotovo")
+
+    @property
+    def total_price(self):
+        items = self.orderitem_set.all()
+        additional_items = self.orderadditionalitem_set.all()
+        totalPrice = sum([ii.item.price for ii in items] + [ii.price for ii in additional_items])
+        return totalPrice
+        
 class OrderItem(models.Model):
     order = models.ForeignKey(Order)
+    item = models.ForeignKey(Item, default=Item())
+
+class OrderAdditionalItem(models.Model):
+    order = models.ForeignKey(Order)
+    description = models.CharField(_("Description"), max_length = 256, blank=True, null=True)
+    meta = models.CharField(_("Meta info"), max_length = 256, blank=True, null=True)
+    price = models.DecimalField(_("Price"), decimal_places = 2, max_digits=10, default=Decimal("0"))
+
+    def __unicode__(self):
+        return u"%s | %d Kč" % (self.description, self.price)
+
+class RandomManager(models.Manager):
+    def get_queryset(self):
+        return super(RandomManager, self).get_queryset().order_by("?")
+
+class TradeAction(models.Model):
+    """
+    akce se zbozim, slevy
+    """
+    item = models.ForeignKey(Item, blank=True, null=True)
+    discount = models.DecimalField(_("Discount [%]"), 
+                                   decimal_places = 2, 
+                                   max_digits = 10, 
+                                   default=Decimal("0")
+                                   )
+    def __unicode__(self):
+        return "sleva %s%% pro: " % (self.discount,) + unicode(self.item)
+
+    objects = models.Manager()        
+    random_set = RandomManager()
     
+
+class DeliveryPrice(models.Model):
+    delivery_way = models.PositiveSmallIntegerField(_("Delivery way"), choices=DELIVERY_WAYS, default=1)
+    price = models.DecimalField(_("Price [CZK]"), decimal_places = 2, max_digits=10, default=Decimal("0"))
+    
+    def __unicode__(self):
+        descs = [ii[1] for ii in DELIVERY_WAYS if ii[0] == self.delivery_way]
+        desc = descs and descs[0] or ""
+        return u"%s: %s Kč" % (desc, self.price)
+
+    @classmethod
+    def asAdditionalItemForBasket(cls,delivery_way):
+        obj = cls.objects.get(delivery_way=delivery_way)
+        descs = [ii[1] for ii in DELIVERY_WAYS if ii[0] == delivery_way]
+        desc = descs and descs[0] or ""
+        return additionalItem(desc = u"poplatek za doručení: " + desc,
+                              price = obj.price,
+                              type = "by-order:delivery")
+                                
+    @classmethod
+    def asToBeRemovedFilter(cls):
+        return lambda item: item.type == 'by-order:delivery'
+        
+class PaymentPrice(models.Model):
+    payment_way = models.PositiveSmallIntegerField(_("Payment way"), choices=PAYMENT_WAYS, default=1)
+    price = models.DecimalField(_("Price [CZK]"), decimal_places = 2, max_digits=10, default=Decimal("0"))
+    
+    def __unicode__(self):
+        descs = [ii[1] for ii in PAYMENT_WAYS if ii[0] == self.payment_way]
+        desc = descs and descs[0] or ""
+        return u"%s: %s Kč" % (desc, self.price)
+    
+    @classmethod
+    def asAdditionalItemForBasket(cls,payment_way):
+        obj = cls.objects.get(payment_way=payment_way)
+        descs = [ii[1] for ii in PAYMENT_WAYS if ii[0] == payment_way]
+        desc = descs and descs[0] or ""
+        return additionalItem(desc = u"poplatek za provedení platby: " + desc,
+                              price = obj.price,
+                              type = "by-order:payment")
+
+    @classmethod
+    def asToBeRemovedFilter(cls):
+        return lambda item: item.type == 'by-order:payment'
+    
+class News(models.Model):
+    title = models.CharField("Titulek", max_length=64)
+    text = models.TextField(_("Text"))
+    eshop = models.BooleanField("Vystavit na eshopu?", default=False)
+    created = models.DateTimeField(_("To store date of an item"), auto_now=True)
+
+class Content(models.Model):
+    title = models.CharField("Titulek", max_length=64)
+    text = models.TextField(_("Text"))
+    eshop = models.BooleanField("Vystavit na eshopu?", default=False)
+    created = models.DateTimeField(_("To store date of an item"), auto_now=True)
+    contentType = models.CharField("Titulek", max_length=12)

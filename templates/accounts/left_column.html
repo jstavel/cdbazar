@@ -1,9 +1,11 @@
 {% load i18n %}
-<ul class="nav nav-tabs">
-  <li class="active"><a href="#my-orders" data-toggle="tab">My Orders</a></li>
-</ul>
-<div class="tab-content">
-  <div class="tab-pane" id="my-orders">
-    {% include "accounts/my_orders_choose.html" %}
+<div class="well">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#my-orders" data-toggle="tab">Moje objednávky</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-panel" id="my-orders">
+      {% include "accounts/my_orders_choose.html" %}
+    </div>
   </div>
 </div>

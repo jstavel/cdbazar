@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 # Create your views here.
 from django.views.generic import TemplateView, ListView, DetailView, UpdateView, CreateView, FormView
 from django.db.models import Q
@@ -6,6 +7,10 @@ from .forms import *
 from .models import Article, Picture, Item, Basket, MediaType
 from django.forms.models import modelformset_factory
 import cdbazar.audio3
+import sys, json
+from django import http
+
+from cdbazar.eshop.models import TradeAction
 
 # def getArticles():
 #     words = ["+" + ii for ii in re.split("[\ ]+",title)]
@@ -71,6 +76,8 @@ class ArticleList(ListView,JSONTemplateResponse):
         context['basket'] = basket
         context['mediatypes'] = MediaType.objects.all()
         context['mediatype'] = self.request.GET.get('mediaType',None)
+        context['tradeaction_banner_list'] = TradeAction.objects.all().order_by("?")[:20]
+        context['new_articles_banner_list'] = Article.objects.all().order_by("to_store")[:20]
         return context
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
@@ -123,6 +130,32 @@ class ItemList(ListView,JSONTemplateResponse):
         context['mediatypes'] = MediaType.objects.all()
         context['mediatype'] = self.request.GET.get('mediaType',None)
         return context
+
+class ItemDataset(ListView):
+    model=Item
+    paginate_by = 50
+
+    def get_queryset(self):
+        qs = super(ItemDataset,self).get_queryset()
+        qs = qs.filter(state__in=(Item.state_for_sale,Item.state_at_stock))
+
+        search = self.request.GET.get('search',None)
+        article_id = self.request.GET.get('article_id',None)
+        mediaType__name = self.request.GET.get('mediaType',None)
+
+        if article_id:
+            qs = qs.filter(article__id = article_id)
+        if search:
+            qs = qs.filter(Q(article__title__icontains=search) | Q(article__interpret__icontains=search))
+        if mediaType__name:
+            qs = qs.filter(article__mediaType__name = mediaType__name)
+
+        return qs.select_related()
+
+    def render_to_response(self, context):
+        content = [unicode(aa) + " | %s" % (aa.id,) for aa in context['object_list']]
+        return http.HttpResponse(json.dumps(content), content_type='application/json')
+    
 
 class ToBasketView(DetailView, JSONTemplateResponse):
     model = Item
@@ -354,6 +387,39 @@ class BuyoutLookupView(TemplateView,JSONTemplateResponse):
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, TemplateView)
 
+class BuyoutLoadDetailView(TemplateView,JSONTemplateResponse):
+    template_name = "store/buyout/load_detail.html"
+    page_includes = ['store/buyout/load_detail.html','store/buyout/js.js']
+
+    def get_context_data(self,**kwargs):
+        context = TemplateView.get_context_data(self,**kwargs)
+        gid = self.request.GET.get('gid',None)
+        if gid:
+            try:
+                detail = cdbazar.audio3.Detail(gid)
+                if Article.objects.all().filter(barcode=detail.ean).count():
+                    context['result'] = u"artikl s ean: %s už existuje. Přeskakuji." % (detail.ean,)
+                else:
+                    mediaType = MediaType.objects.all().filter(name=detail.type)
+                    article = Article(title = detail.title,
+                                      interpret = detail.interpret,
+                                      year = detail.year,
+                                      publisher = detail.publisher,
+                                      mediaType = mediaType and mediaType[0],
+                                      specification = detail.detail,
+                                      tracklist = detail.tracklists,
+                                      origPrice = detail.price,
+                                      barcode = detail.ean,
+                                      pictureSource = "<img src='%s'>picture</img>" % (detail.imgUrl,),
+                                      )
+                    article.save()
+                    context['result'] = u"načteno"
+            except:
+                context['error'] = "chyba komunikace s audio3, %s" (sys.exc_info()[0],)
+        return context
+
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, TemplateView)
+
 # 0652637291629
 class BasketView(TemplateView, JSONTemplateResponse):
     model = Item
@@ -383,3 +449,4 @@ class SellView(TemplateView):
         context['basket'] = basket
         context['mediatypes'] = MediaType.objects.all()
         return context
+

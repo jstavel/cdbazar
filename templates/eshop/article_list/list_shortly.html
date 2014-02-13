@@ -1,0 +1,39 @@
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Interpret</th>
+      <th>Titul</th>
+      <th>Rok</th>
+      <th>Nosič</th>
+      <th></th>
+      <th>Čárový kód</th>
+      <th>Cena [Kč]</th>
+  </thead>
+  <tbody>
+    {% for article in object_list %}
+    <tr>
+      <td>{{ article.interpret }}</td>
+      <td>{{ article.title }}</td>
+      <td>{{ article.year|default:"" }}</td>
+      <td>{{ article.mediaType }}</td>
+      <td>
+        <a class="to-basket btn btn-small"
+           href="/eshop/article/{{ article.id  }}/to-basket/"> 
+          <span class="add-on"><i class="icon-inbox"></i></span>do
+          košíku</a> 
+        {% if article.discount %}<span class="badge badge-success">akce</span>{% endif %}
+      </td>
+      <td>{{ article.barcode }}</td>
+      <td>
+        {% with priceRange=article.forSalePriceRange %}
+	{% if priceRange.0 != priceRange.1 %}
+	{{ priceRange.0 }} Kč - {{ priceRange.1 }} Kč
+	{% else %}
+	{{ priceRange.0 }} Kč
+	{% endif %}
+	{% endwith %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

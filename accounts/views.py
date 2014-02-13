@@ -9,13 +9,15 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 from .forms import *
 from cdbazar.store.models import MediaType
+from cdbazar.eshop.models import Order
 
 class UserProfileView(TemplateView):
     template_name = "accounts/profile.html"
 
     def get_context_data(self,**kwargs):
+        user = self.request.user
         context = TemplateView.get_context_data(self,**kwargs)
-        context['mediatypes'] = MediaType.objects.all()
+        context['my_orders'] = Order.objects.filter(user=user)
         context['form_authentication'] = UserProfileAuthenticationForm()
         context['form_invoicing'] = UserProfileInvoicingForm()
         context['form_delivery'] = UserProfileDeliveryForm()

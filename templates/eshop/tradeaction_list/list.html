@@ -1,0 +1,39 @@
+{% load i18n %}
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>{% trans "Item" %}</th>
+      <th>{% trans "Barcode" %}</th>
+      <th>{% trans "Pack Number" %}</th>
+      <th>{% trans "Discount [%]" %}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in object_list %}
+    <tr class="tradeaction-detail" title='{% trans "Goods" %}' id="tradeaction_detail_{{ item.id }}">
+      <td class="item">{{ item.item }}</td>
+      <td class="barcode">{{ item.item.barcode }}</td>
+      <td class="packnumber">{{ item.item.packnumber }}</td>
+      <td class="price">{{ item.discount }}</td>
+      <td>
+        <div class="btn-group">
+          <a id="item-{{ item.id }}-actions" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            {% trans "Action" %}<span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="item-{{ item.id }}-actions">
+            <li>
+              <a class="add-tradeaction btn btn-secondary btn-small"
+                 href="/eshop/item/{{ item.item.id }}/add-tradeaction/?success_url=/eshop/tradeaction/">{% trans "update" %}</a>
+            </li>
+            <li>
+              <a class="edit btn btn-secondary btn-small"
+                 href="/eshop/tradeaction/{{ item.id }}/delete/">{% trans "delete" %}</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
