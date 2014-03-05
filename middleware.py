@@ -12,6 +12,10 @@ def getMenu(request):
                  (u'Akce',"actions", "/eshop/tradeaction/", ()),
                  (u'Objednávky', "orders", "/eshop/order/", ()),
                  (u"eShop", "eshop", "/eshop/", ()),
+                 (u"Admin","admin","/admin/", ( 
+                     (u"Stránky","","/admin/flatpages/flatpage/",()), 
+                     (u"Novinky","","/admin/eshop/news/",()), 
+                 )),
              ]
         
     def getMenuForFrontend(request):
