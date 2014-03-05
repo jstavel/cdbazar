@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tinymce',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -159,6 +160,7 @@ INSTALLED_APPS = (
     'inplaceeditform',    
     'inplaceeditform_extra_fields',
 )
+TINYMCE_DEFAULT_CONFIG = {'theme': "advanced", 'relative_urls': False}
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 
 # A sample logging configuration. The only tangible logging
