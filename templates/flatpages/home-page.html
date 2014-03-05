@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ flatpage.title }}{% endblock %}
+{% block content %}
+{% if perms.store.add_item %}
+{% endif %}
+<div class="banners clearfix">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tradeaction-banner" data-toggle="tab">Akce</a></li>
+    <li class=""><a href="#new-articless-banner" data-toggle="tab">Nové zboží</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active tradeaction-banner" id="tradeaction-banner">
+      {% include "eshop/article_list/tradeaction_banner.html" %}
+    </div>
+    <div class="tab-pane new-articles-banner"  id="new-articles-banner">
+      {% include "eshop/article_list/new_articles_banner.html" %}
+    </div>
+  </div>
+</div>
+{{ flatpage.content }}
+{% endblock %}
+{% block left_column %}
+{% autoescape off %}
+<div class="news-banner well well-condensed">{% include "eshop/news_banner.html"%}</div>
+{% endautoescape %}
+{% endblock %}

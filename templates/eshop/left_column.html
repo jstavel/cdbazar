@@ -2,7 +2,6 @@
 {% autoescape off %}
 <div class="news-banner well well-condensed">{% include "eshop/news_banner.html"%}</div>
 {% endautoescape %}
-{% if user.is_authenticated %}
 <ul class="nav nav-tabs">
   <li class="active"><a href="#mediatypes" data-toggle="tab">Media</a></li>
   <li><a href="#categories" data-toggle="tab">Kategorie</a></li>
@@ -15,6 +14,3 @@
     {% include "eshop/category_choose.html" %}
   </div>
 </div>
-{% else %}
-{% include "eshop/mediatype_choose.html" %}
-{% endif %}

@@ -1,5 +1,5 @@
 {% load i18n thumbnail %}
-{% for item in tradeaction_banner_list %}
+{% for item in request.tradeActions %}
 <span class="article span2 well well-condensed row-fluid" 
       title='{% trans "goods" %}' 
       id="article_detail_{{ item.id }}">

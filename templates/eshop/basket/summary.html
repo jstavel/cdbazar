@@ -1,6 +1,6 @@
 {% load i18n %}
 {% if basket.items %}
-<a href="/eshop/basket" class="total">{% trans "you have in the basket " %}{{ basket.items|length }} {% trans "items for "%} {{ basket.total_price|floatformat }}Kč</a>
+<a href="/eshop/basket" class="total">košík: {{ basket.items|length }} položek, {{ basket.total_price|floatformat }}Kč</a>
 {% else %}
-<span class="no-item">{% trans 'No item in basket' %}</span>
+<span class="no-item">prázdný košík</span>
 {% endif %}
