@@ -1,0 +1,37 @@
+{% load i18n %}
+<ul class="nav">
+  {% for item in request.menu %}
+  <li class="{% if item.2 = request.path %} active {% endif %}
+             {% if item.3 %} dropdown {% endif %}">
+    <a {% if item.3 %} class="dropdown-toggle"  data-toggle="dropdown"  href="#" id="{{ item.1 }}"
+       {% else %} href="{{ item.2 }}" {% endif %} >{{ item.0 }}</a>
+    {% if item.3 %}
+    <ul class="dropdown-menu" role="menu" aria-labelledby="{{ item.1 }}">
+      <li><a href="{{ item.2 }}">{{ item.0 }}</a></li>
+      <li class="divider"></li>
+      {% for subitem in item.3 %}
+      <li><a href="{{ subitem.2 }}" tabindex="-1">{{ subitem.0 }}</a></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    </li>
+  {% endfor %}
+  {% comment %}
+  <li {% if "/store/buyout/" in request.path %} class="active" {% endif %} class="dropdown">
+    <a  id="menu-hromadeni" class="dropdown-toggle" data-toggle="dropdown" href="#">{% trans 'Buyout' %}</a>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="menu-hromadeni">
+      <li><a href="/store/buyout/">{% trans 'Buyout' %}</a></li>
+      <li class="divider"></li>
+      <li><a href="/store/buyout/to-stock/" tabindex="-1">{% trans 'At stock' %}</a></li>
+      <li><a href="/store/buyout/to-store/" tabindex="-1">{% trans 'To store' %}</a></li>
+      <li><a href="/store/buyout/to-clean/" tabindex="-1">{% trans 'To clean' %}</a></li>
+    </ul>
+  </li>
+  <li {% if "/store/article/" in request.path %} class="active" {% endif %} ><a href="/store/article/">{% trans 'Articles' %}</a></li>
+  <li {% if "/store/item/" in request.path %} class="active" {% endif %} ><a href="/store/item/">{% trans 'Goods' %}</a></li>
+  <li {% if "/eshop/tradeaction/" in request.path %}  class="active" {% endif %} ><a href="/eshop/tradeaction/">{% trans 'Trade Actions' %}</a></li>
+  <li {% if "/eshop/order/" in request.path %} class="active" {% endif %} ><a href="/eshop/order/">Objednávky</a></li>
+  <li {% if "/eshop/" = request.path %} class="active" {% endif %}
+  ><a href="/eshop/">{% trans 'E-Shop' %}</a></li>
+{% endcomment %}
+</ul>

@@ -27,7 +27,8 @@ DATABASES = {
 import django.conf.global_settings as DEFAULT_SETTINGS
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
-    'django.core.context_processors.csrf'
+    'django.core.context_processors.csrf',
+    'django.contrib.auth.context_processors.auth',
 )
 
 # Local time zone for this installation. Choices can be found here:
@@ -110,6 +111,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'cdbazar.middleware.Middleware',
+    'cdbazar.eshop.middleware.Middleware',
+    'cdbazar.store.middleware.Middleware',
 )
 
 ROOT_URLCONF = 'cdbazar.urls'
