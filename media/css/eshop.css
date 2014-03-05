@@ -1,0 +1,23 @@
+.control-group {float: left;width: 450px;}
+#div_id_invoicing_firm,#div_id_invoicing_address_dic,#div_id_delivery_firm {width:100%}
+.sidebar-nav {padding-top: 12px !important;}
+div.sidebar-nav div.review,div.sidebar-nav div.left-column {background: #FFFFFF; padding:10px;}
+h1,h2,h3,h4,h5,h6 {color:#C7DA29 !important;}
+div.form-actions { clear: both;}
+div.navbar-inner a.brand {color: #C7DA29;font-family: 'Maven Pro',sans-serif;font-size: 40px;line-height: 40px;margin: 0;padding: 0 0 0 20px;}
+div.navbar-inner a.brand:hover {color: #2FA4E7;}
+div.navbar-inner a.brand div {font-size: 16px;width:650px;}
+div.navbar-inner form.navbar-search {margin: 10px 0;}
+body {padding-top: 180px !important;}
+div.eshop-lists {background: #FFFFFF; padding:10px;}
+div.banners { padding-top: 12px }
+div.news-banner hr { margin: 6px; }
+
+
+
+
+
+
+
+
+

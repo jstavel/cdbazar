@@ -2,9 +2,13 @@
 *.pot
 *.pyc
 local_settings.py
-media/*
+media/js/*
+media/development-bundle/*
+media/cache/*
+media/img/*
 .git-old
 *.py~
 audio3/*.pickle
 manage.py
 *.html~
+*.css~

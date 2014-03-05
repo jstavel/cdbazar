@@ -1,0 +1,87 @@
+#main {
+    float:left;
+    /* border: solid 1px; */
+    padding: 20px;
+}
+#menu {
+    font-size: 80%;
+    text-align: left;
+    list-style-type:none;
+    background: lightgray;
+}
+#menu ul {
+    padding:0; margin:0em; list-style-type:none; /* for Firefox */
+
+}
+#menu li {
+    float:left; list-style-type:none;
+}
+#menu li a, #menu li a:visited {
+    display:block; text-decoration:none; float:left; padding-right:0.5em; padding-left:0.5em;
+}
+#left-column {
+    /* background:red; */
+    float:left;
+    /* border:solid 1px; */
+    padding: 6px;
+    margin:0px;
+}
+#right-column {
+    /* background:green; */
+    /* border:solid 1px; */
+    float:left;
+    padding: 6px;
+    margin:0px;
+}
+
+.basket {
+    float:right;
+}
+
+.basket ul {
+    list-style-type: none;
+    margin-left: 0px;
+}
+
+.basket li a {
+    margin-right: 1ex;
+}
+
+.basket li {
+    font-size: 90%;
+}
+
+.article {
+    /* border: solid 1px; */
+    padding:0px;
+    margin:0px;
+}
+
+.article img {
+    float:left;
+    margin-right:20px;
+}
+
+.article .detail table tbody th {
+    text-align:left;
+}
+
+.clear {
+    clear:both;
+    height: 0px;
+}
+
+.article .detail .header {
+    font-size: 130%;
+}
+.article .detail table {
+    margin-top: 0.5em;
+}
+
+.article th {
+    font-weigh: normal;
+}
+
+.ui-effects-transfer {
+    border: solid 1px green;
+}
