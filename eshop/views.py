@@ -1,7 +1,19 @@
 #-*- coding:utf-8 -*-
 # Create your views here.
 
-from django.views.generic import TemplateView, ListView, DetailView, UpdateView, CreateView, FormView, DeleteView
+from django.views.generic import (
+    TemplateView, 
+    ListView, 
+    DetailView, 
+    UpdateView, 
+    CreateView, 
+    FormView, 
+    DeleteView,
+
+)
+
+from django.views.generic.detail import BaseDetailView
+import json    
 from django.db.models import Q
 from django import forms
 from cdbazar.views import JSONTemplateResponse, prepare_render_to_response
@@ -16,6 +28,8 @@ from .models import Order, additionalItem, DeliveryPrice, PaymentPrice, TradeAct
 from django.shortcuts import redirect
 from django.forms.models import inlineformset_factory
 from django.forms import widgets
+from django.core.mail import send_mail
+from django.http import HttpResponse
 
 class AddTradeActionView(TemplateView, JSONTemplateResponse):
     template_name = "eshop/tradeaction_add.html"
@@ -97,20 +111,16 @@ class OrderList(ListView,JSONTemplateResponse):
 
     page_includes = ['paginator.html','eshop/order_list/list.html','eshop/order_list/js.js']
 
-    # def get_queryset(self):
-    #     qs = super(OrderList,self).get_queryset()
-    #     search = self.request.GET.get('search',None)
-    #     if search:
-    #         qs = qs.filter(Q(article__title__icontains=search) | Q(article__interpret__icontains=search))
-    #     mediaType__name = self.request.GET.get('mediaType',None)
-    #     if mediaType__name:
-    #         qs = qs.filter(mediaType__name = mediaType__name)
-    #     return qs.select_related()
+    def get_queryset(self):
+        qs = super(OrderList,self).get_queryset()
+        state = self.request.GET.get('state',None)
+        if state:
+            qs = qs.filter(state=state)
+        return qs.select_related()
 
     def get_context_data(self,**kwargs):
         context = super(OrderList,self).get_context_data(**kwargs)
-        context['mediatypes'] = MediaType.objects.all()
-        context['mediatype'] = self.request.GET.get('mediaType',None)
+        context['orderState'] = int(self.request.GET.get('state','0'))
         return context
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
@@ -386,7 +396,9 @@ class OrderView(DetailView, JSONTemplateResponse):
     model = Order
     template_name = "eshop/order_detail.html"
     page_includes = ['eshop/order_detail/detail.html','eshop/order_detail/js.js',]
-    
+    slug_field = 'uuid'
+    slug_url_kwarg = 'uuid'
+
     def get_context_data(self,**kwargs):
         context = super(OrderView,self).get_context_data(**kwargs)
         context['order_id'] = self.object.id
@@ -395,3 +407,54 @@ class OrderView(DetailView, JSONTemplateResponse):
         return context
     
     render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)
+
+class OrderTransitionView(DetailView, JSONTemplateResponse):
+    model = Order
+    template_name = "eshop/order_transition.html"
+    page_includes = ['eshop/order_transition/form.html','eshop/order_transition/js.js',]
+    slug_field = 'uuid'
+    slug_url_kwarg = 'uuid'
+
+    def get_context_data(self,**kwargs):
+        context = super(OrderTransitionView,self).get_context_data(**kwargs)
+        context['form'] = getattr(self,'form',OrderTransitionForm())
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.success_url_form = SuccessURLForm(self.request.POST)
+        self.form = OrderTransitionForm(request.POST)
+        if self.form.is_valid():
+            import sys,pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
+            data = self.form.data
+            if data['send']:
+                order = self.get_object()
+
+                if data['emailMessageID']:
+                    emailMessage = EmailMessage.objects.get(id=self.form.data['emailMessageID'])
+                    subject = emailMessage.title
+                    message = emailMessage.text
+                    send_mail(emailMessage.title, emailMessage.text,
+                              'cdbazar@bazar-cd.cz',
+                              [order.contact_email], fail_silently=False)
+                else:
+                    send_mail( data['subject'], data['message'],
+                               'cdbazar@bazar-cd.cz',
+                               [order.contact_email], fail_silently=False)
+                    pass
+                pass
+            # transition pro objednavku
+            
+            # TODO pridat oznameni o provedene akci
+            if self.success_url_form.is_valid() and self.success_url_form.cleaned_data['success_url']:
+                return redirect(self.success_url_form.cleaned_data['success_url'])
+        return super(OrderTransitionView,self).get(request, *args, **kwargs)
+
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)
+
+class EmailMessageView(BaseDetailView):
+    model = EmailMessage
+    def render_to_response(self, context, **kwargs):
+        return HttpResponse(json.dumps({'title': context['object'].title,
+                                        'text': context['object'].text,
+                                        'id': context['object'].id
+                                    }), **kwargs)

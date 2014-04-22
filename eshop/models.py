@@ -92,6 +92,14 @@ PAYMENT_WAYS = (
 )
 
 class Order(models.Model):
+    STATES = ( (1,'Waiting for payment'),
+               (2,'Waiting for expedition'),
+               (3,'Waiting for takeover'),
+               (4,'Rejected'),
+               (5,'Expedited'),
+               (6,'Taken over'),
+               )
+
     uuid = UUIDField()
 
     invoicing_firm = models.CharField(_('Firm'), max_length = 30, blank=True, null=True)
@@ -123,6 +131,8 @@ class Order(models.Model):
 
     created = models.DateTimeField(_("To store date of an item"), auto_now=True)
 
+    state = models.PositiveSmallIntegerField(_("State"), choices=STATES, default=1)
+
     def __unicode__(self):
         return u"Objednávka č.%d | cena: %d | zákazník: %s | ve stavu: %s" % (self.id,
                                                                               self.total_price,
@@ -135,7 +145,40 @@ class Order(models.Model):
         additional_items = self.orderadditionalitem_set.all()
         totalPrice = sum([ii.item.price for ii in items] + [ii.price for ii in additional_items])
         return totalPrice
+
+    @classmethod
+    def get_transitions(cls):
+        return (
+            ('Submit payment', (Order.state_waiting_for_payment, Order.state_waiting_for_expedition)),
+            ('Take over', (Order.state_waiting_for_takeover, Order.state_taken_over)),
+        )
         
+    def processTransition(self, transitionName):
+        fname = transitionName.lower().replace(' ','_')
+        getattr(self,fname,lambda self: None)
+
+    def transition_submit_payment(self):
+        print "submit payment transition"
+        pass
+
+    def transition_take_over(self):
+        print "take over transition"
+        pass
+
+    def available_transitions(self):
+        return map(lambda tr: tr[0], filter(lambda transition: transition[1][0] == self.state, Order.TRANSITIONS))
+
+    @property
+    def state_name(self):
+        return map(lambda item: _(item[1]), filter(lambda tr: self.state == tr[0], self.STATES))[0]
+
+for state in Order.STATES:
+    name = "state_" + state[1].lower().replace(" ","_")
+    number = state[0]
+    setattr(Order,name,number)
+
+Order.TRANSITIONS = Order.get_transitions()    
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order)
     item = models.ForeignKey(Item, default=Item())
@@ -226,3 +269,8 @@ class Content(models.Model):
     eshop = models.BooleanField("Vystavit na eshopu?", default=False)
     created = models.DateTimeField(_("To store date of an item"), auto_now=True)
     contentType = models.CharField("Titulek", max_length=12)
+
+class EmailMessage(models.Model):
+    title = models.CharField("Titulek", max_length=64)
+    text = models.TextField(_("Text"))
+    created = models.DateTimeField(u'Vytvořeno', auto_now=True)

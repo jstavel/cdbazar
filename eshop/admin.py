@@ -1,4 +1,14 @@
-from .models import Order, OrderItem, OrderAdditionalItem, DeliveryPrice, PaymentPrice, TradeAction, News, Content
+from .models import (
+    Order, 
+    OrderItem, 
+    OrderAdditionalItem,
+    DeliveryPrice, 
+    PaymentPrice, 
+    TradeAction,
+    News, 
+    Content,
+    EmailMessage
+)
 from django.contrib import admin
 from django import forms
 from django.core.urlresolvers import reverse
@@ -50,3 +60,8 @@ class TinyMCEFlatPageAdmin(FlatPageAdmin):
 admin.site.unregister(FlatPage)
 admin.site.register(FlatPage, TinyMCEFlatPageAdmin)
 
+class EmailMessageAdmin(admin.ModelAdmin):
+    list_display = ('title',)
+    pass
+
+admin.site.register(EmailMessage, EmailMessageAdmin)

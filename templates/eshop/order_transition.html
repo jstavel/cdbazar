@@ -1,0 +1,20 @@
+{% extends "eshop.html" %}
+{% load i18n %}
+{% block title %}{% trans "Order Detail" %}{% endblock %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){
+{% include "eshop/order_detail/js.js" %}
+});
+</script>
+{% endblock %}
+{% block navigation %}{% include "eshop/basket.html" %}{% endblock %}
+{% block content %}
+<div class="order_detail">
+<h2>Akce s objednávkou</h2>
+<div class="detail clearfix">{% include "eshop/order_transition/form.html" %}</div>
+</div>
+{% endblock %}
+{% block left_column %}
+{% endblock %}
+

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from .models import *
@@ -56,6 +57,22 @@ class OrderPaymentForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [ff.name for ff in Order._meta.fields if 'payment_' in ff.name]
+
+class OrderTransitionForm(forms.Form):
+    send = forms.BooleanField(label=_("Send?"))
+    emailMessageID = forms.ChoiceField(
+        label = u"Šablona",
+        required=False,
+        choices = [(0,"--- select ---")] + [(msg.id, msg.title) for msg in EmailMessage.objects.all()],       
+    )
+    subject = forms.CharField(label="Titulek",
+                              required = False,
+                              )
+    message = forms.CharField(label=u"Zpráva", 
+                              required = False,
+                              widget=forms.widgets.Textarea()
+    )
+
 
 class UserForm(forms.ModelForm):
     class Meta:

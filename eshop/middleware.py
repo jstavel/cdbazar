@@ -2,7 +2,7 @@
 from django.contrib import auth
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.functional import SimpleLazyObject
-from .models import TradeAction, Article, News
+from .models import TradeAction, Article, News, Order
 
 def getActions(request):
     return TradeAction.objects.all().order_by("?")[:20]
@@ -18,4 +18,5 @@ class Middleware(object):
         request.tradeActions = getActions(request)
         request.newArticles = getNewArticles(request)
         request.news = getNews(request)
-            
+        request.orderTransitions = Order.TRANSITIONS
+        request.orderStates = Order.STATES

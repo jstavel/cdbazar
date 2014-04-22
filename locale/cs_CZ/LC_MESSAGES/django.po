@@ -1,0 +1,106 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-03 22:00+0200\n"
+"PO-Revision-Date: 2014-04-03 22:03+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Taken over"
+msgstr "Převzato"
+
+msgid "Expedited"
+msgstr "Vyexpedováno"
+
+msgid "Rejected"
+msgstr "Odmítnuto"
+
+msgid "Waiting for takeover"
+msgstr "Čeká na převzetí"
+
+msgid "Waiting for expedition"
+msgstr "Čeká na expedici"
+
+msgid "Take over"
+msgstr "Převzato"
+
+msgid "Submit payment"
+msgstr "Zaplaceno"
+
+msgid "Waiting for payment"
+msgstr "Čeká na zaplacení"
+
+#: cdbazar/accounts/forms.py:7
+msgid "Password"
+msgstr "Heslo"
+
+#: cdbazar/accounts/forms.py:10
+msgid "Password confirmation"
+msgstr "Potvrzení hesla"
+
+#: cdbazar/accounts/forms.py:13
+msgid "Enter the same password as above, for verification."
+msgstr "Zadejte to samé heslo, pro jistotu"
+
+#: cdbazar/accounts/models.py:12 cdbazar/accounts/models.py:26
+msgid "Firm"
+msgstr "Firma"
+
+#: cdbazar/accounts/models.py:13 cdbazar/accounts/models.py:27
+msgid "Name"
+msgstr "Jméno"
+
+#: cdbazar/accounts/models.py:14 cdbazar/accounts/models.py:28
+msgid "Surname"
+msgstr "Příjmení"
+
+#: cdbazar/accounts/models.py:15 cdbazar/accounts/models.py:29
+msgid "Street"
+msgstr "Ulice"
+
+#: cdbazar/accounts/models.py:16 cdbazar/accounts/models.py:30
+msgid "ZIP code"
+msgstr "PSČ"
+
+#: cdbazar/accounts/models.py:17 cdbazar/accounts/models.py:31
+msgid "City"
+msgstr "Město"
+
+#: cdbazar/accounts/models.py:18 cdbazar/accounts/models.py:32
+msgid "Country"
+msgstr "Země"
+
+#: cdbazar/accounts/models.py:19
+msgid "ICO"
+msgstr "IČO"
+
+#: cdbazar/accounts/models.py:20
+msgid "VAT number"
+msgstr "DIČ"
+
+#: cdbazar/accounts/models.py:22
+msgid "Email"
+msgstr "Email"
+
+#: cdbazar/accounts/models.py:23
+msgid "Phone number"
+msgstr "Tel. číslo"
+
+#: cdbazar/accounts/models.py:25
+msgid "Delivery way"
+msgstr "Způsob doručení"
+
+#: cdbazar/accounts/models.py:34
+msgid "Payment way"
+msgstr "Způsob placení"

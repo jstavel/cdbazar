@@ -17,21 +17,22 @@
       <td class="created">{{ order.created|date:"j. N Y, l" }}</td>
       <td class="customer">{{ order.user }}</td>
       <td class="total-price">{{ order.total_price }} Kč</td>
-      <td class="state">{{ order.state }}</td>
+      <td class="state">{% trans order.state_name %}</td>
       <td>
         <div class="btn-group">
           <a id="order-{{ order.id }}-actions" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
             {% trans "Action" %}<span class="caret"></span>
           </a>
-          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="order-{{ order.id }}-actions">
+          <ul class="dropdown-menu pull-right" role="menu"
+              aria-labelledby="order-{{ order.id }}-actions">
+            {% for transition in order.available_transitions %}
             <li>
               <a class="btn btn-secondary btn-small"
-                 href="/eshop/item/{{ item.item.id }}/add-tradeaction/?success_url=/eshop/tradeaction/">{% trans "update" %}</a>
+                 href="/eshop/order/{{ order.id }}/transition/{{ transition }}/?success_url=/eshop/order/">
+                {% trans transition %}
+              </a>
             </li>
-            <li>
-              <a class="edit btn btn-secondary btn-small"
-                 href="/eshop/order/{{ item.id }}/delete/">{% trans "delete" %}</a>
-            </li>
+            {% endfor %}
           </ul>
         </div>
       </td>

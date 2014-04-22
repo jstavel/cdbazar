@@ -1,0 +1,10 @@
+{% load i18n %}
+<ul class="nav nav-list">
+  <li class="nav-header">Vyberte si</li>
+  {% for tr in request.orderTransitions %}
+  <li {% if request.orderTransition == tr.0 %} class="active" {% endif %}>
+    <a href="?orderTransition={{ tr.0 }}">{% trans tr.0 %}</a>
+  </li>
+  {% endfor %}
+</ul>
+

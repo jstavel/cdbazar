@@ -15,6 +15,7 @@ def getMenu(request):
                  (u"Admin","admin","/admin/", ( 
                      (u"Stránky","","/admin/flatpages/flatpage/",()), 
                      (u"Novinky","","/admin/eshop/news/",()), 
+                     (u"Šablony","","/admin/eshop/emailmessage/",()), 
                  )),
              ]
         
