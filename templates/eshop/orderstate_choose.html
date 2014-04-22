@@ -1,0 +1,12 @@
+{% load i18n %}
+<ul class="nav nav-list">
+  <li class="nav-header">Vyberte si</li>
+  <li><a href="/eshop/order/">vše</a>
+  </li>
+  {% for state in request.orderStates %}
+  <li {% ifequal orderState state.0 %} class="active" {% endifequal %}>
+    <a href="?state={{ state.0 }}">{% trans state.1 %}</a>
+  </li>
+  {% endfor %}
+</ul>
+

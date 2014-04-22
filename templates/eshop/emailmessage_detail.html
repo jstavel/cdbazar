@@ -1,0 +1,21 @@
+{% extends "eshop.html" %}
+{% load i18n %}
+{% block title %}{% trans "Email Message" %}{% endblock %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){
+{% include "eshop/emailmessage_detail/js.js" %}
+});
+</script>
+{% endblock %}
+{% block navigation %}{% include "eshop/basket.html" %}{% endblock %}
+{% block content %}
+<div class="emailmessage_detail">
+<h2>Sablona pro emaily</h2>
+<div class="detail clearfix">{% include "eshop/emailmessage_detail/detail.html" %}</div>
+</div>
+{% endblock %}
+{% block left_column %}
+{% include "accounts/left_column.html" %}
+{% endblock %}
+

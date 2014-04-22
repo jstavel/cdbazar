@@ -156,13 +156,15 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_forms_bootstrap',
     'registration',
-    #'tinymce',
     'inplaceeditform',    
     'inplaceeditform_extra_fields',
 )
 TINYMCE_DEFAULT_CONFIG = {'theme': "advanced", 'relative_urls': False}
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 
+LOCALE_PATHS = (
+    os.path.join(_dir,'locale'),
+)
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
