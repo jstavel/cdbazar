@@ -20,16 +20,27 @@ from cdbazar.views import JSONTemplateResponse, prepare_render_to_response
 from cdbazar.store.models import Article, Picture, Item, MediaType
 from django.forms.models import modelformset_factory
 from django.shortcuts import render_to_response
-from django.template import RequestContext, loader
+from django.template import RequestContext, loader, Context
 from decimal import Decimal
 from itertools import chain
 from .forms import *
-from .models import Order, additionalItem, DeliveryPrice, PaymentPrice, TradeAction, News, Basket
+from .models import (
+    Order, 
+    additionalItem, 
+    DeliveryPrice, 
+    PaymentPrice, 
+    TradeAction, 
+    News, 
+    Basket, 
+    PAYMENT_WAYS, 
+    DELIVERY_WAYS
+)
 from django.shortcuts import redirect
 from django.forms.models import inlineformset_factory
 from django.forms import widgets
 from django.core.mail import send_mail
 from django.http import HttpResponse
+from django.contrib import messages
 
 class AddTradeActionView(TemplateView, JSONTemplateResponse):
     template_name = "eshop/tradeaction_add.html"
@@ -116,7 +127,7 @@ class OrderList(ListView,JSONTemplateResponse):
         state = self.request.GET.get('state',None)
         if state:
             qs = qs.filter(state=state)
-        return qs.select_related()
+        return qs.order_by('-pk',).select_related()
 
     def get_context_data(self,**kwargs):
         context = super(OrderList,self).get_context_data(**kwargs)
@@ -408,12 +419,33 @@ class OrderView(DetailView, JSONTemplateResponse):
     
     render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)
 
+
 class OrderTransitionView(DetailView, JSONTemplateResponse):
     model = Order
     template_name = "eshop/order_transition.html"
     page_includes = ['eshop/order_transition/form.html','eshop/order_transition/js.js',]
     slug_field = 'uuid'
     slug_url_kwarg = 'uuid'
+
+    def sendTransitionEmail(self, subject, text, contact_email, order):
+        from django.core.mail import EmailMultiAlternatives
+        context = Context({
+            'subject': subject,
+            'text': text,
+            'object':order, 
+            'order': order,
+            'PAYMENTS': PAYMENT_WAYS,
+            'DELIVERY': DELIVERY_WAYS
+        })
+        htmlCode = loader.get_template('eshop/transitionemail.html').render(context)
+        message = EmailMultiAlternatives(subject=subject,
+                                         from_email='bazar@bazar-cd.cz',
+                                         to=[contact_email,],
+                                         bcc=['stavel.jan@gmail.com',])
+        message.attach_alternative(text.encode('utf8'), 'text/plain')
+        message.attach_alternative(htmlCode.encode('utf8'),'text/html')
+        #print message.message().as_string()
+        return message.send(fail_silently=False)
 
     def get_context_data(self,**kwargs):
         context = super(OrderTransitionView,self).get_context_data(**kwargs)
@@ -423,30 +455,39 @@ class OrderTransitionView(DetailView, JSONTemplateResponse):
     def post(self, request, *args, **kwargs):
         self.success_url_form = SuccessURLForm(self.request.POST)
         self.form = OrderTransitionForm(request.POST)
-        if self.form.is_valid():
-            import sys,pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
-            data = self.form.data
-            if data['send']:
-                order = self.get_object()
-
-                if data['emailMessageID']:
-                    emailMessage = EmailMessage.objects.get(id=self.form.data['emailMessageID'])
-                    subject = emailMessage.title
-                    message = emailMessage.text
-                    send_mail(emailMessage.title, emailMessage.text,
-                              'cdbazar@bazar-cd.cz',
-                              [order.contact_email], fail_silently=False)
-                else:
-                    send_mail( data['subject'], data['message'],
-                               'cdbazar@bazar-cd.cz',
-                               [order.contact_email], fail_silently=False)
-                    pass
+        if request.POST.get('submit',"") == u"načíst šablonu":
+            def valueFactory(value):
+                def value_from_datadict(data, files, prefix):
+                    return value
+                return value_from_datadict
+            try:
+                emailMessage = EmailMessage.objects.get(id=request.POST.get('emailMessageID',0))
+                self.form.fields['subject'].widget.value_from_datadict = valueFactory(emailMessage.title)
+                self.form.fields['message'].widget.value_from_datadict = valueFactory(emailMessage.text)
+            except EmailMessage.DoesNotExist:
+                self.form.fields['subject'].widget.value_from_datadict = valueFactory("")
+                self.form.fields['message'].widget.value_from_datadict = valueFactory("")
                 pass
-            # transition pro objednavku
-            
-            # TODO pridat oznameni o provedene akci
-            if self.success_url_form.is_valid() and self.success_url_form.cleaned_data['success_url']:
-                return redirect(self.success_url_form.cleaned_data['success_url'])
+        else:
+            if self.form.is_valid():
+                data = self.form.cleaned_data
+                if data['send']:
+                    order = self.get_object()
+                    self.sendTransitionEmail(data['subject'], 
+                                             data['message'],
+                                             order.contact_email, 
+                                             order)
+                    messages.add_message(request, messages.INFO, 'Odeslal jsem email.')
+                
+                # transition pro objednavku
+                print 'process transition: ', kwargs['transitionName'], "\n"
+                order.processTransition(kwargs['transitionName'])
+                order.save()
+
+                if self.success_url_form.is_valid() and self.success_url_form.cleaned_data['success_url']:
+                    return redirect(self.success_url_form.cleaned_data['success_url'])
+                else:
+                    return redirect("/eshop/order")
         return super(OrderTransitionView,self).get(request, *args, **kwargs)
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)

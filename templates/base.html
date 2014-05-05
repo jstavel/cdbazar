@@ -64,7 +64,15 @@
         {% block pretitle %}{% endblock %}
         {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
         {% block object-tools %}{% endblock %}
-        {% block messages %}{% endblock %}
+        {% block messages %}
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endblock %}
         {% block content %}{% endblock %}
       </div>
     </div>

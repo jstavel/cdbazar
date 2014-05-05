@@ -96,8 +96,7 @@ class Order(models.Model):
                (2,'Waiting for expedition'),
                (3,'Waiting for takeover'),
                (4,'Rejected'),
-               (5,'Expedited'),
-               (6,'Taken over'),
+               (5,'Taken over'),
                )
 
     uuid = UUIDField()
@@ -131,13 +130,13 @@ class Order(models.Model):
 
     created = models.DateTimeField(_("To store date of an item"), auto_now=True)
 
-    state = models.PositiveSmallIntegerField(_("State"), choices=STATES, default=1)
+    state = models.PositiveSmallIntegerField(_("State"), choices=STATES, blank=True, null=True)
 
     def __unicode__(self):
         return u"Objednávka č.%d | cena: %d | zákazník: %s | ve stavu: %s" % (self.id,
                                                                               self.total_price,
                                                                               self.user,
-                                                                              "hotovo")
+                                                                              self.state_name)
 
     @property
     def total_price(self):
@@ -149,28 +148,38 @@ class Order(models.Model):
     @classmethod
     def get_transitions(cls):
         return (
-            ('Submit payment', (Order.state_waiting_for_payment, Order.state_waiting_for_expedition)),
-            ('Take over', (Order.state_waiting_for_takeover, Order.state_taken_over)),
+            ('Submit payment',    Order.state_waiting_for_payment),
+            ('Submit expedition', Order.state_waiting_for_expedition),
+            ('Submit takeover',   Order.state_waiting_for_takeover),
+            ('Submit reject',   Order.state_waiting_for_takeover)
         )
         
     def processTransition(self, transitionName):
-        fname = transitionName.lower().replace(' ','_')
-        getattr(self,fname,lambda self: None)
+        fname = "transition_" + transitionName.lower().replace(' ','_')
+        handler = getattr(self,fname,lambda: None)
+        handler()
 
     def transition_submit_payment(self):
         print "submit payment transition"
+        self.state=Order.state_waiting_for_expedition
         pass
 
-    def transition_take_over(self):
-        print "take over transition"
+    def transition_submit_expedition(self):
+        print "submit payment transition"
+        self.state=Order.state_waiting_for_takeover
+        pass
+
+    def transition_submit_takeover(self):
+        print "submit takeover transition"
+        self.state=Order.state_taken_over
         pass
 
     def available_transitions(self):
-        return map(lambda tr: tr[0], filter(lambda transition: transition[1][0] == self.state, Order.TRANSITIONS))
+        return map(lambda tr: tr[0], filter(lambda transition: transition[1] == self.state, Order.TRANSITIONS))
 
     @property
     def state_name(self):
-        return map(lambda item: _(item[1]), filter(lambda tr: self.state == tr[0], self.STATES))[0]
+        return (map(lambda item: _(item[1]), filter(lambda tr: self.state == tr[0], self.STATES)) or ['Neznamy stav'])[0]
 
 for state in Order.STATES:
     name = "state_" + state[1].lower().replace(" ","_")
