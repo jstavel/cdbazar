@@ -29,6 +29,7 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'django.core.context_processors.csrf',
     'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages'
 )
 
 # Local time zone for this installation. Choices can be found here:

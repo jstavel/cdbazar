@@ -1,4 +1,12 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>Informace k objednávce č. {{ order.id }}</title>
+</head>
+<body>
 {% load i18n %}
+<h1>{{ subject }}</h1>
+<p>{{ text }}</p>
+<hr/>
+<h2>Objednávka č. {{ order.id }} <a href="http://www.bazar-cd.cz/eshop/order/{{ order.uuid }}">originál</a></h2>
 <div class="">
 <table width="100%" style="">
   <tr>
@@ -109,3 +117,5 @@
 {% endfor %}
 </div>
 </div>
+</body>
+</html>

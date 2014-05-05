@@ -27,7 +27,13 @@ class OrderForm(forms.ModelForm):
         additionalItems += [DeliveryPrice.asAdditionalItemForBasket(data['delivery_way'])]
         additionalItems += [PaymentPrice.asAdditionalItemForBasket(data['payment_way'])]
         return additionalItems
-    
+
+    def save(self):
+        self.cleaned_data['state']=1
+        self.instance.state = 1
+        order = super(OrderForm,self).save(self)
+        return order
+
     # def save(self):
     #     order = super(OrderForm,self).save(self)
     #     for additionalItem in self.getAdditionalItems():
@@ -59,20 +65,24 @@ class OrderPaymentForm(forms.ModelForm):
         fields = [ff.name for ff in Order._meta.fields if 'payment_' in ff.name]
 
 class OrderTransitionForm(forms.Form):
-    send = forms.BooleanField(label=_("Send?"))
+    send = forms.BooleanField(required=False, label=_("Send?"))
     emailMessageID = forms.ChoiceField(
         label = u"Šablona",
         required=False,
         choices = [(0,"--- select ---")] + [(msg.id, msg.title) for msg in EmailMessage.objects.all()],       
     )
     subject = forms.CharField(label="Titulek",
-                              required = False,
+                              required = True,
                               )
     message = forms.CharField(label=u"Zpráva", 
-                              required = False,
+                              required = True,
                               widget=forms.widgets.Textarea()
     )
 
+    def __init__(self, *args, **kwargs):
+        super(OrderTransitionForm,self).__init__(*args, **kwargs)
+        self.fields['emailMessageID'].choices = [(0,"--- select ---")] \
+                                                + [(msg.id, msg.title) for msg in EmailMessage.objects.all()]
 
 class UserForm(forms.ModelForm):
     class Meta:
