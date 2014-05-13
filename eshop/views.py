@@ -155,6 +155,7 @@ class ArticleList(ListView,JSONTemplateResponse):
 
     page_includes = ['paginator.html',
                      'eshop/article_list/list.html',
+                     'eshop/article_list/list-by-cheaper.html',
                      'eshop/article_list/list_shortly.html',
                      'eshop/article_list/js.js',
                      'eshop/article_list/tradeaction_banner.html',
@@ -199,13 +200,13 @@ class ArticleList(ListView,JSONTemplateResponse):
     def get_context_data(self,**kwargs):
         context = super(ArticleList,self).get_context_data(**kwargs)
         basket = Basket(self.request)
+        context['object_list_by_cheaper'] = context['object_list']
         context['articles_with_tradeaction'] = self.get_queryset_for_articles_with_tradeaction()
         context['news_list'] = News.objects.all().order_by('created')[:5]
         context['new_articles'] = self.get_queryset_for_new_articles()
         context['basket'] = basket
         context['mediatypes'] = MediaType.objects.all()
         context['mediatype'] = self.request.GET.get('mediaType',None)
-        #import pdb; pdb.set_trace()
         context['tradeaction_banner_list'] = TradeAction.objects.all().order_by("?")[:20]
         context['new_articles_banner_list'] = Article.objects.all().order_by("to_store")[:20]
         return context
