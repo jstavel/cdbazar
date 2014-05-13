@@ -156,7 +156,7 @@ INSTALLED_APPS = (
     #'categories.editor',
     'django_extensions',
     'django_forms_bootstrap',
-    'registration',
+    #'registration',
     'inplaceeditform',    
     'inplaceeditform_extra_fields',
 )
