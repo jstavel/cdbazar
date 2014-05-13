@@ -13,8 +13,8 @@ $(function(){
 <div class="article_list">
 <!-- <h2>{% trans "E-Shop" %}</h2> -->
 <div class="heading well well-condensed clearfix">
-  <i class="icon-wrench text-large"></i>na pockani opravime Vase poskrabane CD a DVD na profesionalnim stroji TDR <br/>
-  od 49KC
+  <i class="icon-wrench text-large"></i> na počkání opravíme Vaše poškrábané CD a DVD na profesionálnímm stroji TDR<br/>
+  od 49Kč
 </div>
 <div class="banners clearfix">
   <ul class="nav nav-tabs">
@@ -41,12 +41,14 @@ $(function(){
       <div class="row-fluid">
         <div class="pagination span4">{% include "paginator.html" %}</div>
         <ul class="order-by span8 nav nav-tabs">
-          <li class="active"><a href="#">Od nejnovějšího</a></li>
-          <li><a href="#">Od nejlevnějšího</a></li>
-          <li><a href="#">Podle abecedy</a></li>
+          <li class="active"><a href="#list-by-newest" data-toggle="tab">Od nejnovějšího</a></li>
+          <li><a href="#list-by-cheaper" data-toggle="tab" >Od nejlevnějšího</a></li>
+          <li><a href="#list-by-abc" data-toggle="tab">Podle abecedy</a></li>
         </ul>
       </div>
-      <div class="list clearfix">{% include "eshop/article_list/list.html" %}</div>
+      <div class="tab-pane" id="list-by-newest">
+        <div class="list clearfix">{% include "eshop/article_list/list.html" %}</div>
+      </div>
       <div class="pagination clearfix">{% include "paginator.html" %}</div>
     </div>
     <div class="tab-pane" id="list-shortly">

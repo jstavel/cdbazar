@@ -172,7 +172,7 @@ class ArticleList(ListView,JSONTemplateResponse):
         if search:
             qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search))
         mediaType__name = self.request.GET.get('mediaType',None)
-        if mediaType__name:
+        if mediaType__name and mediaType__name != 'all':
             qs = qs.filter(mediaType__name = mediaType__name)
         return qs.select_related()
 

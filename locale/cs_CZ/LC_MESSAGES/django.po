@@ -104,3 +104,48 @@ msgstr "Způsob doručení"
 #: cdbazar/accounts/models.py:34
 msgid "Payment way"
 msgstr "Způsob placení"
+
+msgid "Delivery"
+msgstr "Doručení"
+
+msgid "Back to Eshop"
+msgstr "Zpátky nakupovat"
+
+msgid "Review Order"
+msgstr "Kontrola objednávky"
+
+msgid "Payment"
+msgstr "Placení"
+
+msgid "Cancel"
+msgstr "Pryč odtud"
+
+msgid "Invoicing"
+msgstr "Faktura"
+
+msgid "Page"
+msgstr "Strana"
+
+msgid "next"
+msgstr "další"
+
+msgid "previous"
+msgstr "zpět"
+
+msgid "Search"
+msgstr "Hledání"
+
+msgid "With registration"
+msgstr "Chci se zaregistrovat"
+
+msgid "Required. max 30 characters or fewer. Letters, digits and @/./+/-/_ only."
+msgstr "Povinné. max 30 znaků. Písmena, číslice a @/./+/-/_."
+
+msgid "Delivery address is the same as invoicing address"
+msgstr "Doručovací adresa je stejná jako fakturační adresa"
+
+msgid "Basket Review"
+msgstr "Co máme v košíku?"
+
+msgid "Order of Items"
+msgstr "Vystavíme objednávku"

@@ -16,6 +16,8 @@ def getMenu(request):
                      (u"Stránky","","/admin/flatpages/flatpage/",()), 
                      (u"Novinky","","/admin/eshop/news/",()), 
                      (u"Šablony","","/admin/eshop/emailmessage/",()), 
+                     (u"Média","","/admin/store/mediatype/",()), 
+                     #(u"Kategorie","","/admin/store/category/",()), 
                  )),
              ]
         
