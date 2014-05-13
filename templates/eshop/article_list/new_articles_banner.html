@@ -1,9 +1,9 @@
 {% load i18n thumbnail %}
-{% for item in request.newArticles %}
+{% for article in request.newArticles %}
 <span class="article span2 well row-fluid" 
       title='{% trans "goods" %}' 
-      id="article_detail_{{ item.id }}">
-  {% thumbnail item.item.article.picture "60x60" as im %}
+      id="article_detail_{{ article.id }}">
+  {% thumbnail article.picture "60x60" as im %}
   <img class="picture img-polaroid span6" src="/media/{{im.url}}"
        width="{{ im.width }}" height="{{ im.height }}"></img>
   {% endthumbnail %}

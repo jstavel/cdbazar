@@ -19,7 +19,7 @@ $(function(){
 <div class="banners clearfix">
   <ul class="nav nav-tabs">
     <li class="active"><a href="#tradeaction-banner" data-toggle="tab">Akce</a></li>
-    <li class=""><a href="#new-articless-banner" data-toggle="tab">Nové zboží</a></li>
+    <li class=""><a href="#new-articles-banner" data-toggle="tab">Nové zboží</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active tradeaction-banner" id="tradeaction-banner">
@@ -46,8 +46,16 @@ $(function(){
           <li><a href="#list-by-abc" data-toggle="tab">Podle abecedy</a></li>
         </ul>
       </div>
-      <div class="tab-pane" id="list-by-newest">
-        <div class="list clearfix">{% include "eshop/article_list/list.html" %}</div>
+      <div class="tab-content">
+        <div class="tab-pane active" id="list-by-newest">
+          <div class="list clearfix">{% include "eshop/article_list/list.html" %}</div>
+        </div>
+        <div class="tab-pane" id="list-by-cheaper">
+          <div class="list clearfix">{% include "eshop/article_list/list-by-cheaper.html" %}</div>
+        </div>
+        <div class="tab-pane" id="list-by-abc">
+          podle abecedy
+        </div>
       </div>
       <div class="pagination clearfix">{% include "paginator.html" %}</div>
     </div>
@@ -55,24 +63,47 @@ $(function(){
       <div class="row-fluid">
         <div class="pagination span4">{% include "paginator.html" %}</div>
         <ul class="order-by span8 nav nav-tabs">
-          <li class="active"><a href="#">Od nejnovějšího</a></li>
-          <li><a href="#">Od nejlevnějšího</a></li>
-          <li><a href="#">Podle abecedy</a></li>
+          <li class="active"><a href="#list-shortly-by-newest" data-toggle="tab">Od nejnovějšího</a></li>
+          <li><a href="#list-shortly-by-cheaper" data-toggle="tab">Od nejlevnějšího</a></li>
+          <li><a href="#list-shortly-by-abc" data-toggle="tab">Podle abecedy</a></li>
         </ul>
       </div>
-      <div class="list-shortly clearfix">{% include "eshop/article_list/list_shortly.html" %}</div>
+      <div class="tab-content">
+        <div class="tab-pane active" id="list-shortly-by-newest">
+          <div class="list-shortly clearfix">{% include "eshop/article_list/list_shortly.html" %}</div>
+        </div>
+        <div class="tab-pane" id="list-shortly-by-cheaper">
+          nejlevnejsi
+        </div>
+        <div class="tab-pane" id="list-shortly-by-abc">
+          podle abecedy
+        </div>
+      </div>
       <div class="pagination clearfix">{% include "paginator.html" %}</div>
     </div>
     <div class="tab-pane list-with-tradeaction" id="list-with-tradeaction">
       <div class="row-fluid">
         <div class="pagination span4">{% include "paginator.html" %}</div>
         <ul class="order-by span8 nav nav-tabs">
-          <li class="active"><a href="#">Od nejnovějšího</a></li>
-          <li><a href="#">Od nejlevnějšího</a></li>
-          <li><a href="#">Podle abecedy</a></li>
+          <li class="active"><a href="#list-with-tradeaction-by-newest" data-toggle="tab">Od nejnovějšího</a></li>
+          <li><a href="#list-with-tradeaction-by-cheaper" data-toggle="tab">Od nejlevnějšího</a></li>
+          <li><a href="#list-with-tradeaction-by-abc" data-toggle="tab">Podle abecedy</a></li>
         </ul>
       </div>
-      <div class="list-with-tradeaction">{% include "eshop/article_list/list_with_tradeaction.html" %}</div>
+      <div class="tab-content">
+        <div class="tab-pane active" id="list-with-tradeaction-by-newest">
+          <div class="list-with-tradeaction">
+            {% include "eshop/article_list/list_with_tradeaction.html" %}
+          </div>
+        </div>
+        <div class="tab-pane" id="list-with-tradeaction-by-cheaper">
+          nejlevnejsi
+        </div>
+        <div class="tab-pane" id="list-with-tradeaction-by-abc">
+          podle abecedy
+        </div>
+      </div>
+
       <div class="pagination clearfix">{% include "paginator.html" %}</div>
     </div>
   </div>
