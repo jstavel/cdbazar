@@ -44,6 +44,10 @@ class OrderForm(forms.ModelForm):
     #         orderAdditionalItem.save()
     #     return order
 
+class ReservationForm(forms.ModelForm):
+    class Meta:
+        model = Reservation
+
 class OrderInvoicingForm(forms.ModelForm):
     class Meta:
         model = Order

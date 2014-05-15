@@ -7,7 +7,8 @@ from .models import (
     TradeAction,
     News, 
     Content,
-    EmailMessage
+    EmailMessage,
+    Reservation,
 )
 from django.contrib import admin
 from django import forms
@@ -47,6 +48,12 @@ class ContentAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Content, ContentAdmin)
+
+class ReservationAdmin(admin.ModelAdmin):
+    list_display = ('query','email','phone','duedate','numOfFoundItems','created')
+    pass
+
+admin.site.register(Reservation, ReservationAdmin)
 
 class TinyMCEFlatPageAdmin(FlatPageAdmin):
     def formfield_for_dbfield(self, db_field, **kwargs):

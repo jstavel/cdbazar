@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .models import Article, Picture, Item
 from django.utils.translation import ugettext as _
 
@@ -19,7 +20,7 @@ class ArticleItemForm(forms.ModelForm):
         fields = ('title','interpret','year','mediaType')
         
 class BuyoutForm(forms.Form):
-    legend = _("Buyout")
+    legend = u"Výkup"
     barcode = forms.CharField(max_length=120)
 
 
