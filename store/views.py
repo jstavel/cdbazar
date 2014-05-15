@@ -231,12 +231,14 @@ class BuyoutToStockView(TemplateView):
 
     def get_context_data(self,**kwargs):
         context = TemplateView.get_context_data(self,**kwargs)
+        context['title'] = u"Na sklad"
         context['basket'] = Basket(self.request)
         context['form'] = self.form
         context['form2'] = self.form2
         context['form2_message'] = self.form2_message
         context['barcode'] = self.barcode
         context['items'] = self.barcode and Item.objects.filter(barcode=self.barcode)
+        context['form'].legend=""
         return context
 
     def post(self,request,*args,**kwargs):
@@ -280,12 +282,14 @@ class BuyoutToStoreView(TemplateView):
 
     def get_context_data(self,**kwargs):
         context = TemplateView.get_context_data(self,**kwargs)
+        context['title'] = u"Na prodejnu"
         context['basket'] = Basket(self.request)
         context['form'] = self.form
         context['form2'] = self.form2
         context['form2_message'] = self.form2_message
         context['barcode'] = self.barcode
         context['items'] = self.barcode and Item.objects.filter(barcode=self.barcode)
+        context['form'].legend=""
         return context
 
     def post(self,request,*args,**kwargs):
@@ -329,12 +333,14 @@ class BuyoutToCleanView(TemplateView):
 
     def get_context_data(self,**kwargs):
         context = TemplateView.get_context_data(self,**kwargs)
+        context['title'] = u"K čištění"
         context['basket'] = Basket(self.request)
         context['form'] = self.form
         context['form2'] = self.form2
         context['form2_message'] = self.form2_message
         context['barcode'] = self.barcode
         context['items'] = self.barcode and Item.objects.filter(barcode=self.barcode)
+        context['form'].legend=""
         return context
 
     def post(self,request,*args,**kwargs):

@@ -283,3 +283,19 @@ class EmailMessage(models.Model):
     title = models.CharField("Titulek", max_length=64)
     text = models.TextField(_("Text"))
     created = models.DateTimeField(u'Vytvořeno', auto_now=True)
+
+class Reservation(models.Model):
+    query = models.CharField("dotaz", max_length=64, blank=True, null=True)
+    email = models.CharField("email", max_length=64, blank=True, null=True)
+    phone = models.CharField("telefon", max_length=64, blank=True, null=True)
+    duedate = models.DateTimeField(u"platí do", blank=True, null=True)
+    created = models.DateTimeField(u"vytvořeno", auto_now=True)
+
+    @property
+    def foundItems(self):
+        return ['Article','Article']
+
+    @property
+    def numOfFoundItems(self):
+        return len(self.foundItems)
+

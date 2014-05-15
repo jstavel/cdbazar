@@ -1,7 +1,7 @@
 {% load i18n bootstrap_tags %}
 
 {% if form %}
-<form class="buyout form-inline" title='{% trans "Buyout" %}' action="{{ request.path }}" method="post">
+<form class="buyout form-inline" title='{{ title|default:"Výkup" }}' action="{{ request.path }}" method="post">
   <legend>{{ form.legend }}</legend>
   {% csrf_token %}
   {{ form|as_bootstrap }}

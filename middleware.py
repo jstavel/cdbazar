@@ -17,6 +17,7 @@ def getMenu(request):
                      (u"Novinky","","/admin/eshop/news/",()), 
                      (u"Šablony","","/admin/eshop/emailmessage/",()), 
                      (u"Média","","/admin/store/mediatype/",()), 
+                     (u"Rezervace","","/admin/eshop/reservation/",()), 
                      #(u"Kategorie","","/admin/store/category/",()), 
                  )),
              ]

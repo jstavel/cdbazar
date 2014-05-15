@@ -200,7 +200,7 @@ class ArticleList(ListView,JSONTemplateResponse):
     def get_context_data(self,**kwargs):
         context = super(ArticleList,self).get_context_data(**kwargs)
         basket = Basket(self.request)
-        context['object_list_by_cheaper'] = context['object_list']
+        context['object_list_by_cheaper'] = context.get('object_list',[])
         context['articles_with_tradeaction'] = self.get_queryset_for_articles_with_tradeaction()
         context['news_list'] = News.objects.all().order_by('created')[:5]
         context['new_articles'] = self.get_queryset_for_new_articles()
@@ -209,13 +209,20 @@ class ArticleList(ListView,JSONTemplateResponse):
         context['mediatype'] = self.request.GET.get('mediaType',None)
         context['tradeaction_banner_list'] = TradeAction.objects.all().order_by("?")[:20]
         context['new_articles_banner_list'] = Article.objects.all().order_by("to_store")[:20]
+        context['reservation_form'] = getattr(self,'reservationForm',ReservationForm(initial={'query':
+                                                                                              self.request.GET.get('search',"")
+                                                                                          }
+                                                                                 ))
         return context
+
+    def post(self, request, *args, **kwargs):
+        self.reservation_form = ReservationForm(request.POST)
+        return self.render_to_response(self.get_context_data(**kwargs))
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
 
 class ChooseItemForm(forms.Form):
     item = forms.IntegerField(widget = forms.Select())
-    
     
 class ToBasketView(DetailView, JSONTemplateResponse):
     model = Article

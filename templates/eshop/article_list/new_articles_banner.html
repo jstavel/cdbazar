@@ -1,11 +1,16 @@
 {% load i18n thumbnail %}
 {% for article in request.newArticles %}
-<span class="article span2 well row-fluid" 
-      title='{% trans "goods" %}' 
+<span class="article span2 well row-fluid" title='{% trans "goods" %}' 
       id="article_detail_{{ article.id }}">
+  <h6>{{ article.title }}</h6>
   {% thumbnail article.picture "60x60" as im %}
-  <img class="picture img-polaroid span6" src="/media/{{im.url}}"
+  <img class="picture img-polaroid span4" src="/media/{{im.url}}"
        width="{{ im.width }}" height="{{ im.height }}"></img>
   {% endthumbnail %}
+  <span class="span6 pull-right">
+    <small>{{ article.interpret }}</small>
+    <small>{{ article.year|default:"" }}</small>
+    <small>{{ article.mediaType }}</small>
+  </span>
 </span>
 {% endfor %}
