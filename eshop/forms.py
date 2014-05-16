@@ -44,9 +44,19 @@ class OrderForm(forms.ModelForm):
     #         orderAdditionalItem.save()
     #     return order
 
+
 class ReservationForm(forms.ModelForm):
     class Meta:
         model = Reservation
+        fields =  filter(lambda name: name != 'duedate' and name != 'created', 
+                         map(lambda ff: ff.name, Reservation._meta.fields))
+
+    # def save(self, commit=True):
+    #     obj = super(forms.ModelForm,self).save()
+    #     from datetime import timedelta
+    #     obj.duedate = obj.created + timedelta(days=obj.duemonths*30)
+    #     obj.save()
+    #     return obj
 
 class OrderInvoicingForm(forms.ModelForm):
     class Meta:

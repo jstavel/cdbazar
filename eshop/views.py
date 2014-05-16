@@ -209,14 +209,21 @@ class ArticleList(ListView,JSONTemplateResponse):
         context['mediatype'] = self.request.GET.get('mediaType',None)
         context['tradeaction_banner_list'] = TradeAction.objects.all().order_by("?")[:20]
         context['new_articles_banner_list'] = Article.objects.all().order_by("to_store")[:20]
-        context['reservation_form'] = getattr(self,'reservationForm',ReservationForm(initial={'query':
-                                                                                              self.request.GET.get('search',"")
-                                                                                          }
-                                                                                 ))
+        context['reservation_form'] = getattr(self,
+                                              'reservation_form',
+                                              ReservationForm(initial={'query':
+                                                                       self.request.GET.get('search',"")
+                                                                   }
+                                                          ))
+        print context['reservation_form'].is_bound
         return context
 
     def post(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        kwargs.update({'object_list': self.object_list})
         self.reservation_form = ReservationForm(request.POST)
+        if self.reservation_form.is_valid():
+            self.reservation_form.save()
         return self.render_to_response(self.get_context_data(**kwargs))
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)

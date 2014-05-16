@@ -36,8 +36,18 @@
 {% endif %}
 {% endfor %}
 {% else %}
+{% if reservation_form.is_bound and reservation_form.is_valid %}
+   <div class="well">
+     <h4>Díky za rezervaci</h4>
+     <p>
+       Hotovo, máme rezervaci a jak se něco objeví, ozveme se Vám.
+     </p>
+     <div>
+       <a href="?" class="btn btn-success">Zpátky do eShopu</a>
+     </div>
+   </div>
+{% else %}
 <div class="well">
-  <div class="well">
     <h4>Hm, nic jsme nenašli.</h4>
     <p>
       Ale neztrácejte hlavu, zboží si můžete rezervovat. 
@@ -45,17 +55,17 @@
     <p>
       A jak se objeví, budeme Vás informovat!
     </p>
-  </div>
-  <p> zadejte dotaz, jako ve vyhledávání</p>
-  <form method="post" class="form-horizontal" action="">
-     {% csrf_token %}
-     {{ reservation_form | as_bootstrap }}
-     <div class="form-actions">
-       <input type="submit" name="cancel" class="btn" value="{% trans 'Cancel' %}"/>
-       <input type="submit" name="review-order" class="btn btn-success" 
-              value="{% trans 'Submit reservation' %}"/>
-     </div>
-   </form>
+    <p> zadejte dotaz, jako ve vyhledávání</p>
+    <form method="post" class="form-horizontal" action="">
+      {% csrf_token %}
+      {{ reservation_form | as_bootstrap }}
+      <div class="form-actions">
+        <input type="submit" name="cancel" class="btn" value="{% trans 'Cancel' %}"/>
+        <input type="submit" name="review-order" class="btn btn-success" 
+               value="{% trans 'Submit reservation' %}"/>
+      </div>
+    </form>
 </div>
+{% endif %}
 {% endif %}
 </div>
