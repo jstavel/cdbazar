@@ -35,9 +35,9 @@ CHOICES = (('1', 'First',), ('2', 'Second',))
 #
 
 class BuyoutToStockForm(forms.Form):
-    legend = _("Choose an item to stock")
+    legend = u"Vyberte zboží na sklad"
     barcode = forms.CharField(max_length=120, widget=forms.HiddenInput)
-    article_id = forms.ChoiceField(label=_("Goods"), widget=forms.RadioSelect, choices = CHOICES)
+    article_id = forms.ChoiceField(label=u"Zboží", widget=forms.RadioSelect, choices = CHOICES)
     
     def save(self):
         article = Article.objects.get(id=self.cleaned_data['article_id'])

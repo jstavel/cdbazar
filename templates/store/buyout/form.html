@@ -13,7 +13,7 @@
 <p class="form2-message well text-info">{{ form2_message }}</p>
 {% endif %}
 
-{% if form2 %}
+{% if form2 and form2.fields.article_id.choices %}
 <form class="form2 well form-vertical" title='{% trans "Choose form" %}' action="{{ request.path }}" method="post">
 {% csrf_token %}
 <legend>{{ form2.legend }}</legend>
