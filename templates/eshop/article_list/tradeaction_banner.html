@@ -3,10 +3,12 @@
 <span class="article span2 well well-condensed row-fluid" 
       title='{% trans "goods" %}' 
       id="article_detail_{{ item.id }}">
-  <h6>{{ item.item.article.title }}</h6>
+  <h6><a href="?search={{ item.item.article.barcode }}">{{ item.item.article.title }}</a></h6>
   {% thumbnail item.item.article.picture "60x60" as im %}
-  <img class="picture img-polaroid span6" src="/media/{{im.url}}"
+  <a href="?search={{ item.item.article.barcode }}">
+    <img class="picture img-polaroid span6" src="/media/{{im.url}}"
        width="{{ im.width }}" height="{{ im.height }}"></img>
+  </a>
   {% endthumbnail %}
   <span class="span4 pull-right">
     <small>{{ item.item.article.interpret }}</small>

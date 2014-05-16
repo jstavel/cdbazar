@@ -50,7 +50,8 @@ class ContentAdmin(admin.ModelAdmin):
 admin.site.register(Content, ContentAdmin)
 
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('query','email','phone','duedate','numOfFoundItems','created')
+    list_display = ('query','contact','active','numOfFoundItems','created','duemonths')
+    list_filter = ('created',)
     pass
 
 admin.site.register(Reservation, ReservationAdmin)

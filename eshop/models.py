@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 from decimal import Decimal
 from collections import namedtuple
 from django_extensions.db.fields import UUIDField
+import datetime
+from django.utils import timezone
+from django.conf import settings
 
 def calculateTotalPrice(items, additional_items):
     totalPrice = float(sum([ii.price for ii in items])) \
@@ -286,10 +289,24 @@ class EmailMessage(models.Model):
 
 class Reservation(models.Model):
     query = models.CharField("dotaz", max_length=64, blank=True, null=True)
-    email = models.CharField("email", max_length=64, blank=True, null=True)
-    phone = models.CharField("telefon", max_length=64, blank=True, null=True)
-    duedate = models.DateTimeField(u"platí do", blank=True, null=True)
+    contact = models.CharField("kontakt - telefon, nebo email", max_length=64, blank=True, null=True)
+    duemonths = models.IntegerField(u"na kolik měsíců platí", default = 6)
     created = models.DateTimeField(u"vytvořeno", auto_now=True)
+
+    @property
+    def active(self):
+        now = datetime.datetime.now()
+        if settings.USE_TZ:
+            # For backwards compatibility, interpret naive datetimes in
+            # local time. This won't work during DST change, but we can't
+            # do much about it, so we let the exceptions percolate up the
+            # call stack.
+
+            default_timezone = timezone.get_default_timezone()
+            now = timezone.make_aware(now, default_timezone)
+            pass
+        delta = now - self.created
+        return delta.days <= (self.duemonths*30)
 
     @property
     def foundItems(self):
