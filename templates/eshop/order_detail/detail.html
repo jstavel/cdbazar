@@ -1,8 +1,9 @@
 {% load i18n %}
+<strong>{{ order.state_name }}</strong>
 <div class="">
 <table width="100%" style="">
   <tr>
-    <td width="50%">
+    <td width="50%" valign="top">
       <h2>Dodavatel</h2>
       <p>CD Bazar</p>
       <table style="border: none">
@@ -14,14 +15,35 @@
       <div>Školská 36</div>
       <div>Praha 1 11000, Česká republika</div>
     </td>
-    <td width="50%">
+    <td width="50%" style="">
       <h2>Zákazník</h2>
-      <div style="float:left">
-        
-	<p>{{ object.invoicing_name }} {{ object.invoicing_surname }}</p>
-	<div>{{ object.invoicing_address_street }}</div>
-	<div> {{ object.invoicing_address_zip }} {{ object.invoicing_address_city }}, {{ object.invoicing_address_country }}</div>
-	<h3>Doručovací adresa</h3>
+        <table width="100%" style="">
+          <tbody>
+            <tr>
+              <td>
+	        <p>{{ object.invoicing_name }} {{ object.invoicing_surname }}</p>
+	        <div>{{ object.invoicing_address_street }}</div>
+	        <div> 
+                  {{ object.invoicing_address_zip }} 
+                  {{ object.invoicing_address_city }}, 
+                {{ object.invoicing_address_country }}</div>
+              </td>
+              <td align="left" style="">
+                {% if order.user %}
+                <table class="user-info" style="">
+                  <tbody>
+                    <tr style=""><td colspan="2"><a href="/admin/auth/user/{{ order.user.id }}/?post_url=/eshop/order/{{ order.id }}/&post_url_arg=update_user_discount=yes">{{ order.user }}</a></td></tr>
+                    <tr><th>Storn. obj.</th><td align="right">0</td></tr>
+                    <tr><th>Zapl. obj.</th><td align="right">0</td></tr>
+                    <tr><th>Věrn. sleva</th><td align="right" style="padding-left:1em">{{ order.user.getUserDiscount }}%</td></tr>
+                  </tbody>
+                </table>
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Doručovací adresa</h3>
 	{% if not object.delivery_is_the_same_as_invoicing %}
 	<div>{{ object.deliveryaddresshead }}</div>
 	<div>{{ object.individual.deliveryAddress.street }} {{ object.individual.deliveryAddress.streetnumber }}</div>
@@ -32,7 +54,6 @@
 	<h3>Kontakt</h3>
 	<div>telefon: {{ object.contact_phonenumber }}</div>
 	<div>email: {{ object.contact_email }}</div>
-      </div>
     </td>
   </tr>
 </table>
@@ -66,7 +87,7 @@
 
 <div class="module">
   <h2>Zboží</h2>
-  <table class="table" style="border: 1px solid gray">
+  <table class="table order-items" style="border: 1px solid gray">
     <tbody>
       <thead>
         <tr>

@@ -3,69 +3,81 @@
 <form method="post" class="form-horizontal order" action="">
   {% csrf_token %}
   {{ order_stage_form }}
+  {% if user.is_anonymous %}
+  <fieldset class="login">
+    <legend>Přihlášení</legend>
+    <small>pokud jste zaregistrovaní</small>
+    {{ order_login_form | as_bootstrap }}
+    <div class="form-actions">
+      <input type="submit" 
+             name="login" 
+             class="btn btn-success"
+             value="Přihlásit se"/>
+    </div>
+  </fieldset>
+  {% endif %}
+  {% if order_stage_form.stage.value == 0 %}
+  <fieldset class="delivery">
+    <legend>Doručení, placení</legend>
+    {{ order_delivery_way_form | as_bootstrap }}
+    {{ order_payment_way_form  | as_bootstrap }}
+  </fieldset>
+  <fieldset class="invocing">
+    <legend>Fakturační adresa</legend>
+    {{ order_invoicing_form | as_bootstrap }}
+  </fieldset>
+  
+  <fieldset class="delivery">
+    <legend>Doručovací adresa</legend>
+    {{ order_delivery_form | as_bootstrap }}
+  </fieldset>
 
-  {% if order_stage_form.stage.value == 1 %}
+  <fieldset class="contact">
+    <legend>Kontakt</legend>
+    {{ order_contact_form | as_bootstrap }}
+  </fieldset>
 
-  <fieldset class="invoicing">
-  <legend>{% trans 'Contact' %}</legend>
-  {{ order_contact_form | as_bootstrap }}
+  {% if user.is_anonymous %}
+  <fieldset>
+    <legend>Uživatel</legend>
+    {{ userform | as_bootstrap }}
+  </fieldset>
+  {% endif %}
+  <div class="form-actions">
+    <input type="submit" name="cancel" class="btn" value="{% trans 'Cancel' %}"/>
+    <input type="submit" name="submit-order" class="btn btn-success" value="{% trans 'Submit Order' %}"/>
+  </div>
+
+{% else %}
+  <fieldset class="delivery">
+    <legend>Doručení, placení</legend>
+  {{ order_delivery_way_form | as_bootstrap }}
+  {{ order_payment_way_form  | as_bootstrap }}
   </fieldset>
 
   <fieldset class="invocing">
-  <legend>{% trans 'Invoicing' %}</legend>
-  {{ order_invoicing_form | as_bootstrap }}
+    <legend>Fakturační adresa</legend>
+    {{ order_invoicing_form | as_bootstrap }}
   </fieldset>
 
   <fieldset class="delivery">
-  <legend>{% trans 'Delivery' %}</legend>
-  {{ order_delivery_form | as_bootstrap }}
+    <legend>Doručovací adresa</legend>
+    {{ order_delivery_form | as_bootstrap }}
   </fieldset>
 
-  <fieldset class="payment">
-  <legend>{% trans 'Payment' %}</legend>
-  {{ order_payment_form | as_bootstrap }}
-  </legend>
-  
+  <fieldset class="contact">
+    <legend>Kontakt</legend>
+    {{ order_contact_form | as_bootstrap }}
+  </fieldset>
+
   <fieldset>
-  {{ userform | as_bootstrap }}
+    <legend>Uživatel</legend>
+    {{ userform | as_bootstrap }}
   </fieldset>
 
   <div class="form-actions">
     <input type="submit" name="cancel" class="btn" value="{% trans 'Cancel' %}"/>
-    <input type="submit" name="back-to-order" class="btn" value="{% trans 'Back to order' %}"/>
     <input type="submit" name="submit-order" class="btn btn-success" value="{% trans 'Submit Order' %}"/>
   </div>
-
-  {% else %}
-
-  <ul class="nav nav-tabs">
-    <li class="active"><a href="#order_contact" data-toggle="tab">{% trans "Contact" %}</a></li>
-    <li><a href="#order_invoicing" data-toggle="tab">{% trans "Invoicing" %}</a></li>
-    <li><a href="#order_delivery" data-toggle="tab">{% trans "Delivery" %}</a></li>
-    <li><a href="#order_payment" data-toggle="tab">{% trans "Payment" %}</a></li>
-    <li><a href="#user" data-toggle="tab">{% trans "User" %}</a></li>
-  </ul>
-  <div class="tab-content">
-    <div class="tab-pane active" id="order_contact">
-      {{ order_contact_form | as_bootstrap }}
-    </div>
-    <div class="tab-pane" id="order_invoicing">
-      {{ order_invoicing_form | as_bootstrap }}
-    </div>
-    <div class="tab-pane" id="order_delivery">
-      {{ order_delivery_form | as_bootstrap }}
-    </div>
-    <div class="tab-pane" id="order_payment">
-      {{ order_payment_form | as_bootstrap }}
-    </div>
-    <div class="tab-pane" id="user">
-      {{ userform | as_bootstrap }}
-    </div>
-    <div class="form-actions">
-      <input type="submit" name="cancel" class="btn" value="{% trans 'Cancel' %}"/>
-      <input type="submit" name="review-order" class="btn btn-success" value="{% trans 'Review Order' %}"/>
-    </div>
-  </div>
-
   {% endif %}
 </form>

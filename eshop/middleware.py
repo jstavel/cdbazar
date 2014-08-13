@@ -13,6 +13,14 @@ def getNewArticles(request):
 def getNews(request):
     return News.objects.all().order_by('created')[:5]
 
+def getMyOrders(request):
+    if request.user.is_authenticated():
+        return Order.objects.filter(user=request.user)
+    return []
+
+def getBasket(request):
+    pass
+
 class Middleware(object):
     def process_request(self, request):
         request.tradeActions = getActions(request)
@@ -20,3 +28,5 @@ class Middleware(object):
         request.news = getNews(request)
         request.orderTransitions = Order.TRANSITIONS
         request.orderStates = Order.STATES
+        request.myOrders = getMyOrders(request)
+        #request.basket = getBasket(request)

@@ -3,26 +3,25 @@
 {% block title %}Přehled objednávek{% endblock %}
 {% block extrastyle %}
 <script type="text/javascript">
-$(function(){
-{% include "eshop/order_list/js.js" %}
-});
+  $(function(){
+  {% include "eshop/order_list/js.js" %}
+  });
 </script>
 {% endblock %}
-{% block navigation %}
-{% include "store/basket.html" %}
-{% endblock %}
+{% block navigation %}{% include "store/basket.html" %}{% endblock %}
+
 {% block content %}
-<div class="order_edit modal hide fade">
-  <div class="modal-header">
-  </div>
-  <div class="modal-body">
-  </div>
-</div>
 <div class="order_list">
 <h2>Přehled objednávek</h2>
+<form id="form-transition" 
+      method="post" 
+      action=""
+      class="well transition form-horizontal">
 <div class="pagination">{% include "paginator.html" %}</div>
+<div class="form clearfix">{% include "eshop/order_list/form.html" %}</div>
 <div class="list">{% include "eshop/order_list/list.html" %}</div>
 <div class="pagination">{% include "paginator.html" %}</div>
+</form>
 </div>
 {% endblock %}
 {% block left_column %}{% include "eshop/orderstate_choose.html" %}{% endblock %}

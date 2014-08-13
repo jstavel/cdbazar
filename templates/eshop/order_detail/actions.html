@@ -1,0 +1,25 @@
+{% load i18n %}
+<div class="btn-group pull-right">
+  <a id="order-actions" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+    {% trans "Action" %} <span class="caret"></span>
+  </a>
+  <ul class="actions dropdown-menu pull-right" role="menu"
+      aria-labelledby="order-actions">
+    {% for transition in order.available_transitions %}
+    <li class="">
+      <a class="order-action btn btn-secondary btn-small"
+         href="/eshop/order/{{ order.id }}/?transition={{ transition }}">
+        {% trans transition %}
+      </a>
+    </li>
+    {% endfor %}
+    {% for transition in order.available_transitions %}
+    <li class="">
+      <a class="btn btn-secondary btn-small"
+         href="/eshop/order/{{ order.id }}/?transition={{ transition }}">
+        {% trans transition %}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>

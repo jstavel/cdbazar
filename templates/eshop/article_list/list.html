@@ -1,40 +1,33 @@
 {% load i18n thumbnail %}
 {% load bootstrap_tags %}
-<div class="row-fluid">
+
+<div class="">
 {% if object_list %}
+<ul class="thumbnails">
+<div class="row-fluid">
 {% for article in object_list %}
-<span class="article span4 well well-small row-fluid" title='{% trans "article" %}' id="article_detail_{{ article.id }}">
-  {% thumbnail article.picture "60x60" as im %}
-  <img class="picture img-polaroid span4" src="/media/{{im.url}}" width="{{ im.width }}" height="{{ im.height }}"></img>
-  {% endthumbnail %}
-<span class="span8 pull-right">
-    <h5>{{ article.title }}</h5>
-    <div>{{ article.interpret }}</div>
-    <div class="">
-      <span class="span4">vydavatel:</span>
-      <span class="span8">{{ article.publisher }}</span>
+<li class="span2">
+  <div class="thumbnail">
+    {% thumbnail article.picture "310x310" as im %}
+    <a href="/eshop/article/{{article.id}}/">
+      <img class="picture" src="/media/{{im.url}}" width="{{ im.width }}" height="{{ im.height }}"></img>
+    </a>
+    {% endthumbnail %}
+    <div class="caption">
+      <h5><a href="/eshop/article/{{ article.id }}">{{ article.interpret|truncatechars:20 }}</a></h5>
+      <div><a href="/eshop/article/{{ article.id }}">{{ article.title|truncatechars:20 }}</a></div>
+      <div><strong>{{ article.forSalePriceRange.0 }} Kč</strong></div>
+      <div>{% if article.discount %}<span class="badge  badge-success">akce</span>{% endif %}</div>
     </div>
-    <div class="">
-      <span class="span4">cena:</span>
-      <span class="span8">
-	{% with priceRange=article.forSalePriceRange %}
-	{% if priceRange.0 != priceRange.1 %}
-	{{ priceRange.0 }} Kč - {{ priceRange.1 }} Kč
-	{% else %}
-	{{ priceRange.0 }} Kč
-	{% endif %}
-	{% endwith %}
-      </span>
-    </div>
-    <a class="to-basket btn btn-small pull-right"
-       href="/eshop/article/{{ article.id  }}/to-basket/"> <span class="add-on"><i class="icon-inbox"></i></span>do košíku</a>
-    {% if article.discount %}<span class="badge badge-success">akce</span>{% endif %}
-  </span>
-</span>
-{% if forloop.counter|divisibleby:"3" %}
+  </div>
+</li>
+{% if forloop.counter|divisibleby:"6" %}
 </div><div class="row-fluid">
 {% endif %}
 {% endfor %}
+</div>
+</ul>
+
 {% else %}
 {% if reservation_form.is_bound and reservation_form.is_valid %}
    <div class="well">

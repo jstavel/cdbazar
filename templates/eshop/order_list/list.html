@@ -1,42 +1,47 @@
 {% load i18n %}
 <table class="table table-condensed table-hover">
-  <thead>
-    <tr>
-      <th>Čislo</th>
-      <th>Ze dne</th>
-      <th>Zákazník</th>
-      <th>Cena</th>
-      <th>Stav</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for order in object_list %}
-    <tr class="order-detail" title='Objednávka' id="order_detail_{{ order.id }}">
-      <td class="id">{{ order.id }}</td>
-      <td class="created">{{ order.created|date:"j. N Y, l" }}</td>
-      <td class="customer">{{ order.user }}</td>
-      <td class="total-price">{{ order.total_price }} Kč</td>
-      <td class="state">{% trans order.state_name %}</td>
-      <td>
-        <div class="btn-group">
-          <a id="order-{{ order.id }}-actions" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            {% trans "Action" %}<span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu pull-right" role="menu"
-              aria-labelledby="order-{{ order.id }}-actions">
-            {% for transition in order.available_transitions %}
-            <li>
-              <a class="btn btn-secondary btn-small"
-                 href="/eshop/order/{{ order.id }}/transition/{{ transition }}/?success_url=/eshop/order/">
-                {% trans transition %}
-              </a>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
+    <thead>
+      <tr>
+        <th><input type="checkbox" name="all"></input></th>
+        <th>Čislo</th>
+        <th>Ze dne</th>
+        <th>Zákazník</th>
+        <th>Cena</th>
+        <th>Stav</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in object_list %}
+      <tr class="order-detail" title='Objednávka' id="order_detail_{{ order.id }}">
+        <td><input type="checkbox" class="order-id-checkbox" name="order-{{ order.id }}"></input></td>
+        <td class="id"><a href="/eshop/order/{{ order.id }}/">{{ order.id }}</a></td>
+        <td class="created">{{ order.created|date:"j. N Y, l" }}</td>
+        <td class="customer">{{ order.user|default:"" }}</td>
+        <td class="total-price">{{ order.total_price }} Kč</td>
+        <td class="state">{% trans order.state_name %}</td>
+        {% comment %}
+        <td>
+          <div class="btn-group">
+            <a id="order-{{ order.id }}-actions" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              {% trans "Action" %}<span class="caret"></span>
+            </a>
+            {% comment %}
+            <ul class="dropdown-menu pull-right" role="menu"
+                aria-labelledby="order-{{ order.id }}-actions">
+              {% for transition in order.available_transitions %}
+              <li>
+                <a class="btn btn-secondary btn-small"
+                   href="/eshop/order/{{ order.id }}/transition/{{ transition }}/?success_url=/eshop/order/">
+                  {% trans transition %}
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </td>
+        {% endcomment %}
+      </tr>
+      {% endfor %}
+    </tbody>
 </table>

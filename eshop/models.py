@@ -12,12 +12,12 @@ from django.utils import timezone
 from django.conf import settings
 
 def calculateTotalPrice(items, additional_items):
-    totalPrice = float(sum([ii.price for ii in items])) \
-        + float(sum([ii.price for ii in additional_items]))
+    totalPrice = float(sum([ii.price for ii in items if ii.price])) \
+        + float(sum([ii.price for ii in additional_items if ii.price]))
     return totalPrice
 
 # polozka reprezentuje dodatecne polozky v kosiku
-additionalItem = namedtuple('additionalItem',['desc','price','type'])
+additionalItem = namedtuple('additionalItem',['desc','price','type','shortDesc'])
 
 class Basket(object):
     BASKET_NAME="eshop-basket"
@@ -85,13 +85,13 @@ class Basket(object):
 DELIVERY_WAYS = (
     (1,_('Czech Post')),
     (2,_('DHL')),
-    (3,_('At store')),
+    (3,_('Take at store')),
 )
 
 PAYMENT_WAYS = (
     (1,_('Pay at delivery')),
     (2,_('By bank account')),
-    (3,_('At store')),
+    (3,_('Pay at store')),
 )
 
 class Order(models.Model):
@@ -143,9 +143,11 @@ class Order(models.Model):
 
     @property
     def total_price(self):
+        #import sys,pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
         items = self.orderitem_set.all()
         additional_items = self.orderadditionalitem_set.all()
-        totalPrice = sum([ii.item.price for ii in items] + [ii.price for ii in additional_items])
+        totalPrice = sum([ii.item.price for ii in items if ii.item.price] 
+                         + [ii.price for ii in additional_items if ii.price])
         return totalPrice
 
     @classmethod
@@ -239,9 +241,10 @@ class DeliveryPrice(models.Model):
         obj = cls.objects.get(delivery_way=delivery_way)
         descs = [ii[1] for ii in DELIVERY_WAYS if ii[0] == delivery_way]
         desc = descs and descs[0] or ""
-        return additionalItem(desc = u"poplatek za doručení: " + desc,
-                              price = obj.price,
-                              type = "by-order:delivery")
+        return additionalItem( price = obj.price,
+                               desc = u"poplatek za doručení: " + desc,
+                               shortDesc = desc,
+                               type = "by-order:delivery")
                                 
     @classmethod
     def asToBeRemovedFilter(cls):
@@ -262,6 +265,7 @@ class PaymentPrice(models.Model):
         descs = [ii[1] for ii in PAYMENT_WAYS if ii[0] == payment_way]
         desc = descs and descs[0] or ""
         return additionalItem(desc = u"poplatek za provedení platby: " + desc,
+                              shortDesc = desc,
                               price = obj.price,
                               type = "by-order:payment")
 
@@ -288,8 +292,8 @@ class EmailMessage(models.Model):
     created = models.DateTimeField(u'Vytvořeno', auto_now=True)
 
 class Reservation(models.Model):
-    query = models.CharField("dotaz", max_length=64, blank=True, null=True)
-    contact = models.CharField("kontakt - telefon, nebo email", max_length=64, blank=True, null=True)
+    query = models.CharField("dotaz", max_length=64)
+    email = models.CharField("email", max_length=64)
     duemonths = models.IntegerField(u"na kolik měsíců platí", default = 6)
     created = models.DateTimeField(u"vytvořeno", auto_now=True)
 
@@ -316,3 +320,16 @@ class Reservation(models.Model):
     def numOfFoundItems(self):
         return len(self.foundItems)
 
+
+class UserDiscount(models.Model):
+    """
+    slevy pro uzivatele na celou objednavku
+    """
+    user = models.ForeignKey(User)
+    discount = models.DecimalField(_("User discount [%]"), 
+                                   decimal_places = 2, 
+                                   max_digits = 10, 
+                                   default=Decimal("0")
+                                   )
+    def __unicode__(self):
+        return u"věrnostní sleva %s%% pro: " % (self.discount,) + unicode(self.user)

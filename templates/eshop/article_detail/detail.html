@@ -1,0 +1,95 @@
+{% load i18n thumbnail %}
+{% load bootstrap_tags %}
+
+<div class="article-detail">
+  <h2>{{ object.interpret }} - {{ object.title }}</h2>
+  <div class="row-fluid">
+    {% thumbnail object.picture "310x310" as im %}
+    <div class="">
+      <img class="picture span4"
+           src="/media/{{im.url}}" 
+           width="{{ im.width }}" 
+           height="{{ im.height }}"></img>
+    </div>
+    {% endthumbnail %}
+    
+    <div class="span8 row-fluid">
+      <span class="span2 article-label">interpret:</span>
+      <span class="article-field">{{ object.interpret }}</span>
+    </div>
+    
+    <div class="span8 row-fluid">
+      <span class="span2 article-label">titul:</span>
+      <span class="article-field">{{ object.title }}</span>
+    </div>
+    
+    <div class="span8 row-fluid">
+      <span class="span2 article-label">cena:</span>
+      <span class="span2 article-field">{{ object.forSalePriceRange.0 }} Kč</span>
+      {% if object.discount %}<span class="span2"><span class="badge badge-success">akce</span></span>{% endif %}
+      <a class="to-basket btn btn-small"
+         href="/eshop/article/{{ object.id  }}/to-basket/"> <span class="add-on"><i class="icon-inbox"></i></span>do košíku</a>
+    </div>
+    <div class="span8 row-fluid">
+      <span class="span2 article-label">rok:</span>
+      <span class="article-field">{{ object.year|default:"" }}</span>
+    </div>
+    <div class="span8 row-fluid">
+      <span class="span2 article-label">vydavatel:</span>
+      <span class="article-field">{{ object.publisher|default:"" }}</span>
+    </div>
+    <div class="span8 row-fluid">
+      <span class="span2 article-label">medium:</span>
+      <span class="article-field">{{ object.mediaType.name }}</span>
+    </div>
+    <div class="span8 row-fluid">
+      <span class="span2 article-label">čárový kód:</span>
+      <span class="article-field">{{ object.barcode|default:"" }}</span>
+    </div>
+    <div class="span8 row-fluid">
+      {% autoescape off %}
+      <h4 class="specification">{% trans "specification" %}</h4>
+      <div>{{ object.specification }}</div>
+      {% endautoescape %}
+    </div>
+    <div class="span8 row-fluid">
+      {% autoescape off %}
+      <h4 class="tracklist">{% trans "tracklist" %}</h4>
+      <div>{{ object.tracklist }}</div>
+      {% endautoescape %}
+    </div>
+  </div>
+</div>
+
+{% comment %}
+<span class="article" title='{% trans "article" %}'
+      id="article_detail_{{ article.id }}">
+  {% thumbnail article.picture "60x60" as im %}
+  <img class="span2 picture img-polaroid" src="/media/{{im.url}}" width="{{ im.width }}" height="{{ im.height }}"></img>
+  {% endthumbnail %}
+  <span>aa</span>
+  <span class="">
+    <h5>{{ article.title }}</h5>
+    <div>{{ article.interpret }}</div>
+    <div class="">
+      <span class="span4">vydavatel:</span>
+      <span class="span8">{{ article.publisher }}</span>
+    </div>
+    <div class="">
+      <span class="span4">cena:</span>
+      <span class="span8">
+	{% with priceRange=article.forSalePriceRange %}
+	{% if priceRange.0 != priceRange.1 %}
+	{{ priceRange.0 }} Kč - {{ priceRange.1 }} Kč
+	{% else %}
+	{{ priceRange.0 }} Kč
+	{% endif %}
+	{% endwith %}
+      </span>
+    </div>
+    <a class="to-basket btn btn-small pull-right"
+       href="/eshop/article/{{ article.id  }}/to-basket/"> <span class="add-on"><i class="icon-inbox"></i></span>do košíku</a>
+    {% if article.discount %}<span class="badge badge-success">akce</span>{% endif %}
+  </span>
+</span>
+{% endcomment %}

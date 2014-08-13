@@ -1,19 +1,25 @@
 {% load i18n thumbnail %}
-{% for item in request.tradeActions %}
-<span class="article span2 well well-condensed row-fluid" 
-      title='{% trans "goods" %}' 
-      id="article_detail_{{ item.id }}">
-  <h6><a href="?search={{ item.item.article.barcode }}">{{ item.item.article.title }}</a></h6>
-  {% thumbnail item.item.article.picture "60x60" as im %}
-  <a href="?search={{ item.item.article.barcode }}">
-    <img class="picture img-polaroid span6" src="/media/{{im.url}}"
-       width="{{ im.width }}" height="{{ im.height }}"></img>
-  </a>
-  {% endthumbnail %}
-  <span class="span4 pull-right">
-    <small>{{ item.item.article.interpret }}</small>
-    <small>{{ item.item.article.year|default:"" }}</small>
-    <small>{{ item.item.article.mediaType }}</small>
-  </span>
-</span>
+<ul class="thumbnails">
+<div class="row-fluid">
+  {% for item in request.tradeActions %}
+  <li class="span2">
+    <div class="thumbnail">
+      {% thumbnail item.item.article.picture "60x60" as im %}
+      <a href="/eshop/article/{{ item.item.article.id }}/">
+        <img class="picture img-polaroid" src="/media/{{im.url}}"
+             width="{{ im.width }}" height="{{ im.height }}"></img>
+      </a>
+      {% endthumbnail %}
+      <div class="caption">
+        <small>{{ item.item.article.interpret|default:"" }}</small>
+        <small>{{ item.item.article.year|default:"" }}</small>
+        <small>{{ item.item.article.mediaType }}</small>
+      </div>
+    </div>
+  </li>
+  {% if forloop.counter|divisibleby:"6" %}
+</div><div class="row-fluid">
+  {% endif %}
 {% endfor %}
+</div>
+</ul>

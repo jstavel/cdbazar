@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .models import (
     Order, 
     OrderItem, 
@@ -9,6 +10,7 @@ from .models import (
     Content,
     EmailMessage,
     Reservation,
+    UserDiscount,
 )
 from django.contrib import admin
 from django import forms
@@ -16,6 +18,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.flatpages.admin import FlatPageAdmin
 from django.contrib.flatpages.models import FlatPage
 from tinymce.widgets import TinyMCE
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 
 admin.site.register(DeliveryPrice)
 admin.site.register(PaymentPrice)
@@ -50,7 +53,7 @@ class ContentAdmin(admin.ModelAdmin):
 admin.site.register(Content, ContentAdmin)
 
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('query','contact','active','numOfFoundItems','created','duemonths')
+    list_display = ('query','email','active','numOfFoundItems','created','duemonths')
     list_filter = ('created',)
     pass
 
@@ -73,3 +76,60 @@ class EmailMessageAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(EmailMessage, EmailMessageAdmin)
+
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
+
+admin.site.unregister(User)
+
+from .models import additionalItem
+
+class UserOrderInline(admin.TabularInline):
+    model = Order
+    extra = 0
+    fields = ('invoicing_firm','state')
+
+class UserDiscountInline(admin.TabularInline):
+    model = UserDiscount
+    extra = 0
+
+def getUserDiscount(user):
+    discounts =[dd.discount for dd in user.userdiscount_set.all()] 
+    return discounts and sum(discounts) or 0
+
+def getUserDiscountAsAdditionalItem(user, price):
+    discount = user.getUserDiscount()
+    return additionalItem( price = price,
+                           shortDesc = u"věrnostní sleva",
+                           desc = u"věrnostní sleva",
+                           type = "by-order:user-discount" )
+
+User.getUserDiscount = getUserDiscount
+User.getUserDiscountAsAdditionalItem = getUserDiscountAsAdditionalItem
+
+class NewUserAdmin(UserAdmin):
+    inlines = (UserDiscountInline,)
+    list_display = UserAdmin.list_display + ('getUserDiscount',)
+
+    def response_post_save_change(self, request, obj):
+        """
+        Figure out where to redirect after the 'Save' button has been pressed
+        when editing an existing object.
+        """
+        opts = self.model._meta
+        post_url_arg=request.REQUEST.get('post_url_arg')
+        post_url = request.REQUEST.get('post_url')
+        if post_url:
+            return HttpResponseRedirect(post_url_arg and "%s?%s" % (post_url, post_url_arg) or post_url)
+        if self.has_change_permission(request, None):
+            post_url = reverse('admin:%s_%s_changelist' %
+                               (opts.app_label, opts.module_name),
+                               current_app=self.admin_site.name)
+        else:
+            post_url = reverse('admin:index',
+                               current_app=self.admin_site.name)
+        return HttpResponseRedirect(request.REQUEST.get('post_url') or post_url)
+
+admin.site.register(User,NewUserAdmin)
+
+
