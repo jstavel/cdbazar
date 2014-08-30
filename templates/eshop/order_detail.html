@@ -8,11 +8,19 @@ $(function(){
 });
 </script>
 {% endblock %}
+{% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+{% endblock messages %}
 {% block navigation %}{% include "eshop/basket.html" %}{% endblock %}
 {% block content %}
 <div class="order_detail">
-<h2>Detail objednávky</h2>
-<div class="detail clearfix">{% include "eshop/order_detail/detail.html" %}</div>
+  <h2>Detail objednávky </h2> <a class="btn btn-success btn-small pull-right" href="/eshop/order/{{ object.id }}/pdf/">pdf</a> 
+  <div class="form">{% include "eshop/order_detail/form.html" %}</div>
+  <div class="detail clearfix">{% include "eshop/order_detail/detail.html" %}</div>
 </div>
 {% endblock %}
 {% block left_column %}

@@ -17,6 +17,21 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "Czech Post"
+msgstr "Česká pošta"
+
+msgid "Take at store"
+msgstr "Vyzvednout v obchodě"
+
+msgid "Pay at delivery"
+msgstr "Dobírkou"
+
+msgid "Pay at store"
+msgstr "Zaplatit v obchodě"
+
+msgid "By bank account"
+msgstr "Bankovním převodem"
+
 msgid "Taken over"
 msgstr "Převzato"
 

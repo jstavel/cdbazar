@@ -1,0 +1,108 @@
+{% load i18n %}
+<html>
+  <head>
+    <title>Faktura č. {{ object.id }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+    <style type="text/css"> @import  url(/opt/cdbazar/project/cdbazar/media/css/print.css) print;</style>
+  </head>
+  <body>
+    <h1>Faktura č. {{ object.id }}</h1>
+    <table width="100%">
+      <tr>
+        <td width="50%"  style="border: 1px solid gray; padding-left: 0.5em;">
+          <h2 style="text-decoration:underline">Dodavatel</h2>
+          <p>CD Bazar</p>
+          <table style="border: none">
+	    <tr><td>IČO:</td><td>43714897</td></tr>
+	    <tr><td>není plátce DPH</td></tr>
+          </table>
+          <h3>adresa</h3>
+          <div>CD Bazar</div>
+          <div>Školská 36</div>
+          <div>Praha 1 11000, Česká republika</div>
+        </td>
+        <td width="50%" style="border 1px solid gray; padding-left: 0.5em">
+          <h2  style="padding-top: 0.5em; text-decoration: underline">Zákazník</h2>
+	  <p>{{ object.invoicing_name }} {{ object.invoicing_surname }}</p>
+	  <div>{{ object.invoicing_address_street }}</div>
+	  <div> {{ object.invoicing_address_zip }} {{ object.invoicing_address_city }}, {{ object.invoicing_address_country }}</div>
+	  <h3>Doručovací adresa</h3>
+	  {% if not object.delivery_is_the_same_as_invoicing %}
+	  <div>{{ object.deliveryaddresshead }}</div>
+	  <div>{{ object.individual.deliveryAddress.street }} {{ object.individual.deliveryAddress.streetnumber }}</div>
+	  <div>{{ object.individual.deliveryAddress.city }} {{ object.individual.deliveryAddress.zipcode }} {{ object.individual.deliveryAddress.country }}</div>
+	  {% else %}
+          stejná jako fakturační adresa
+          {% endif %}
+	  <h3>Kontakt</h3>
+	  <div>telefon: {{ object.contact_phonenumber }}</div>
+	  <div>email: {{ object.contact_email }}</div>
+        </td>
+      </tr>
+    </table>
+
+    <hr style=""></hr>
+
+    <table style="padding:0.2em">
+      <tbody>
+        <tr><th align="left" >Způsob platby a dodání</th>
+          <td>
+            {% for choice in PAYMENTS %}
+            {% ifequal choice.0 object.payment_way %}
+            {% ifequal choice.0 1 %}
+            {{ choice.1 }}
+            {% endifequal %}
+            {% ifequal choice.0 2 %}
+            <span style="color:red;">{{ choice.1 }}</span>
+            {% endifequal %}
+            {% endifequal %}
+            {% endfor %};
+            {% for choice in DELIVERY %}
+            {% ifequal choice.0 object.delivery_way %}
+            {{ choice.1 }}
+            {% endifequal %}
+            {% endfor %}
+          </td>
+        </tr>
+        <tr><th align="left">Datum vystavení</th><td>{{ object.created|date:"j. N Y, l" }}</td></tr>
+      </tbody>
+    </table>
+    
+    <div class="module">
+      <h2>Zboží</h2>
+      <table class="table" style="border: 0.2px solid gray; padding: 0.3em">
+        <tbody>
+          <thead>
+            <tr>
+              <th>Titul</th>
+              <th>Čárový kód</th>
+              <th>Komentář</th>
+              <th>Cena</th>
+            </tr>
+          </thead>
+          {% for item in object.orderitem_set.all %}
+          <tr>
+            <td><a href="/eshop/">{{ item.item.article }}</a></td>
+            <td>{{ item.item.barcode }}</td>
+            <td>{{ item.item.commentary }}</td>
+            <td align="right">{{ item.item.price }} Kč</td>
+          </tr>
+          {% endfor %}
+          
+          {% for item in object.orderadditionalitem_set.all %}
+          <tr>
+            <td colspan="3">{{ item.description }}</td>
+            <td align="right">{{ item.price }} Kč</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr style="border-top: 1px solid gray">
+            <th colspan="3">celkem</th>
+            <th align="right">{{ object.total_price }} Kč</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </body>
+</html>

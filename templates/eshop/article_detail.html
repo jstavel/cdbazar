@@ -1,0 +1,42 @@
+{% extends "eshop.html" %}
+{% load i18n %}
+{% block title %}{% trans "Article" %}{% endblock %}
+{% block extrastyle %}
+<script type="text/javascript">
+$(function(){
+{% include "eshop/article_detail/js.js" %}
+});
+</script>
+{% endblock %}
+{% block navigation %}{% include "eshop/basket.html" %}{% endblock %}
+{% block content %}
+<div class="article_detail">
+<!-- <h2>{% trans "E-Shop" %}</h2> -->
+<div class="heading well well-condensed clearfix">
+  <i class="icon-wrench text-large"></i> na počkání opravíme Vaše poškrábané CD a DVD na profesionálnímm stroji TDR<br/>
+  od 49Kč
+</div>
+<div class="banners clearfix">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tradeaction-banner" data-toggle="tab">Akce</a></li>
+    <li class=""><a href="#new-articles-banner" data-toggle="tab">Nové zboží</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active tradeaction-banner" id="tradeaction-banner">
+      {% include "eshop/article_list/tradeaction_banner.html" %}
+    </div>
+    <div class="tab-pane new-articles-banner" id="new-articles-banner">
+      {% include "eshop/article_list/new_articles_banner.html" %}
+    </div>
+  </div>
+</div>
+<div class="eshop-detail clearfix">
+  {% include "eshop/article_detail/detail.html" %}
+</div>
+{% endblock %}
+{% block left_column %}
+<div class="left-column well">
+  {% include "eshop/left_column.html" %}
+</div>
+{% endblock %}
+

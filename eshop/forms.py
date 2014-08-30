@@ -68,18 +68,31 @@ class OrderContactForm(forms.ModelForm):
         model = Order
         fields = [ff.name for ff in Order._meta.fields if 'contact_' in ff.name]
 
+class OrderDeliveryWayForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [ff.name for ff in Order._meta.fields if 'delivery_way' in ff.name]
+
 class OrderDeliveryForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = [ff.name for ff in Order._meta.fields if 'delivery_' in ff.name]
+        fields = [ff.name for ff in Order._meta.fields if 'delivery_' in ff.name and '_way' not in ff.name]
+
+class OrderPaymentWayForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [ff.name for ff in Order._meta.fields if 'payment_way' in ff.name]
 
 class OrderPaymentForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = [ff.name for ff in Order._meta.fields if 'payment_' in ff.name]
+        fields = [ff.name for ff in Order._meta.fields if 'payment_' in ff.name and '_way' not in ff.name]
 
 class OrderTransitionForm(forms.Form):
-    send = forms.BooleanField(required=False, label=_("Send?"))
+    transition = forms.ChoiceField(label="akce",
+                                   required=False,
+                                   choices = [(0,"--- akce ---")]
+                               )
     emailMessageID = forms.ChoiceField(
         label = u"Šablona",
         required=False,
@@ -98,10 +111,10 @@ class OrderTransitionForm(forms.Form):
         self.fields['emailMessageID'].choices = [(0,"--- select ---")] \
                                                 + [(msg.id, msg.title) for msg in EmailMessage.objects.all()]
 
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ("username",)
+class UserForm(forms.Form):
+    # class Meta:
+    #     model = User
+    #     fields = ("username",)
 
     error_messages = {
         'duplicate_username': _("A user with that username already exists."),
@@ -112,7 +125,7 @@ class UserForm(forms.ModelForm):
                                            initial=True,
                                            required=False,
                                            )
-    username = forms.RegexField(label=_("Username"), max_length=30,
+    new_username = forms.RegexField(label=_("Username"), max_length=30,
                                 required = False,
                                 regex=r'^[\w.@+-]+$',
                                 help_text = _("Required. max 30 characters or fewer. Letters, digits and "
@@ -136,10 +149,10 @@ class UserForm(forms.ModelForm):
     #          raise forms.ValidationError(self.error_message['no username'])
     #      return cleaned_data
 
-    def clean_username(self):
+    def clean_new_username(self):
         # Since User.username is unique, this check is redundant,
         # but it sets a nicer error message than the ORM. See #13147.f
-        username = self.cleaned_data["username"]
+        username = self.cleaned_data["new_username"]
         if self.data.get('with_registration',False):
             try:
                 User.objects.get(username=username)
@@ -160,8 +173,9 @@ class UserForm(forms.ModelForm):
     
     def save(self, commit=True):
         if self.cleaned_data['with_registration']:
-            user = super(UserForm, self).save(commit=False)
-            user.set_password(self.cleaned_data["password1"])
+            user = User.objects.create_user(self.cleaned_data['new_username'],
+                                            email = self.data['contact_email'],
+                                            password = self.data['password1'])
             if commit:
                 user.save()
             return user

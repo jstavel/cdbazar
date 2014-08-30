@@ -24,7 +24,7 @@ def getMenu(request):
         
     def getMenuForFrontend(request):
         return [ (u'O nás', "about", "/o-nas/", ()),
-                 (u'Licence', "licence", "/licence/", ()),
+                 (u'Obchodní podmínky', "obchodni podminky", "/licence/", ()),
                  (u'Kontakt', "contact", "/kontakt/", ()),
                  (u"eShop", "eshop", "/eshop/", ()),
              ]

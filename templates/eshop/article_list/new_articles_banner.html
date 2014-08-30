@@ -1,18 +1,25 @@
 {% load i18n thumbnail %}
-{% for article in request.newArticles %}
-<span class="article span2 well row-fluid" title='{% trans "goods" %}' 
-      id="article_detail_{{ article.id }}">
-  <h6><a href="?search={{ article.barcode }}">{{ article.title }}</a></h6>
-  {% thumbnail article.picture "60x60" as im %}
-  <a href="?search={{ article.barcode }}">
-    <img class="picture img-polaroid span4" src="/media/{{im.url}}"
-         width="{{ im.width }}" height="{{ im.height }}"></img>
-  </a>
-  {% endthumbnail %}
-  <span class="span6 pull-right">
-    <small>{{ article.interpret }}</small>
-    <small>{{ article.year|default:"" }}</small>
-    <small>{{ article.mediaType }}</small>
-  </span>
-</span>
-{% endfor %}
+<ul class="thumbnails">
+<div class="row-fluid">
+  {% for article in request.newArticles %}
+  <li class="span2">
+    <div class="thumbnail">
+      {% thumbnail article.picture "60x60" as im %}
+      <a href="/eshop/article/{{ article.id }}/">
+        <img class="picture img-polaroid" src="/media/{{im.url}}"
+             width="{{ im.width }}" height="{{ im.height }}"></img>
+      </a>
+      {% endthumbnail %}
+      <div class="caption">
+        <small>{{ article.interpret|default:"" }}</small>
+        <small>{{ article.year|default:"" }}</small>
+        <small>{{ article.mediaType }}</small>
+      </div>
+    </div>
+  </li>
+  {% if forloop.counter|divisibleby:"6" %}
+</div><div class="row-fluid">
+  {% endif %}
+  {% endfor %}
+</div>
+</ul>

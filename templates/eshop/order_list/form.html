@@ -1,0 +1,13 @@
+{% load bootstrap_tags %}
+{% if orderState %}
+{% csrf_token %}
+{{ form | as_bootstrap }}
+<div class="form-actions">
+  <input class="btn btn-success" type="submit" name="submit" id="submit-submit" value="submit"></input>
+  <input class="btn btn-success" 
+         type="submit" 
+         name="submit" 
+         id="submit-load-emailmessage" 
+         value="načíst šablonu"></input>
+</div>
+{% endif %}

@@ -11,7 +11,7 @@ from django.views.generic import (
     DeleteView,
 
 )
-
+from django.utils.translation import ugettext as _
 from django.views.generic.detail import BaseDetailView
 import json    
 from django.db.models import Q
@@ -21,8 +21,9 @@ from cdbazar.store.models import Article, Picture, Item, MediaType
 from django.forms.models import modelformset_factory
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader, Context
-from decimal import Decimal
+from decimal import Decimal, getcontext, ROUND_HALF_UP, localcontext
 from itertools import chain
+import re
 from .forms import *
 from .models import (
     Order, 
@@ -41,6 +42,9 @@ from django.forms import widgets
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.contrib import messages
+from django_xhtml2pdf.utils import render_to_pdf_response
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login,logout
 
 class AddTradeActionView(TemplateView, JSONTemplateResponse):
     template_name = "eshop/tradeaction_add.html"
@@ -120,7 +124,10 @@ class OrderList(ListView,JSONTemplateResponse):
     model=Order
     paginate_by = 50
 
-    page_includes = ['paginator.html','eshop/order_list/list.html','eshop/order_list/js.js']
+    page_includes = ['paginator.html',
+                     'eshop/order_list/form.html', 
+                     'eshop/order_list/list.html',
+                     'eshop/order_list/js.js']
 
     def get_queryset(self):
         qs = super(OrderList,self).get_queryset()
@@ -132,7 +139,52 @@ class OrderList(ListView,JSONTemplateResponse):
     def get_context_data(self,**kwargs):
         context = super(OrderList,self).get_context_data(**kwargs)
         context['orderState'] = int(self.request.GET.get('state','0'))
+        available_transitions = len(context['object_list']) and context['object_list'][0].available_transitions()
+        context['form'] = getattr(self,'form',OrderTransitionForm())
+        if available_transitions:
+            context['form'].fields['transition'].choices = [(0,'--- vyber si ---'),] + \
+                                                           map(lambda tr: (tr,_(tr)), available_transitions)
         return context
+
+    def post(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        available_transitions = len(self.object_list) and self.object_list[0].available_transitions()
+        self.form = OrderTransitionForm(request.POST)
+        if available_transitions:
+            self.form.fields['transition'].choices = [(0,'--- vyber si ---'),] + \
+                                                     map(lambda tr: (tr,_(tr)), available_transitions)
+        if request.POST.get('submit',"") == u"načíst šablonu":
+            def valueFactory(value):
+                def value_from_datadict(data, files, prefix):
+                    return value
+                return value_from_datadict
+            try:
+                emailMessage = EmailMessage.objects.get(id=request.POST.get('emailMessageID',0))
+                self.form.fields['subject'].widget.value_from_datadict = valueFactory(emailMessage.title)
+                self.form.fields['message'].widget.value_from_datadict = valueFactory(emailMessage.text)
+            except EmailMessage.DoesNotExist:
+                self.form.fields['subject'].widget.value_from_datadict = valueFactory("")
+                self.form.fields['message'].widget.value_from_datadict = valueFactory("")
+                pass
+        else:
+            if self.form.is_valid():
+                context = self.get_context_data(object_list=self.object_list)
+                data = self.form.cleaned_data
+                if data['subject'] and data['transition']:
+                    selectedOrderKeys = filter(lambda key: re.match('order-[0-9]+', key), request.POST.keys())
+                    selectedOrderIDs = map(lambda key: int(key.split('-')[1]), selectedOrderKeys)
+                    for order in filter(lambda order: order.id in selectedOrderIDs, context['object_list']):
+                        sendTransitionEmail(data['subject'],
+                                            data['message'],
+                                            order.contact_email, 
+                                            order)
+                        order.processTransition(data['transition'])
+                        order.save()
+                        pass
+                    messages.add_message(request, messages.INFO, 'Rozeslal jsem emaily.')
+                    return redirect("/eshop/order")
+
+        return super(OrderList,self).get(request, *args, **kwargs)
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
 
@@ -230,6 +282,25 @@ class ArticleList(ListView,JSONTemplateResponse):
 
 class ChooseItemForm(forms.Form):
     item = forms.IntegerField(widget = forms.Select())
+
+class ArticleDetail(DetailView, JSONTemplateResponse):
+    model = Article
+    template_name = "eshop/article_detail.html"
+    page_includes = ['eshop/basket/summary.html',
+                     'eshop/article_detail/detail.html', 
+                     'eshop/article_detail/js.js', 
+                     'eshop/basket/js.js']
+    
+    def get_template_names(self):
+        return [self.template_name]
+
+    def get_context_data(self,**kwargs):
+        context = super(ArticleDetail,self).get_context_data(**kwargs)
+        basket = Basket(self.request)
+        context['basket'] = basket
+        return context
+
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)
     
 class ToBasketView(DetailView, JSONTemplateResponse):
     model = Article
@@ -244,11 +315,12 @@ class ToBasketView(DetailView, JSONTemplateResponse):
 
         self.more_items = False
         self.form = None
-        if len(context['items_to_basket']) == 1:
-            basket.addItem(context['items_to_basket'][0])
-        else:
-            self.more_items = True
-            self.form = ChooseItemForm()
+
+        #if len(context['items_to_basket']) == 1:
+        basket.addItem(context['items_to_basket'][0])
+        #else:
+        #    self.more_items = True
+        #    self.form = ChooseItemForm()
 
         context['basket'] = basket
         context['mediatypes'] = MediaType.objects.all()
@@ -283,88 +355,140 @@ class BasketView(TemplateView,JSONTemplateResponse):
         context = TemplateView.get_context_data(self,**kwargs)
         context['basket'] = getattr(self,'basket',Basket(self.request))
         context['mediatypes'] = MediaType.objects.all()
+        context['order_login_form'] = getattr(self,'order_login_form',AuthenticationForm())
         context['order_invoicing_form'] = getattr(self,'order_invoicing_form',OrderInvoicingForm())
         context['order_contact_form'] = getattr(self,'order_contact_form',  OrderContactForm())
+        context['order_delivery_way_form'] = getattr(self,'order_delivery_way_form', OrderDeliveryWayForm())
+        context['order_payment_way_form'] = getattr(self,'order_payment_way_form',  OrderPaymentWayForm())
         context['order_delivery_form'] = getattr(self,'order_delivery_form', OrderDeliveryForm())
         context['order_payment_form'] = getattr(self,'order_payment_form',  OrderPaymentForm())
         context['userform'] = getattr(self,'userform',UserForm())
         context['order_stage_form'] = getattr(self,'order_stage_form',OrderStageForm())
         return context
     
-    def post_delivery(self,request,*args,**kwargs):
-        self.order_delivery_form = OrderDeliveryForm(request.POST)
-        basket = Basket(request)
-        basket.removeAdditionalItem(toBeRemoved = DeliveryPrice.asToBeRemovedFilter())
-        if self.order_delivery_form.is_valid():
-            delivery_way = self.order_payment_form.cleaned_data['delivery_way']
-            basket.addAdditionalItem(DeliveryPrice.asAdditionalItemForBasket(delivery_way))
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        basket = context['basket']
 
-        self.basket = basket
+        # vycisteni basket od automatickych polozek, ktere zavisi na objednavce
+        basket.removeAdditionalItem(toBeRemoved = lambda item: 'by-order' in item.type)
 
-    def post_payment(self,request,*args,**kwargs):
-        self.order_payment_form = OrderPaymentForm(request.POST)
-        basket = Basket(request)
-        basket.removeAdditionalItem(toBeRemoved = PaymentPrice.asToBeRemovedFilter())
-        if self.order_payment_form.is_valid():
-            payment_way = self.order_payment_form.cleaned_data['payment_way']
-            basket.addAdditionalItem(PaymentPrice.asAdditionalItemForBasket(payment_way))
+        delivery_way = context['order_delivery_way_form'].fields['delivery_way'].initial
+        basket.addAdditionalItem(DeliveryPrice.asAdditionalItemForBasket(delivery_way))
 
-        self.basket = basket
-        
-    def post(self, request, *args, **kwargs):
-        part_of_form = request.POST.get('part-of-form',None)
-        handler = part_of_form and getattr(self,'post_' + part_of_form,None)
-        if handler:
-            handler(request,*args,**kwargs);
+        payment_way = context['order_payment_way_form'].fields['payment_way'].initial
+        basket.addAdditionalItem(PaymentPrice.asAdditionalItemForBasket(payment_way))
+
+        # jestli je uzivatel prihlasen a ma slevu, tak doplnime
+        if request.user.is_authenticated() and request.user.getUserDiscount():
+            price = (-1 * Decimal(basket.total_price) * \
+                     Decimal("0.01") * \
+                     Decimal(request.user.getUserDiscount())) \
+                .quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+            basket.addAdditionalItem( request.user.getUserDiscountAsAdditionalItem(price) )
+        return self.render_to_response(context)
             
-        self.order_invoicing_form = OrderInvoicingForm(request.POST)
-        self.order_contact_form = OrderContactForm(request.POST)
-        self.order_delivery_form = OrderDeliveryForm(request.POST)
-        self.order_payment_form = OrderPaymentForm(request.POST)
-        self.userform = UserForm(request.POST)
-        self.orderform = OrderForm(request.POST)
-        self.order_stage_form = OrderStageForm(request.POST)
+    def post(self, request, *args, **kwargs):
+        self.order_login_form = AuthenticationForm(data=request.POST)
+        if 'login' in request.POST:
+            if self.order_login_form.is_valid():
+                user = self.order_login_form.get_user()
+                login(request, user)
+                # nacteni dat z minule objednavky a predvyplneni
+                # default hodnot
+                olderOrders = Order.objects.filter(user=user).order_by('id')
+                olderOrder = olderOrders and olderOrders[0]
+                if olderOrder:
+                    print "naplneni daty z predeslych objednavek"
+                    keys = [aa.name for aa in olderOrder._meta.fields]
+                    initial = dict([(key,getattr(olderOrder,key)) for key in keys])
+                    self.order_invoicing_form = OrderInvoicingForm(initial=initial)
+                    self.order_contact_form = OrderContactForm(initial=initial)
+                    self.order_delivery_form = OrderDeliveryForm(initial=initial)
+                    self.order_payment_form = OrderPaymentForm(initial=initial)
+                    self.order_delivery_way_form = OrderDeliveryWayForm(initial=initial)
+                    self.order_payment_way_form = OrderPaymentWayForm(initial=initial)
+        else:
+            self.order_delivery_way_form = OrderDeliveryWayForm(request.POST)
+            self.order_payment_way_form = OrderPaymentWayForm(request.POST)
 
-        if self.order_invoicing_form.is_valid() and \
-                self.order_contact_form.is_valid() and \
-                self.order_delivery_form.is_valid() and \
-                self.order_payment_form.is_valid() and \
-                self.order_stage_form.is_valid() and \
-                self.orderform.is_valid() and self.userform.is_valid():
 
-            if 'review-order' in request.POST:
-                # ted pujde potvrzeni, tj. nasledujici stav
+        if 'order' in request.POST or 'update' in request.POST:
+            # ted pujde potvrzeni, tj. nasledujici stav
+            if 'order' in request.POST:
                 self.order_stage_form = OrderStageForm(initial={'stage':1})
+                if self.order_delivery_way_form.is_valid():
+                    self.order_delivery_way_form.fields['delivery_way'].widget \
+                        = widgets.HiddenInput({'value':self.order_delivery_way_form.cleaned_data['delivery_way'],
+                                           })
+                    self.order_delivery_way_form.fields['delivery_way'].widget.attrs['readonly'] = True
+                if self.order_payment_way_form.is_valid():
+                    self.order_payment_way_form.fields['payment_way'].widget \
+                        = widgets.HiddenInput({'value':self.order_payment_way_form.cleaned_data['payment_way'],
+                                           })
+                    self.order_payment_way_form.fields['payment_way'].widget.attrs['readonly'] = True
+            else:
+                self.order_stage_form = OrderStageForm(initial={'stage':0})
 
-                # vsechno se hodi jako hidden
-                for (name,field) in chain(self.order_invoicing_form.fields.items(),
-                                          self.order_contact_form.fields.items(),    
-                                          self.order_delivery_form.fields.items(),
-                                          self.order_payment_form.fields.items(),
-                                          self.userform.fields.items()):
-                    field.widget.attrs['readonly'] = True
-                    pass
-                self.userform.fields['password1'].widget = widgets.HiddenInput({'value':self.userform.cleaned_data['password1']})
-                self.userform.fields['password2'].widget = widgets.HiddenInput({'value':self.userform.cleaned_data['password2']})
+            context = self.get_context_data(**kwargs)
+            basket = context['basket']
+
+            # vycisteni basket od automatickych polozek, ktere zavisi na objednavce
+            basket.removeAdditionalItem(toBeRemoved = lambda item: 'by-order' in item.type)
+            if self.order_delivery_way_form.is_valid():
+                delivery_way = self.order_delivery_way_form.cleaned_data['delivery_way']
+                basket.addAdditionalItem(DeliveryPrice.asAdditionalItemForBasket(delivery_way))
+
+            if self.order_payment_way_form.is_valid():
+                payment_way = self.order_payment_way_form.cleaned_data['payment_way']
+                basket.addAdditionalItem(PaymentPrice.asAdditionalItemForBasket(payment_way))
+
+            # jestli je uzivatel prihlasen a ma slevu, tak doplnime
+            if request.user.is_authenticated() and request.user.getUserDiscount():
+                price = (-1 * Decimal(basket.total_price) * \
+                         Decimal("0.01") * \
+                         Decimal(request.user.getUserDiscount())) \
+                    .quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+                basket.addAdditionalItem( request.user.getUserDiscountAsAdditionalItem(price) )
+
+        elif 'submit-order' in request.POST:
+            self.order_invoicing_form = OrderInvoicingForm(request.POST)
+            self.order_contact_form = OrderContactForm(request.POST)
+            self.order_delivery_form = OrderDeliveryForm(request.POST)
+            self.order_payment_form = OrderPaymentForm(request.POST)
+            self.userform = UserForm(request.POST)
+            self.orderform = OrderForm(request.POST)
+            self.order_stage_form = OrderStageForm(request.POST)
+
+            if self.order_invoicing_form.is_valid() and \
+               self.order_contact_form.is_valid() and \
+               self.order_delivery_form.is_valid() and \
+               self.order_payment_form.is_valid() and \
+               self.order_delivery_way_form.is_valid() and \
+               self.order_payment_way_form.is_valid() and \
+               self.order_stage_form.is_valid() and \
+               self.orderform.is_valid() and self.userform.is_valid():
+                
                 context = self.get_context_data(**kwargs)
                 basket = context['basket']
+                
                 # vycisteni basket od automatickych polozek, ktere zavisi na objednavce
                 basket.removeAdditionalItem(toBeRemoved = lambda item: 'by-order' in item.type)
                 for item in self.orderform.getAdditionalItems():
                     basket.addAdditionalItem(item)
 
-                context['order'] = self.orderform.cleaned_data
-                return render_to_response("eshop/basket_review.html", 
-                                          context, 
-                                          context_instance=RequestContext(request))
+                # jestli je uzivatel prihlasen a ma slevu, tak doplnime
+                if request.user.is_authenticated() and request.user.getUserDiscount():
+                    price = (-1 * Decimal(basket.total_price) * \
+                             Decimal("0.01") * \
+                             Decimal(request.user.getUserDiscount())) \
+                        .quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+                    basket.addAdditionalItem( request.user.getUserDiscountAsAdditionalItem(price) )
 
-            elif 'submit-order' in request.POST:
-                context = self.get_context_data(**kwargs)
                 # ulozeni objednavky
                 with transaction.commit_on_success():
                     order = self.orderform.save()
                     user = self.userform.save()
-                    basket = context['basket']
                     # ulozeni uzivatele do objednavky, pokud existuje
                     if user:
                         order.user = user
@@ -376,7 +500,6 @@ class BasketView(TemplateView,JSONTemplateResponse):
                         orderItem.save()
                     pass
 
-                    #import sys,pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
                     # ulozeni dodatecnych polozek objednavky    
                     for additionalItem in basket.additional_items:
                         orderAdditionalItem = OrderAdditionalItem(order = order,
@@ -394,8 +517,8 @@ class BasketView(TemplateView,JSONTemplateResponse):
                 return render_to_response("eshop/order_thanks.html",
                                           context,
                                           context_instance=RequestContext(request))
-            elif 'cancel' in request.POST:
-                return redirect("/eshop")
+        elif 'cancel' in request.POST:
+            return redirect("/eshop")
 
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
@@ -417,59 +540,77 @@ class BuyView(TemplateView, JSONTemplateResponse):
         context['mediatypes'] = MediaType.objects.all()
         return context
 
+
+def get_order_pdf(request,*args,**kwargs):
+    context = Context({
+        'PAYMENTS' : PAYMENT_WAYS,
+        'DELIVERY' : DELIVERY_WAYS,
+        'object' : Order.objects.get(pk=kwargs['pk'])
+    })
+    return render_to_pdf_response('eshop/invoice.html', 
+                                  pdfname='invoice-%s' % (context['object'].id,), 
+                                  context=context)
+
+def sendTransitionEmail(subject, text, contact_email, order):
+    from django.core.mail import EmailMultiAlternatives
+    context = Context({
+        'subject': subject,
+        'text': text,
+        'object':order, 
+        'order': order,
+        'PAYMENTS': PAYMENT_WAYS,
+        'DELIVERY': DELIVERY_WAYS
+    })
+    htmlCode = loader.get_template('eshop/transitionemail.html').render(context)
+    message = EmailMultiAlternatives(subject=subject,
+                                     from_email='bazar@bazar-cd.cz',
+                                     to=[contact_email,],
+                                     bcc=['stavel.jan@gmail.com',])
+    message.attach_alternative(text.encode('utf8'), 'text/plain')
+    message.attach_alternative(htmlCode.encode('utf8'),'text/html')
+    #print message.message().as_string()
+    return message.send(fail_silently=False)
     
 class OrderView(DetailView, JSONTemplateResponse):
     model = Order
     template_name = "eshop/order_detail.html"
-    page_includes = ['eshop/order_detail/detail.html','eshop/order_detail/js.js',]
-    slug_field = 'uuid'
-    slug_url_kwarg = 'uuid'
+    page_includes = ['eshop/order_detail/detail.html',
+                     'eshop/order_detail/js.js',
+                     'eshop/order_detail/actions.html',
+                     'eshop/order_detail/form.html'
+    ]
 
     def get_context_data(self,**kwargs):
         context = super(OrderView,self).get_context_data(**kwargs)
-        context['order_id'] = self.object.id
-        context['basket'] = Basket(self.request)
-        context['my_orders'] = Order.objects.filter(user=self.request.user)
-        return context
-    
-    render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)
-
-
-class OrderTransitionView(DetailView, JSONTemplateResponse):
-    model = Order
-    template_name = "eshop/order_transition.html"
-    page_includes = ['eshop/order_transition/form.html','eshop/order_transition/js.js',]
-    slug_field = 'uuid'
-    slug_url_kwarg = 'uuid'
-
-    def sendTransitionEmail(self, subject, text, contact_email, order):
-        from django.core.mail import EmailMultiAlternatives
-        context = Context({
-            'subject': subject,
-            'text': text,
-            'object':order, 
-            'order': order,
-            'PAYMENTS': PAYMENT_WAYS,
-            'DELIVERY': DELIVERY_WAYS
-        })
-        htmlCode = loader.get_template('eshop/transitionemail.html').render(context)
-        message = EmailMultiAlternatives(subject=subject,
-                                         from_email='bazar@bazar-cd.cz',
-                                         to=[contact_email,],
-                                         bcc=['stavel.jan@gmail.com',])
-        message.attach_alternative(text.encode('utf8'), 'text/plain')
-        message.attach_alternative(htmlCode.encode('utf8'),'text/html')
-        #print message.message().as_string()
-        return message.send(fail_silently=False)
-
-    def get_context_data(self,**kwargs):
-        context = super(OrderTransitionView,self).get_context_data(**kwargs)
         context['form'] = getattr(self,'form',OrderTransitionForm())
+        context['form'].fields['transition'].choices = [(0,'--- vyber si ---'),] + \
+                                                       map(lambda tr: (tr,_(tr)), self.object.available_transitions())
         return context
+
+    def get(self, request, *args, **kwargs):
+        if request.REQUEST.get('update_user_discount',None):
+            #import sys,pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
+            order = self.get_object()
+            for additionalItem in filter(lambda item: item.meta=="by-order:user-discount", order.orderadditionalitem_set.all()):
+                additionalItem.delete()
+                pass
+            if order.user and order.user.getUserDiscount():
+                price = (-1 * order.total_price * Decimal("0.01") * Decimal(order.user.getUserDiscount())).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+                additionalItem = request.user.getUserDiscountAsAdditionalItem(price)
+                orderAdditionalItem = OrderAdditionalItem(order = order,
+                                                          description = additionalItem.desc,
+                                                          meta = additionalItem.type,
+                                                          price = additionalItem.price)
+                orderAdditionalItem.save()
+            pass
+        return super(OrderView,self).get(request,*args,**kwargs)
 
     def post(self, request, *args, **kwargs):
         self.success_url_form = SuccessURLForm(self.request.POST)
         self.form = OrderTransitionForm(request.POST)
+        order = self.get_object()
+        self.form.fields['transition'].choices = [(0,'--- vyber si ---'),] + \
+                                                 map(lambda tr: (tr,_(tr)), order.available_transitions())
         if request.POST.get('submit',"") == u"načíst šablonu":
             def valueFactory(value):
                 def value_from_datadict(data, files, prefix):
@@ -486,26 +627,26 @@ class OrderTransitionView(DetailView, JSONTemplateResponse):
         else:
             if self.form.is_valid():
                 data = self.form.cleaned_data
-                if data['send']:
-                    order = self.get_object()
-                    self.sendTransitionEmail(data['subject'], 
-                                             data['message'],
-                                             order.contact_email, 
-                                             order)
+                if data['subject'] and data['transition']:
+                    sendTransitionEmail(data['subject'], 
+                                        data['message'],
+                                        order.contact_email, 
+                                        order)
                     messages.add_message(request, messages.INFO, 'Odeslal jsem email.')
                 
                 # transition pro objednavku
-                print 'process transition: ', kwargs['transitionName'], "\n"
-                order.processTransition(kwargs['transitionName'])
+                # print 'process transition: ', data['transition'], "\n"
+                order.processTransition(data['transition'])
                 order.save()
 
                 if self.success_url_form.is_valid() and self.success_url_form.cleaned_data['success_url']:
                     return redirect(self.success_url_form.cleaned_data['success_url'])
                 else:
                     return redirect("/eshop/order")
-        return super(OrderTransitionView,self).get(request, *args, **kwargs)
+        return super(OrderView,self).get(request, *args, **kwargs)
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)
+
 
 class EmailMessageView(BaseDetailView):
     model = EmailMessage

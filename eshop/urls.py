@@ -5,6 +5,7 @@ from cdbazar.eshop.views import *
 # Uncomment the next two lines to enable the admin:
 urlpatterns = patterns('',
                        url(r'^$',                  ArticleList.as_view()),
+                       url(r'^article/(?P<pk>\d+)/$',    ArticleDetail.as_view()),
                        url(r'^item/(?P<pk>\d+)/add-tradeaction/$', AddTradeActionView.as_view()),
                        url(r'^item/(?P<pk>\d+)/from-basket/$',     FromBasketView.as_view()),
                        url(r'^article/(?P<pk>\d+)/to-basket/$',    ToBasketView.as_view()),
@@ -13,7 +14,7 @@ urlpatterns = patterns('',
                        url(r'^basket/$',                           BasketView.as_view()),
                        url(r'^basket/update/$',                    BasketView.as_view()),
                        url(r'^order/(?P<pk>\d+)/$',                OrderView.as_view()),
+                       url(r'^order/(?P<pk>\d+)/pdf/$',            get_order_pdf),
                        url(r'^ajax/emailmessage/(?P<pk>\d+)/$',                EmailMessageView.as_view()),
-                       url(r'^order/(?P<pk>\d+)/transition/(?P<transitionName>.+)/$', OrderTransitionView.as_view()),
                        url(r'^order/$',              OrderList.as_view()),
 )

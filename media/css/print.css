@@ -1,0 +1,23 @@
+@media print {
+
+    @font-face {
+        font-family: DejaSans;
+        src: url(/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf);
+    }
+
+    @font-face {
+        font-family: code2000;
+        src: url(/opt/cdbazar/project/cdbazar/templates/eshop/font/CODE2000.TTF);
+    }
+
+   @page {
+       size: a4;
+       margin: 1cm;
+       -pdf-frame-border: 0;
+   }
+}
+
+body {
+	font-family: DejaSans;
+        padding:0em;
+}

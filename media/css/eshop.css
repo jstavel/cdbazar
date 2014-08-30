@@ -12,6 +12,9 @@ body {padding-top: 165px !important;}
 div.eshop-lists {background: #FFFFFF; padding:10px;}
 div.banners { padding-top: 12px }
 div.news-banner hr { margin: 6px; }
+.row-fluid > span.article-label {  color: gray;    }
+.row-fluid > span.article-field {  font-size:110%; }
+
 
 
 

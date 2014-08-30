@@ -33,10 +33,11 @@ urlpatterns = patterns('',
                        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.MEDIA_ROOT, }),
                        url(r'^accounts/profile', UserProfileView.as_view()),
                        url(r'^accounts/', include('registration.backends.default.urls')),
-                       url(r'^(?P<pk>\d+)/$',      DetailView.as_view(model=store.models.Article)),
-                       url(r'^(?P<pk>\d+)/edit/$', store.views.ArticleUpdateView.as_view(success_url="/store/article/")),
-                       url(r'^store/', include('cdbazar.store.urls')),
+                       #url(r'^(?P<pk>\d+)/$',      DetailView.as_view(model=store.models.Article)),
+                       #url(r'^(?P<pk>\d+)/edit/$', store.views.ArticleUpdateView.as_view(success_url="/store/article/")),
                        url(r'^eshop/', include('cdbazar.eshop.urls')),
+                       #url(r'^store/', include('cdbazar.store.urls')),
+
                        
                        # Uncomment the admin/doc line below to enable admin documentation:
                        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
