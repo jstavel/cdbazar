@@ -29,7 +29,7 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'django.core.context_processors.csrf',
     'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages'
+    'django.contrib.messages.context_processors.messages',
 )
 
 # Local time zone for this installation. Choices can be found here:
@@ -156,7 +156,7 @@ INSTALLED_APPS = (
     #'categories.editor',
     'django_extensions',
     'django_forms_bootstrap',
-    'registration',
+    #'registration',
     'inplaceeditform',    
     'inplaceeditform_extra_fields',
 )

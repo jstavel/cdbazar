@@ -71,9 +71,11 @@ class BuyoutToStoreForm(forms.Form):
     
     def save(self):
         article = Article.objects.get(id=self.cleaned_data['article_id'])
-        item = article.item_set.create(price = article.lastSold[0], 
+        item = article.item_set.create(price = self.cleaned_data['price'],
+                                       packnumber = self.cleaned_data['packnumber'],
                                        barcode=article.barcode, 
-                                       state = Item.state_at_stock,
+                                       state = Item.state_for_sale,
+                                       commentary=self.cleaned_data['commentary']
                                        )
 
 # to clean:
