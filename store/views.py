@@ -290,7 +290,8 @@ class BuyoutToStoreView(TemplateView):
         context['form2_message'] = self.form2_message
         context['barcode'] = self.barcode
         context['items'] = self.barcode and Item.objects.filter(barcode=self.barcode)
-        context['form'].legend=""
+        if context['form']:
+            context['form'].legend=""
         return context
 
     def post(self,request,*args,**kwargs):
@@ -341,7 +342,8 @@ class BuyoutToCleanView(TemplateView):
         context['form2_message'] = self.form2_message
         context['barcode'] = self.barcode
         context['items'] = self.barcode and Item.objects.filter(barcode=self.barcode)
-        context['form'].legend=""
+        if context['form']:
+            context['form'].legend=""
         return context
 
     def post(self,request,*args,**kwargs):
