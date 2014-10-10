@@ -104,8 +104,16 @@ def getUserDiscountAsAdditionalItem(user, price):
                            desc = u"věrnostní sleva",
                            type = "by-order:user-discount" )
 
+def numOfCancelledOrders(user):
+    return Order.objects.filter(user=user).filter(state=Order.state_rejected).count()
+
+def numOfPaidOrders(user):
+    return Order.objects.filter(user=user).exclude(state=Order.state_rejected).exclude(state=Order.state_waiting_for_payment).count()
+
 User.getUserDiscount = getUserDiscount
 User.getUserDiscountAsAdditionalItem = getUserDiscountAsAdditionalItem
+User.numOfCancelledOrders = numOfCancelledOrders
+User.numOfPaidOrders = numOfPaidOrders
 
 class NewUserAdmin(UserAdmin):
     inlines = (UserDiscountInline,)

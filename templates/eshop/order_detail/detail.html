@@ -33,8 +33,8 @@
                 <table class="user-info" style="">
                   <tbody>
                     <tr style=""><td colspan="2"><a href="/admin/auth/user/{{ order.user.id }}/?post_url=/eshop/order/{{ order.id }}/&post_url_arg=update_user_discount=yes">{{ order.user }}</a></td></tr>
-                    <tr><th>Storn. obj.</th><td align="right">0</td></tr>
-                    <tr><th>Zapl. obj.</th><td align="right">0</td></tr>
+                    <tr><th>Storn. obj.</th><td align="right">{{ order.user.numOfCancelledOrders }} </td></tr>
+                    <tr><th>Zapl. obj.</th><td align="right">{{ order.user.numOfPaidOrders }} </td></tr>
                     <tr><th>Věrn. sleva</th><td align="right" style="padding-left:1em">{{ order.user.getUserDiscount }}%</td></tr>
                   </tbody>
                 </table>

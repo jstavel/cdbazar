@@ -386,9 +386,26 @@ class BasketView(TemplateView,JSONTemplateResponse):
                      Decimal(request.user.getUserDiscount())) \
                 .quantize(Decimal('0'), rounding=ROUND_HALF_UP)
             basket.addAdditionalItem( request.user.getUserDiscountAsAdditionalItem(price) )
+            self.fillByOlderOrder(request.user)
         return self.render_to_response(context)
-            
+        
+    def fillByOlderOrder(self, user):
+        olderOrders = Order.objects.filter(user=user).order_by('id')
+        olderOrder = olderOrders and olderOrders[0]
+        if olderOrder:
+            print "naplneni daty z predeslych objednavek"
+            keys = [aa.name for aa in olderOrder._meta.fields]
+            initial = dict([(key,getattr(olderOrder,key)) for key in keys])
+            self.order_invoicing_form = OrderInvoicingForm(initial=initial)
+            self.order_contact_form = OrderContactForm(initial=initial)
+            self.order_delivery_form = OrderDeliveryForm(initial=initial)
+            self.order_payment_form = OrderPaymentForm(initial=initial)
+            self.order_delivery_way_form = OrderDeliveryWayForm(initial=initial)
+            self.order_payment_way_form = OrderPaymentWayForm(initial=initial)
+        pass
+
     def post(self, request, *args, **kwargs):
+        print "post"
         self.order_login_form = AuthenticationForm(data=request.POST)
         if 'login' in request.POST:
             if self.order_login_form.is_valid():
@@ -396,18 +413,7 @@ class BasketView(TemplateView,JSONTemplateResponse):
                 login(request, user)
                 # nacteni dat z minule objednavky a predvyplneni
                 # default hodnot
-                olderOrders = Order.objects.filter(user=user).order_by('id')
-                olderOrder = olderOrders and olderOrders[0]
-                if olderOrder:
-                    print "naplneni daty z predeslych objednavek"
-                    keys = [aa.name for aa in olderOrder._meta.fields]
-                    initial = dict([(key,getattr(olderOrder,key)) for key in keys])
-                    self.order_invoicing_form = OrderInvoicingForm(initial=initial)
-                    self.order_contact_form = OrderContactForm(initial=initial)
-                    self.order_delivery_form = OrderDeliveryForm(initial=initial)
-                    self.order_payment_form = OrderPaymentForm(initial=initial)
-                    self.order_delivery_way_form = OrderDeliveryWayForm(initial=initial)
-                    self.order_payment_way_form = OrderPaymentWayForm(initial=initial)
+                self.fillByOlderOrder(user)
         else:
             self.order_delivery_way_form = OrderDeliveryWayForm(request.POST)
             self.order_payment_way_form = OrderPaymentWayForm(request.POST)
@@ -488,7 +494,7 @@ class BasketView(TemplateView,JSONTemplateResponse):
                 # ulozeni objednavky
                 with transaction.commit_on_success():
                     order = self.orderform.save()
-                    user = self.userform.save()
+                    user = (request.user.is_authenticated() and request.user) or self.userform.save()
                     # ulozeni uzivatele do objednavky, pokud existuje
                     if user:
                         order.user = user

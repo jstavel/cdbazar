@@ -36,7 +36,7 @@ urlpatterns = patterns('',
                        #url(r'^(?P<pk>\d+)/$',      DetailView.as_view(model=store.models.Article)),
                        #url(r'^(?P<pk>\d+)/edit/$', store.views.ArticleUpdateView.as_view(success_url="/store/article/")),
                        url(r'^eshop/', include('cdbazar.eshop.urls')),
-                       #url(r'^store/', include('cdbazar.store.urls')),
+                       url(r'^store/', include('cdbazar.store.urls')),
 
                        
                        # Uncomment the admin/doc line below to enable admin documentation:
