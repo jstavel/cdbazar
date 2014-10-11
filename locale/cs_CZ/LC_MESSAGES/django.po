@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-03 22:00+0200\n"
-"PO-Revision-Date: 2014-04-03 22:03+0200\n"
+"POT-Creation-Date: 2014-10-11 19:44+0200\n"
+"PO-Revision-Date: 2014-10-11 19:59+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,26 +17,676 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: accounts/forms.py:7 eshop/forms.py:136
+msgid "Password"
+msgstr "Heslo"
+
+#: accounts/forms.py:10 eshop/forms.py:139
+msgid "Password confirmation"
+msgstr "Potvrzení hesla"
+
+#: accounts/forms.py:13 eshop/forms.py:142
+msgid "Enter the same password as above, for verification."
+msgstr "Zadejte to samé heslo, pro jistotu"
+
+#: accounts/models.py:12 accounts/models.py:26 eshop/models.py:107
+#: eshop/models.py:124
+msgid "Firm"
+msgstr "Firma"
+
+#: accounts/models.py:13 accounts/models.py:27 eshop/models.py:108
+#: eshop/models.py:125 store/models.py:26
+msgid "Name"
+msgstr "Jméno"
+
+#: accounts/models.py:14 accounts/models.py:28 eshop/models.py:109
+#: eshop/models.py:126
+msgid "Surname"
+msgstr "Příjmení"
+
+#: accounts/models.py:15 accounts/models.py:29 eshop/models.py:110
+#: eshop/models.py:127
+msgid "Street"
+msgstr "Ulice"
+
+#: accounts/models.py:16 accounts/models.py:30 eshop/models.py:111
+#: eshop/models.py:128
+msgid "ZIP code"
+msgstr "PSČ"
+
+#: accounts/models.py:17 accounts/models.py:31 eshop/models.py:112
+#: eshop/models.py:129
+msgid "City"
+msgstr "Město"
+
+#: accounts/models.py:18 accounts/models.py:32 eshop/models.py:113
+#: eshop/models.py:130
+msgid "Country"
+msgstr "Země"
+
+#: accounts/models.py:19 eshop/models.py:114
+msgid "ICO"
+msgstr "IČO"
+
+#: accounts/models.py:20 eshop/models.py:115
+msgid "VAT number"
+msgstr "DIČ"
+
+#: accounts/models.py:22 eshop/models.py:117
+msgid "Email"
+msgstr "Email"
+
+#: accounts/models.py:23 eshop/models.py:118
+msgid "Phone number"
+msgstr "Tel. číslo"
+
+#: accounts/models.py:25 eshop/models.py:121 eshop/models.py:231
+msgid "Delivery way"
+msgstr "Způsob doručení"
+
+#: accounts/models.py:34 eshop/models.py:132 eshop/models.py:254
+msgid "Payment way"
+msgstr "Způsob placení"
+
+#: eshop/forms.py:120
+msgid "A user with that username already exists."
+msgstr "Uživatel s takovýmto jménem už existuje."
+
+#: eshop/forms.py:121
+msgid "The two password fields didn't match."
+msgstr "Hesla se neshodují."
+
+#: eshop/forms.py:122
+msgid "Username is required"
+msgstr "Uživatelské jméno je povinné"
+
+#: eshop/forms.py:124
+msgid "With registration"
+msgstr "Chci se zaregistrovat"
+
+#: eshop/forms.py:128
+#, fuzzy
+msgid "Username"
+msgstr "Příjmení"
+
+#: eshop/forms.py:131
+msgid ""
+"Required. max 30 characters or fewer. Letters, digits and @/./+/-/_ only."
+msgstr "Povinné. max 30 znaků. Písmena, číslice a @/./+/-/_."
+
+#: eshop/forms.py:134
+msgid "This value may contain only letters, numbers and @/./+/-/_ characters."
+msgstr "Můžete použít pouze písmena, číslice a znaky @/./+/-/_"
+
+#: eshop/models.py:86
 msgid "Czech Post"
 msgstr "Česká pošta"
 
+#: eshop/models.py:87
+msgid "DHL"
+msgstr ""
+
+#: eshop/models.py:88
 msgid "Take at store"
 msgstr "Vyzvednout v obchodě"
 
+#: eshop/models.py:92
 msgid "Pay at delivery"
 msgstr "Dobírkou"
 
-msgid "Pay at store"
-msgstr "Zaplatit v obchodě"
-
+#: eshop/models.py:93
 msgid "By bank account"
 msgstr "Bankovním převodem"
 
+#: eshop/models.py:94
+msgid "Pay at store"
+msgstr "Zaplatit v obchodě"
+
+#: eshop/models.py:123
+msgid "Delivery address is the same as invoicing address"
+msgstr "Doručovací adresa je stejná jako fakturační adresa"
+
+#: eshop/models.py:134 eshop/models.py:280 eshop/models.py:286
+#: store/models.py:70
+msgid "To store date of an item"
+msgstr "Datum kdy šlo zboží do prodeje"
+
+#: eshop/models.py:136 store/models.py:168
+msgid "State"
+msgstr "Stav"
+
+#: eshop/models.py:202 store/models.py:27
+msgid "Description"
+msgstr "Popis"
+
+#: eshop/models.py:203
+msgid "Meta info"
+msgstr ""
+
+#: eshop/models.py:204 store/forms.py:56 store/forms.py:91 store/forms.py:115
+#: store/models.py:167 templates/store/item_list/list.html:15
+msgid "Price"
+msgstr "Cena"
+
+#: eshop/models.py:218
+msgid "Discount [%]"
+msgstr "Sleva"
+
+#: eshop/models.py:232 eshop/models.py:255
+msgid "Price [CZK]"
+msgstr "Cena [CZK]"
+
+#: eshop/models.py:278 eshop/models.py:284 eshop/models.py:291
+msgid "Text"
+msgstr ""
+
+#: eshop/models.py:329
+msgid "User discount [%]"
+msgstr "Uživatelské sleva [%]"
+
+#: store/forms.py:52
+msgid "Choose an item to store"
+msgstr "Vyberte zboží ve skladě"
+
+#: store/forms.py:54 store/forms.py:89 templates/aa.html:14
+#: templates/base.orig.html:58 templates/eshop/tradeaction_list/list.html:14
+#: templates/store/item_list.html:3 templates/store/item_list.html.py:22
+#: templates/store/item_form/form.html:3
+#: templates/store/item_form/form_body.html:2
+#: templates/store/item_list/list.html:22
+msgid "Goods"
+msgstr "Zboží"
+
+#: store/forms.py:55 store/forms.py:90
+#, fuzzy
+msgid "Packnumber"
+msgstr "Tel. číslo"
+
+#: store/forms.py:57 store/forms.py:92 store/forms.py:116 store/models.py:164
+#: templates/store/item_list/list.html:14
+msgid "Commentary"
+msgstr "Komentář"
+
+#: store/forms.py:69 store/forms.py:104
+msgid "Item with given packnumber is already used."
+msgstr "Číslo obálky už existuje!"
+
+#: store/forms.py:87
+msgid "Choose an item to clean"
+msgstr "Vyberte zboží na číštění"
+
+#: store/forms.py:114 store/models.py:166
+#, fuzzy
+msgid "Pack number"
+msgstr "Tel. číslo"
+
+#: store/forms.py:129
+msgid "Item with given packnumber is already in the store."
+msgstr "Ve skladě je už číslo obálky použito."
+
+#: store/models.py:38 templates/store/picture_detail.html:2
+msgid "picture"
+msgstr "Obrázek"
+
+#: store/models.py:39
+msgid "Pictures"
+msgstr "Obrázky"
+
+#: store/models.py:55 templates/store/item_list/list.html:6
+msgid "Title"
+msgstr "Titulek"
+
+#: store/models.py:56 templates/store/item_list/list.html:5
+msgid "Interpret"
+msgstr ""
+
+#: store/models.py:57 templates/store/item_list/list.html:7
+msgid "Year"
+msgstr "Rok"
+
+#: store/models.py:58
+msgid "Publisher"
+msgstr "Producent"
+
+#: store/models.py:60
+msgid "Specification"
+msgstr "Popis"
+
+#: store/models.py:61
+msgid "Tracklist"
+msgstr "Obsah"
+
+#: store/models.py:62
+msgid "Original price"
+msgstr "Původní cena"
+
+#: store/models.py:64
+msgid "Picture source"
+msgstr "Zdroj obrázku"
+
+#: store/models.py:67
+msgid "For E-Shop?"
+msgstr "Na eShop?"
+
+#: store/models.py:68
+msgid "Has items for sale in an eshop?"
+msgstr "Má v eshopu položky na prodej?"
+
+#: store/models.py:71 store/models.py:72
+msgid "Has discount?"
+msgstr "Má slevu?"
+
+#: store/models.py:165 templates/eshop/tradeaction_list/list.html:6
+#: templates/store/item_list/list.html:10
+msgid "Barcode"
+msgstr "Čárový kód"
+
+#: store/models.py:169
+msgid "Last modified"
+msgstr "Poslední úprava"
+
+#: store/models.py:170
+msgid "To store date"
+msgstr "Datum na sklad"
+
+#: store/models.py:171
+msgid "Show at home page"
+msgstr "Ukázat na hlavní stánce"
+
+#: store/models.py:201 templates/eshop/tradeaction_list/list.html:5
+msgid "Item"
+msgstr "Položka"
+
+#: store/models.py:202
+msgid "Items"
+msgstr "Položky"
+
+#: templates/aa.html:4 templates/aa.html.py:6 templates/base.orig.html:49
+#: templates/base.orig.html.py:53 templates/base.orig.html:54
+msgid "Buyout"
+msgstr "Výkup"
+
+#: templates/aa.html:8
+msgid "At stock"
+msgstr "Na sklad"
+
+#: templates/aa.html:9
+#, fuzzy
+msgid "To store"
+msgstr "Vyzvednout v obchodě"
+
+#: templates/aa.html:10
+msgid "To clean"
+msgstr "Vyčistit"
+
+#: templates/aa.html:13 templates/base.orig.html:57
+msgid "Articles"
+msgstr "Zboží"
+
+#: templates/aa.html:15 templates/eshop/tradeaction_list.html:3
+#: templates/eshop/tradeaction_list.html:22
+msgid "Trade Actions"
+msgstr "Akce"
+
+#: templates/aa.html:17 templates/eshop/article_detail.html:14
+#: templates/eshop/article_list.html:14
+msgid "E-Shop"
+msgstr ""
+
+#: templates/base.html:47
+msgid "Search"
+msgstr "Hledání"
+
+#: templates/paginator.html:4
+msgid "previous"
+msgstr "zpět"
+
+#: templates/paginator.html:8
+msgid "Page"
+msgstr "Strana"
+
+#: templates/paginator.html:12
+msgid "next"
+msgstr "další"
+
+#: templates/accounts/my_profile_choose.html:3
+msgid "Choose some section"
+msgstr "Vyberte sekci"
+
+#: templates/accounts/profile.html:5 templates/registration/activate.html:4
+#: templates/registration/activate.html:6
+#: templates/registration/activation_complete.html:4
+#: templates/registration/login.html:5
+#: templates/registration/registration_complete.html:4
+#: templates/registration/registration_form.html:5
+#: templates/registration/registration_form.html:7
+#, fuzzy
+msgid "Registration"
+msgstr "Chci se zaregistrovat"
+
+#: templates/accounts/profile.html:12
+msgid "User"
+msgstr "Uživatel"
+
+#: templates/accounts/profile.html:13
+#: templates/eshop/basket_review/order_links.html:4
+#, fuzzy
+msgid "Invoicing Address"
+msgstr "Faktura"
+
+#: templates/accounts/profile.html:14
+#, fuzzy
+msgid "Delivery Address"
+msgstr "Doručení"
+
+#: templates/accounts/profile.html:15
+#: templates/eshop/basket_review/order_links.html:6
+msgid "Payment"
+msgstr "Placení"
+
+#: templates/accounts/profile.html:31
+#: templates/eshop/article_list/list-by-abc.html:59
+#: templates/eshop/article_list/list-by-cheaper.html:59
+#: templates/eshop/article_list/list.html:56
+#: templates/eshop/basket_review/order.html:47
+#: templates/eshop/basket_review/order.html:79
+msgid "Cancel"
+msgstr "Pryč odtud"
+
+#: templates/accounts/profile.html:32 templates/registration/login.html:14
+#: templates/registration/registration_form.html:15
+#, fuzzy
+msgid "Submit"
+msgstr "Potvrdit odmítnutí"
+
+#: templates/accounts/profile_choose.html:3
+#: templates/accounts/profile_choose.html:5
+msgid "My Profile"
+msgstr "Můj profil"
+
+#: templates/accounts/profile_choose.html:4
+msgid "My Orders"
+msgstr "Mé objednávky"
+
+#: templates/eshop/article_detail.html:3
+msgid "Article"
+msgstr "Artikl"
+
+#: templates/eshop/article_list.html:3 templates/store/article_list.html:3
+#: templates/store/article_list.html:34
+msgid "Article List"
+msgstr "Přehled artiklů"
+
+#: templates/eshop/basket_review.html:10
+#: templates/eshop/basket_review/review.html:2
+#: templates/store/basket_review.html:10
+msgid "Basket Review"
+msgstr "Co máme v košíku?"
+
+#: templates/eshop/basket_review.html:12
+msgid "Order of Items"
+msgstr "Vystavíme objednávku"
+
+#: templates/eshop/emailmessage_detail.html:3
+msgid "Email Message"
+msgstr "Zpráva v emailu"
+
+#: templates/eshop/order_detail.html:3 templates/eshop/order_transition.html:3
+msgid "Order Detail"
+msgstr "Detail objednávky"
+
+#: templates/eshop/order_thanks.html:5
+msgid "Thank you for your order"
+msgstr "Díky za objednávku!"
+
+#: templates/eshop/order_thanks.html:18
+#: templates/store/mediatype_choose.html:3
+msgid "Choose media type"
+msgstr "Vyberte typ média"
+
+#: templates/eshop/tradeaction_add.html:3
+#: templates/eshop/tradeaction_form.html:3
+#: templates/eshop/tradeaction_add/form.html:6
+#: templates/eshop/tradeaction_form/form.html:2
+#: templates/store/item_list/list.html:37
+#: templates/store/item_list/list.html:48
+msgid "Trade Action"
+msgstr "Akce"
+
+#: templates/eshop/article_detail/detail.html:51
+#: templates/store/article_detail.html:56
+#: templates/store/article_list/list.html:56
+#: templates/store/article_list/list.html:67
+msgid "specification"
+msgstr "specifikace"
+
+#: templates/eshop/article_detail/detail.html:57
+#: templates/store/article_detail.html:60
+#: templates/store/article_list/list.html:60
+#: templates/store/article_list/list.html:71
+msgid "tracklist"
+msgstr "obsah"
+
+#: templates/eshop/article_list/list-by-abc.html:61
+#: templates/eshop/article_list/list-by-cheaper.html:61
+#: templates/eshop/article_list/list.html:58
+#, fuzzy
+msgid "Submit reservation"
+msgstr "Potvrdit odmítnutí"
+
+#: templates/eshop/basket/list.html:2 templates/store/basket/list.html:2
+#: templates/store/basket_review/list.html:2
+#, fuzzy
+msgid "Basket"
+msgstr "Co máme v košíku?"
+
+#: templates/eshop/basket/list.html:28 templates/store/basket/list.html:20
+msgid "review"
+msgstr "přehled"
+
+#: templates/eshop/basket/list.html:29 templates/store/basket/list.html:21
+msgid "buy"
+msgstr "koupit"
+
+#: templates/eshop/basket/list.html:33
+#: templates/eshop/basket_review/review.html:37
+#: templates/eshop/basket_review/summary.html:5
+#: templates/store/basket/list.html:25 templates/store/basket/summary.html:5
+#: templates/store/basket_review/list.html:24
+msgid "No item in basket"
+msgstr "Prázdný košík"
+
+#: templates/eshop/basket_review/order.html:48
+#: templates/eshop/basket_review/order.html:80
+#, fuzzy
+msgid "Submit Order"
+msgstr "Potvrdit odmítnutí"
+
+#: templates/eshop/basket_review/order_links.html:3
+#, fuzzy
+msgid "Order Form"
+msgstr "Vystavíme objednávku"
+
+#: templates/eshop/basket_review/order_links.html:5
+#, fuzzy
+msgid "Deliverance"
+msgstr "Doručení"
+
+#: templates/eshop/basket_review/order_links.html:7
+msgid "Contact"
+msgstr "Kontakt"
+
+#: templates/eshop/basket_review/order_summary.html:3
+#, fuzzy
+msgid "Order Review"
+msgstr "Co máme v košíku?"
+
+#: templates/eshop/basket_review/order_summary.html:4
+msgid "Summary"
+msgstr "Souhrn"
+
+#: templates/eshop/basket_review/review.html:33
+#: templates/registration/login.html:13
+#: templates/registration/registration_form.html:14
+msgid "Back to Eshop"
+msgstr "Zpátky nakupovat"
+
+#: templates/eshop/basket_review/summary.html:3
+#: templates/store/basket/summary.html:3
+msgid "you have in the basket "
+msgstr "v košíku "
+
+#: templates/eshop/basket_review/summary.html:3
+#: templates/store/basket/summary.html:3
+msgid "items for "
+msgstr ""
+
+#: templates/eshop/order_detail/actions.html:4
+#: templates/eshop/tradeaction_list/list.html:22
+#: templates/store/item_list/list.html:43
+msgid "Action"
+msgstr "Akce"
+
+#: templates/eshop/tradeaction_list/list.html:7
+#: templates/store/item_list/list.html:11
+#, fuzzy
+msgid "Pack Number"
+msgstr "Tel. číslo"
+
+#: templates/eshop/tradeaction_list/list.html:8
+#, python-format
+msgid "Discount [%%]"
+msgstr "Sleva [%%]"
+
+#: templates/eshop/tradeaction_list/list.html:27
+msgid "update"
+msgstr ""
+
+#: templates/eshop/tradeaction_list/list.html:31
+msgid "delete"
+msgstr "smazat"
+
+#: templates/registration/activation_complete.html:6
+#: templates/registration/registration_complete.html:6
+msgid "Registration is completed"
+msgstr "Registrace je hotová"
+
+#: templates/registration/login.html:7
+msgid "Login"
+msgstr ""
+
+#: templates/store/article_detail.html:2
+#: templates/store/article_form/form.html:2
+#: templates/store/article_list/list.html:3
+msgid "article"
+msgstr "artikl"
+
+#: templates/store/article_detail.html:7
+#: templates/store/article_list/list.html:8
+#: templates/store/item_list/list.html:52
+#, fuzzy
+msgid "edit"
+msgstr "Vyexpedováno"
+
+#: templates/store/article_detail.html:9 templates/store/picture_detail.html:3
+#: templates/store/article_list/list.html:11
+msgid "detail"
+msgstr ""
+
+#: templates/store/article_detail.html:14
+#: templates/store/article_list/list.html:16
+msgid "interpret"
+msgstr ""
+
+#: templates/store/article_detail.html:18
+#: templates/store/article_list/list.html:20
+msgid "title"
+msgstr "titulek"
+
+#: templates/store/article_detail.html:22
+#: templates/store/article_list/list.html:24
+msgid "year"
+msgstr "rok"
+
+#: templates/store/article_detail.html:26
+#: templates/store/article_list/list.html:28
+msgid "publisher"
+msgstr "producent"
+
+#: templates/store/article_detail.html:30
+#: templates/store/article_list/list.html:32
+msgid "media type"
+msgstr "typ média"
+
+#: templates/store/article_detail.html:34
+#: templates/store/article_list/list.html:36
+msgid "barcode"
+msgstr "čárový kód"
+
+#: templates/store/article_detail.html:38
+#: templates/store/article_list/list.html:40
+#, fuzzy
+msgid "packnumber"
+msgstr "DIČ"
+
+#: templates/store/article_detail.html:42
+#: templates/store/article_list/list.html:44
+msgid "price"
+msgstr "cena"
+
+#: templates/store/article_detail.html:46
+#: templates/store/article_list/list.html:48
+msgid "last sold price"
+msgstr "poslední prodejní cena"
+
+#: templates/store/picture_detail.html:6
+msgid "path"
+msgstr "cesta"
+
+#: templates/store/picture_list.html:3
+msgid "Picture List"
+msgstr ""
+
+#: templates/store/sell.html:5
+msgid "The goods are leaving, the money are comming."
+msgstr "Zboží odchází, peníze přichází."
+
+#: templates/store/article_list/list.html:9
+msgid "related goods"
+msgstr "související zboží"
+
+#: templates/store/basket_review/list.html:20
+msgid "Sell"
+msgstr "Prodat"
+
+#: templates/store/basket_review/list.html:21
+#, fuzzy
+msgid "Back to store"
+msgstr "Zpátky nakupovat"
+
+#: templates/store/buyout/form.html:17
+msgid "Choose form"
+msgstr ""
+
+#: templates/store/item_list/list.html:8
+#: templates/store/mediatype_form/form.html:3
+msgid "Media Type"
+msgstr ""
+
+#: templates/store/item_list/list.html:12
+msgid "To Store Date"
+msgstr ""
+
+#: templates/store/item_list/list.html:13
+msgid "At home page"
+msgstr "Na hlavní stránku"
+
+#: templates/store/item_list/list.html:27
+msgid "sell"
+msgstr ""
+
 msgid "Taken over"
 msgstr "Převzato"
-
-msgid "Expedited"
-msgstr "Vyexpedováno"
 
 msgid "Rejected"
 msgstr "Odmítnuto"
@@ -56,117 +706,8 @@ msgstr "Zaplaceno"
 msgid "Submit takeover"
 msgstr "Potvrdit převzetí"
 
-msgid "Submit reject"
-msgstr "Potvrdit odmítnutí"
-
 msgid "Waiting for payment"
 msgstr "Čeká na zaplacení"
 
-#: cdbazar/accounts/forms.py:7
-msgid "Password"
-msgstr "Heslo"
-
-#: cdbazar/accounts/forms.py:10
-msgid "Password confirmation"
-msgstr "Potvrzení hesla"
-
-#: cdbazar/accounts/forms.py:13
-msgid "Enter the same password as above, for verification."
-msgstr "Zadejte to samé heslo, pro jistotu"
-
-#: cdbazar/accounts/models.py:12 cdbazar/accounts/models.py:26
-msgid "Firm"
-msgstr "Firma"
-
-#: cdbazar/accounts/models.py:13 cdbazar/accounts/models.py:27
-msgid "Name"
-msgstr "Jméno"
-
-#: cdbazar/accounts/models.py:14 cdbazar/accounts/models.py:28
-msgid "Surname"
-msgstr "Příjmení"
-
-#: cdbazar/accounts/models.py:15 cdbazar/accounts/models.py:29
-msgid "Street"
-msgstr "Ulice"
-
-#: cdbazar/accounts/models.py:16 cdbazar/accounts/models.py:30
-msgid "ZIP code"
-msgstr "PSČ"
-
-#: cdbazar/accounts/models.py:17 cdbazar/accounts/models.py:31
-msgid "City"
-msgstr "Město"
-
-#: cdbazar/accounts/models.py:18 cdbazar/accounts/models.py:32
-msgid "Country"
-msgstr "Země"
-
-#: cdbazar/accounts/models.py:19
-msgid "ICO"
-msgstr "IČO"
-
-#: cdbazar/accounts/models.py:20
-msgid "VAT number"
-msgstr "DIČ"
-
-#: cdbazar/accounts/models.py:22
-msgid "Email"
-msgstr "Email"
-
-#: cdbazar/accounts/models.py:23
-msgid "Phone number"
-msgstr "Tel. číslo"
-
-#: cdbazar/accounts/models.py:25
-msgid "Delivery way"
-msgstr "Způsob doručení"
-
-#: cdbazar/accounts/models.py:34
-msgid "Payment way"
-msgstr "Způsob placení"
-
-msgid "Delivery"
-msgstr "Doručení"
-
-msgid "Back to Eshop"
-msgstr "Zpátky nakupovat"
-
 msgid "Review Order"
 msgstr "Kontrola objednávky"
-
-msgid "Payment"
-msgstr "Placení"
-
-msgid "Cancel"
-msgstr "Pryč odtud"
-
-msgid "Invoicing"
-msgstr "Faktura"
-
-msgid "Page"
-msgstr "Strana"
-
-msgid "next"
-msgstr "další"
-
-msgid "previous"
-msgstr "zpět"
-
-msgid "Search"
-msgstr "Hledání"
-
-msgid "With registration"
-msgstr "Chci se zaregistrovat"
-
-msgid "Required. max 30 characters or fewer. Letters, digits and @/./+/-/_ only."
-msgstr "Povinné. max 30 znaků. Písmena, číslice a @/./+/-/_."
-
-msgid "Delivery address is the same as invoicing address"
-msgstr "Doručovací adresa je stejná jako fakturační adresa"
-
-msgid "Basket Review"
-msgstr "Co máme v košíku?"
-
-msgid "Order of Items"
-msgstr "Vystavíme objednávku"
