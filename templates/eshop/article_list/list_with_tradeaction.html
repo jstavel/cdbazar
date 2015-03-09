@@ -1,7 +1,7 @@
 {% load i18n thumbnail %}
 <ul class="thumbnails">
 <div class="row-fluid">
-{% for article in articles_with_tradeaction %}
+{% for article in object_list %}
 <li class="span2">
   <div class="thumbnail">
     {% thumbnail article.picture "310x310" as im %}

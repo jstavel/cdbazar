@@ -1,5 +1,5 @@
 {% load i18n %}
-<ul class="nav nav-list">
+<ul class="nav nav-list mediatype-list">
   <li class="nav-header">Vyberte si</li>
   <li {% if mediatype == 'all' %} class="active" {% endif %}><a href="?mediaType=all">vše</a></li>
   {% for type in request.mediaTypes %}
