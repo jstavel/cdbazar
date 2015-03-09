@@ -206,10 +206,120 @@ class ArticleList(ListView,JSONTemplateResponse):
     paginate_by = 30
 
     page_includes = ['paginator.html',
+                     'eshop/mediatype_choose.html',
+                     'eshop/article_list/list.html',
+                     'eshop/article_list/js.js',
+                     'eshop/article_list/order-by.html',
+                     ]
+
+    def get_sort(self):
+        pagestate = getattr(self,'pagestate_form',None)
+        if pagestate and pagestate.is_valid():
+            return pagestate.cleaned_data['sort']
+        return self.request.GET.get('sort',None)
+        
+    def get_search(self):
+        pagestate = getattr(self,'pagestate_form',None)
+        if pagestate and pagestate.is_valid():
+            return pagestate.cleaned_data['query']
+        return self.request.GET.get('search',None)
+
+    def get_mediatype(self):
+        pagestate = getattr(self,'pagestate_form',None)
+        if pagestate and pagestate.is_valid():
+            return pagestate.cleaned_data['mediatype']
+        return self.request.GET.get('mediaType',None)
+
+    def get_page(self):
+        pagestate = getattr(self,'pagestate_form',None)
+        if pagestate and pagestate.is_valid():
+            return pagestate.cleaned_data['page']
+        return self.request.GET.get('page',1)
+        
+    def get_order_by(self):
+        sort = self.get_sort()
+        print "sort: ", sort
+        values = {
+            'by-newest' : '-id',
+            'by-cheaper': 'origPrice',
+            'by-abc': 'title'
+        }
+        return values.get(sort,'-id')
+
+    def get_queryset(self):
+        qs = super(ArticleList,self).get_queryset().filter(eshop=True)
+        search = self.get_search()
+        if search:
+            qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search))
+        mediaType__name = self.get_mediatype()
+        if mediaType__name and mediaType__name != 'all':
+            qs = qs.filter(mediaType__name = mediaType__name)
+        return qs.order_by(self.get_order_by()).select_related()
+
+    def get_template_names(self):
+        return ['eshop/article_list.html',]
+
+    def get_context_data(self,**kwargs):
+        context = super(ArticleList,self).get_context_data(**kwargs)
+        context['pagestate_form'] = getattr(self, 'pagestate_form',
+                                            ArticleListPageState(initial={
+                                                'banner': 'tradeaction',
+                                                'view': 'articles',
+                                                'sort': 'by-newest',
+                                                'mediatype': 'all',
+                                                'page': 1,
+                                            },))
+        context['mediatype'] = self.get_mediatype()
+        print 'mediatype: ', context['mediatype']
+        return context
+
+    def post(self, request, *args, **kwargs):
+        print request.POST
+        self.pagestate_form = ArticleListPageState(request.POST)
+        self.kwargs['page'] = self.get_page()
+        print self.kwargs
+        self.object_list = self.get_queryset()
+        kwargs.update({'object_list': self.object_list})
+        return self.render_to_response(self.get_context_data(**kwargs))
+
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
+
+class ArticleListShortly(ArticleList):
+    page_includes = ['paginator.html',
+                     'eshop/mediatype_choose.html',
+                     'eshop/article_list/list_shortly.html',
+                     'eshop/article_list/js-shortly.js',
+                     'eshop/article_list/order-by.html',
+                     ]
+    pass
+
+class ArticleListWithTradeAction(ArticleList):
+    page_includes = ['paginator.html',
+                     'eshop/mediatype_choose.html',
+                     'eshop/article_list/list_with_tradeaction.html',
+                     'eshop/article_list/js-tradeaction.js',
+                     'eshop/article_list/order-by.html',
+                     ]
+
+    def get_queryset(self):
+        qs = super(ArticleListWithTradeAction,self).get_queryset().filter(discount=True)
+        search = self.get_search()
+        if search:
+            qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search))
+        mediaType__name = self.get_mediatype()
+        if mediaType__name and mediaType__name != 'all':
+            qs = qs.filter(mediaType__name = mediaType__name)
+        return qs.order_by(self.get_order_by()).select_related()
+
+class EShopList(ListView,JSONTemplateResponse):
+    model=Article
+    paginate_by = 30
+
+    page_includes = ['paginator.html',
                      'eshop/article_list/list.html',
                      'eshop/article_list/list-by-cheaper.html',
                      'eshop/article_list/list_shortly.html',
-                     'eshop/article_list/js.js',
+                     'eshop/article_list/eshop.js',
                      'eshop/article_list/tradeaction_banner.html',
                      'eshop/article_list/tradeaction_banner.js',
                      'eshop/article_list/new_articles_banner.html',
@@ -220,7 +330,7 @@ class ArticleList(ListView,JSONTemplateResponse):
         return ['eshop/article_list.html',]
 
     def get_queryset(self):
-        qs = super(ArticleList,self).get_queryset().filter(eshop=True)
+        qs = super(EShopList,self).get_queryset().filter(eshop=True)
         search = self.request.GET.get('search',None)
         if search:
             qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search))
@@ -249,9 +359,45 @@ class ArticleList(ListView,JSONTemplateResponse):
             qs = qs.filter(mediaType__name = mediaType__name)
         return qs
         
+    def get_context_data_for_action_page(self,**kwargs):
+        self.object_list = self.get_queryset()
+        kwargs.update({'object_list': self.object_list})
+        context = super(EShopList,self).get_context_data(**kwargs)
+        context['pagestate_form'] = getattr(self, 'pagestate_form',
+                                            ArticleListPageState(initial={
+                                                'banner': 'tradeaction',
+                                                'view': 'articles',
+                                                'sort': 'by-newest',
+                                                'action': 'page',
+                                                'page': 1 },))
+        pstate = self.pagestate_form.cleaned_data
+        if pstate['view'] == 'articles':
+            pass
+            
+        return context
+
+    def page_includes_for_action_page(self):
+        page_includes = ['paginator.html',
+                         'eshop/article_list/list.html',
+                         'eshop/article_list/list-by-cheaper.html',
+                         'eshop/article_list/list_shortly.html',
+                         'eshop/article_list/js.js',
+                         'eshop/article_list/tradeaction_banner.html',
+                         'eshop/article_list/tradeaction_banner.js',
+                         'eshop/article_list/new_articles_banner.html',
+                         'eshop/article_list/new_articles_banner.js',
+                     ]
+        return page_includes
+
     def get_context_data(self,**kwargs):
-        context = super(ArticleList,self).get_context_data(**kwargs)
+        context = super(EShopList,self).get_context_data(**kwargs)
         basket = Basket(self.request)
+        context['pagestate_form'] = getattr(self, 'pagestate_form',
+                                            ArticleListPageState(initial={
+                                                'banner': 'tradeaction',
+                                                'view': 'articles',
+                                                'sort': 'by-newest',
+                                                'page': 1 },))
         context['object_list_by_cheaper'] = context.get('object_list',[])
         context['articles_with_tradeaction'] = self.get_queryset_for_articles_with_tradeaction()
         context['news_list'] = News.objects.all().order_by('created')[:5]
@@ -261,16 +407,26 @@ class ArticleList(ListView,JSONTemplateResponse):
         context['mediatype'] = self.request.GET.get('mediaType',None)
         context['tradeaction_banner_list'] = TradeAction.objects.all().order_by("?")[:20]
         context['new_articles_banner_list'] = Article.objects.all().order_by("to_store")[:20]
-        context['reservation_form'] = getattr(self,
-                                              'reservation_form',
-                                              ReservationForm(initial={'query':
-                                                                       self.request.GET.get('search',"")
-                                                                   }
-                                                          ))
-        print context['reservation_form'].is_bound
+        context['reservation_form'] = getattr(self, 'reservation_form',\
+                                              ReservationForm(initial=\
+                                                              {'query':
+                                                               self.request.GET.get('search',"")
+                                                           }
+                                              ))
         return context
 
     def post(self, request, *args, **kwargs):
+        self.pagestate_form = ArticleListPageState(request.POST)
+        self.pagestate_form.is_valid()
+        pstate = self.pagestate_form.cleaned_data
+
+        if self.request.is_ajax() and self.pagestate_form.is_valid():
+            action = pstate['action']
+            page_includes = getattr(self,'page_includes_for_action_%s'%( action,))
+            get_context_data = getattr(self,'get_context_data_for_action_%s'%( action,))
+            self.page_includes = page_includes()
+            return self.render_to_response(get_context_data(**kwargs))
+
         self.object_list = self.get_queryset()
         kwargs.update({'object_list': self.object_list})
         self.reservation_form = ReservationForm(request.POST)
@@ -661,3 +817,5 @@ class EmailMessageView(BaseDetailView):
                                         'text': context['object'].text,
                                         'id': context['object'].id
                                     }), **kwargs)
+
+
