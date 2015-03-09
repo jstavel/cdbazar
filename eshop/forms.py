@@ -4,6 +4,23 @@ from django.contrib.auth.models import User
 from .models import *
 import django.forms as forms
 
+BANNERS = (('tradeaction','Akce'),('new-articles',u"Nové zboží"))
+VIEWS = (('articles',u"Zboží"), ('tabular-view',u"Tabulkový přehled"),('tradeaction','V akci'))
+SORTS = (('by-newest',u"Od nejnovějšího"),('by-cheaper',u"Od nejlevnějšího"),('by-abc','Podle abecedy'))
+ACTIONS = (('banner',u'banner'), 
+           ('view',u'view change'), 
+           ('sort',u'sort change'),
+           ('page',u'page change'))
+
+class ArticleListPageState(forms.Form):
+    banner = forms.ChoiceField( choices = BANNERS, widget=forms.HiddenInput)
+    view = forms.ChoiceField( choices = VIEWS, widget=forms.HiddenInput)
+    sort = forms.ChoiceField( choices = SORTS, widget=forms.HiddenInput)
+    page = forms.IntegerField( widget=forms.HiddenInput )
+    action = forms.ChoiceField( choices = ACTIONS, widget=forms.HiddenInput)
+    query = forms.CharField(max_length=128, required=False, widget=forms.HiddenInput)
+    mediatype = forms.CharField(max_length=128, required=False, widget=forms.HiddenInput)
+
 class OrderStageForm(forms.Form):
     stage = forms.IntegerField(label="stage", 
                                initial=0,
