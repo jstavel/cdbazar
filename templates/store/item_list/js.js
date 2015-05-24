@@ -30,8 +30,6 @@ $("a.to-basket").click(function(){
 		type: 'GET',
 		url: $(this).attr('href'),
 		success: function(data){ 
-	document.data = data;
-	console.log(data);
 			$('.basket').hide().html(data['store/basket/summary.html']).fadeIn();
 			eval(data['store/to_basket/js.js']);
 			eval(data['store/basket/js.js']);
@@ -54,8 +52,9 @@ $('td.field').click(function(){
                 type:'GET',
                 url: url,
                 success: function(data){
-                        $('.item_edit .modal-body').html(data['store/item_field_update/form.html']);
-                        $('.item_edit').modal();
+                        $(from_item).unbind('click');
+                        $(from_item).html(data['store/item_field_update/form-body.html']);
+                        eval(data['store/item_field_update/js.js']);
                 },
         });
 });
