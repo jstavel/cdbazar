@@ -489,9 +489,11 @@ ItemFieldForms = dict(
 )
 
 class ItemFieldUpdateView(TemplateView, JSONTemplateResponse):
-    page_includes = ['store/item_field_update/form.html','store/item_field_update/js.js']
+    page_includes = ['store/item_field_update/form-header.html',
+                     'store/item_field_update/form-body.html',
+                     'store/item_field_update/js.js']
     template_name = 'store/item_field_update.html'
-    success_template_name = 'store/item_field/success.html'
+    success_template_name = 'store/item_field_update/success.html'
 
     def get(self, *args, **kwargs):
         field = kwargs['field']
@@ -508,6 +510,9 @@ class ItemFieldUpdateView(TemplateView, JSONTemplateResponse):
         form = form_class(instance=object, data=self.request.POST)
         if form.is_valid():
             form.save()
+            form.success = True
+            fieldName = form.fields.items()[0][0]
+            form.value = getattr(form.instance,fieldName)
 
         return self.render_to_response(self.get_context_data(form=form))
 
