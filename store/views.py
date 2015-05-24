@@ -9,8 +9,9 @@ from django.forms.models import modelformset_factory
 import cdbazar.audio3
 import sys, json
 from django import http
-
+from functools import partial
 from cdbazar.eshop.models import TradeAction
+import django.forms as forms
 
 # def getArticles():
 #     words = ["+" + ii for ii in re.split("[\ ]+",title)]
@@ -82,7 +83,7 @@ class ArticleList(ListView,JSONTemplateResponse):
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
 
-class ItemUpdateView(UpdateView,JSONTemplateResponse):
+class ItemUpdateView(UpdateView, JSONTemplateResponse):
     model = Item
     form_class = ItemForm
     
@@ -459,3 +460,44 @@ class SellView(TemplateView):
         context['mediatypes'] = MediaType.objects.all()
         return context
 
+ArticleFormFactory = partial(forms.models.modelform_factory, Article)
+ItemFormFactory = partial(forms.models.modelform_factory, Item)
+
+ArticleFieldForms = dict(
+    [ (field,ArticleFormFactory(fields=[field,])) for field in ('interpret','title','year',
+                                                                'mediaType',
+                                                            ) ]
+)
+
+ItemFieldForms = dict(
+    [ (field, ItemFormFactory(fields=[field,])) for field in ('barcode',
+                                                              'packnumber',
+                                                              'home_page',
+                                                              'commentary', 
+                                                              'price') ]
+)
+
+class ItemFieldUpdateView(TemplateView, JSONTemplateResponse):
+    page_includes = ['store/item_field_update/form.html','store/item_field_update/js.js']
+    template_name = 'store/item_field_update.html'
+    success_template_name = 'store/item_field/success.html'
+
+    def get(self, *args, **kwargs):
+        field = kwargs['field']
+        item = Item.objects.get(pk=kwargs['pk'])
+        object = field in ItemFieldForms and item or item.article
+        form_class = ItemFieldForms.get(field) or ArticleFieldForms.get(field)
+        return self.render_to_response(self.get_context_data(form=form_class(instance=object)))
+
+    def post(self, *args, **kwargs):
+        field = kwargs['field']
+        item = Item.objects.get(pk=kwargs['pk'])
+        object = field in ItemFieldForms and item or item.article
+        form_class = ItemFieldForms.get(field) or ArticleFieldForms.get(field)
+        form = form_class(instance=object, data=self.request.POST)
+        if form.is_valid():
+            form.save()
+
+        return self.render_to_response(self.get_context_data(form=form))
+
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, TemplateView)
