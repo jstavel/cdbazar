@@ -45,17 +45,17 @@ table thead tr th {
   <tbody>
     {% for item in object_list %}
     <tr class="item-detail" title='{% trans "Goods" %}' id="item_detail_{{ item.id }}">
-      <td class="interpret">{{ item.article.interpret }}</td>
-      <td class="title">{{ item.article.title }}</td>
-      <td class="year">{{ item.article.year|default:"" }}</td>
-      <td class="mediatype">{{ item.article.mediaType.name }}</td>
+      <td class="field interpret" my:field="interpret">{{ item.article.interpret }}</td>
+      <td class="field title" my:field="title">{{ item.article.title }}</td>
+      <td class="field year" my:field="year">{{ item.article.year|default:"" }}</td>
+      <td class="field mediatype" my:field="mediaType">{{ item.article.mediaType.name }}</td>
       <td><a class="to-basket btn btn-secondary btn-small" href="/store/item/{{ item.id }}/to-basket/">{% trans "sell" %}</a></td>
-      <td class="barcode">{{ item.barcode }}</td>
-      <td class="packnumber">{{ item.packnumber }}</td>
-      <td class="to_store">{{ item.to_store|date:"d.m.Y" }}</td>
-      <td class="home_page">{{ item.home_page }}</td>
-      <td class="commentary">{{ item.commentary }}</td>
-      <td class="price">{{ item.price }}</td>
+      <td class="field barcode" my:field="barcode">{{ item.barcode }}</td>
+      <td class="field packnumber" my:field="packnumber">{{ item.packnumber }}</td>
+      <td class="field to_store" my:field="to_store">{{ item.to_store }}</td>
+      <td class="field home_page" my:field="home_page">{{ item.home_page }}</td>
+      <td class="field commentary" my:field="commentary">{{ item.commentary }}</td>
+      <td class="field price" my:field="price">{{ item.price }}</td>
       <td>
         {% if item.has_tradeaction %}
         <a class="add-tradeaction btn btn-primary btn-small"
