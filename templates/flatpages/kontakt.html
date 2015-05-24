@@ -3,3 +3,8 @@
 {% block content %}
 {{ flatpage.content }}
 {% endblock %}
+{% block left_column %}
+{% autoescape off %}
+<div class="news-banner well well-condensed">{% include "eshop/news_banner.html"%}</div>
+{% endautoescape %}
+{% endblock %}

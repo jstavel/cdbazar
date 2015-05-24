@@ -30,9 +30,13 @@ $("a.to-basket").click(function(){
 		type: 'GET',
 		url: $(this).attr('href'),
 		success: function(data){ 
+	document.data = data;
+	console.log(data);
 			$('.basket').hide().html(data['store/basket/summary.html']).fadeIn();
 			eval(data['store/to_basket/js.js']);
 			eval(data['store/basket/js.js']);
+			$('.basket-review').hide().html(data['store/basket_review/list.html']).fadeIn();
+			eval(data['store/basket_review/js.js']);
 			$(from_item).closest('tr.item-detail').fadeOut();
 		},
 	});

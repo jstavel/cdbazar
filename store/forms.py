@@ -57,8 +57,8 @@ class BuyoutToStoreForm(forms.Form):
     commentary = forms.CharField(label=_("Commentary"), max_length=48, required=False)
     
     def clean(self):
-        article = Article.objects.get(id=self.cleaned_data['article_id']) 
-        packnumber = self.cleaned_data['packnumber']
+        article = Article.objects.get(id=self.cleaned_data['article_id'])
+        packnumber = self.cleaned_data.get('packnumber','')
         itemsInStore = Item.objects.filter(article__mediaType = article.mediaType, 
                                            packnumber = packnumber, 
                                            state__in=( Item.state_at_stock,

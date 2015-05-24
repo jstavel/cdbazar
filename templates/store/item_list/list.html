@@ -1,5 +1,30 @@
 {% load i18n %}
-<table class="table table-condensed table-hover">
+<STYLE type="text/css">
+body {
+  font-size: 70%;
+  -webkit-text-size-adjust: 70%;
+  -ms-text-size-adjust: 70%;
+}
+.table th,
+.table td {
+  padding: 8px;
+  line-height: 12px;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid #dddddd;
+}
+
+.table-condensed th,
+.table-condensed td {
+  padding: 2px 3px;
+}
+
+table thead tr th {
+   background-color: #dddddd;
+}
+</STYLE>
+
+<table class="table table-condensed table-bordered table-hover">
   <thead>
     <tr>
       <th>{% trans "Interpret" %}</th>
@@ -8,8 +33,8 @@
       <th>{% trans "Media Type" %}</th>
       <th></th>
       <th>{% trans "Barcode" %}</th>
-      <th>{% trans "Pack Number" %}</th>
-      <th>{% trans "To Store Date" %}</th>
+      <th>Obálka</th>
+      <th>Naskladněno</th>
       <th>{% trans "At home page" %}</th>
       <th>{% trans "Commentary" %}</th>
       <th>{% trans "Price" %}</th>
@@ -27,7 +52,7 @@
       <td><a class="to-basket btn btn-secondary btn-small" href="/store/item/{{ item.id }}/to-basket/">{% trans "sell" %}</a></td>
       <td class="barcode">{{ item.barcode }}</td>
       <td class="packnumber">{{ item.packnumber }}</td>
-      <td class="to_store">{{ item.to_store }}</td>
+      <td class="to_store">{{ item.to_store|date:"d.m.Y" }}</td>
       <td class="home_page">{{ item.home_page }}</td>
       <td class="commentary">{{ item.commentary }}</td>
       <td class="price">{{ item.price }}</td>

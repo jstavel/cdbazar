@@ -40,6 +40,7 @@
 	    {% if user.is_anonymous %}
             <a href="/accounts/login/" class="navbar-link">přihlásit se</a>
 	    {% else %}
+            <a href="/accounts/logout/"><img src="/media/img/admin/icon_deletelink.gif"></img></a>
             <a href="/accounts/profile/" class="navbar-link">přihlášen/a jako {{ user }}</a>
 	    {% endif %}
 	    <span>{% block navigation %}{% endblock %}</span>
