@@ -65,7 +65,7 @@ class ArticleList(ListView,JSONTemplateResponse):
         qs = super(ArticleList,self).get_queryset()
         search = self.request.GET.get('search',None)
         if search:
-            qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search))
+            qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search) | Q(barcode=search))
         mediaType__name = self.request.GET.get('mediaType',None)
         if mediaType__name:
             qs = qs.filter(mediaType__name = mediaType__name)
@@ -100,11 +100,16 @@ class ItemUpdateView(UpdateView, JSONTemplateResponse):
     
     render_to_response = prepare_render_to_response(JSONTemplateResponse, UpdateView)
 
-class ItemList(ListView,JSONTemplateResponse):
+class ItemList(ListView, JSONTemplateResponse):
     model=Item
     paginate_by = 50
 
-    page_includes = ['paginator.html','store/item_list/list.html','store/item_list/js.js']
+    page_includes = ['paginator.html',
+                     'store/item_list/list.html',
+                     'store/item_list/js.js',
+                     'store/basket_review/list.html',
+                     'store/basket_review/js.js',
+                     ]
 
     def get_queryset(self):
         qs = super(ItemList,self).get_queryset()
@@ -117,7 +122,7 @@ class ItemList(ListView,JSONTemplateResponse):
         if article_id:
             qs = qs.filter(article__id = article_id)
         if search:
-            qs = qs.filter(Q(article__title__icontains=search) | Q(article__interpret__icontains=search))
+            qs = qs.filter(Q(article__title__icontains=search) | Q(article__interpret__icontains=search) | Q(barcode=search) | Q(packnumber=search))
         if mediaType__name:
             qs = qs.filter(article__mediaType__name = mediaType__name)
 
@@ -162,7 +167,13 @@ class ToBasketView(DetailView, JSONTemplateResponse):
     model = Item
     template_name = "store/to_basket.html"
     
-    page_includes = ['store/basket/summary.html','store/to_basket/done.html', 'store/to_basket/js.js', 'store/basket/js.js']
+    page_includes = ['store/basket/summary.html',
+                     'store/to_basket/done.html',
+                     'store/to_basket/js.js',
+                     'store/basket/js.js',
+                     'store/basket_review/list.html',
+                     'store/basket_review/js.js',
+                     ]
     
     def get_context_data(self,**kwargs):
         context = super(DetailView,self).get_context_data(**kwargs)

@@ -5,6 +5,7 @@
 <script type="text/javascript">
 $(function(){
 {% include "store/item_list/js.js" %}
+{% include "store/basket_review/js.js" %}
 });
 </script>
 {% endblock %}
@@ -19,6 +20,11 @@ $(function(){
   </div>
 </div>
 <div class="item_list">
+
+<form method="get" action="/store/item/">
+<input type="text" class="search-query" placeholder="Hledani" name="search"></input>
+</form>
+
 <h2>{% trans "Goods" %}</h2>
 
 <div class="tools"><a class="add btn btn-secondary btn-normal
@@ -28,6 +34,13 @@ $(function(){
 <div class="list">{% include "store/item_list/list.html" %}</div>
 <div class="pagination">{% include "paginator.html" %}</div>
 </div>
+<script type="text/javascript">
+jQuery(".item_list form input[name='search']").focus();
+</script>
 {% endblock %}
-{% block left_column %}{% include "store/mediatype_choose.html" %}{% endblock %}
+{% block left_column %}
+<div class="basket-review">{% include "store/basket_review/list.html" %}</div>
+<hr/>
+{% include "store/mediatype_choose.html" %}
+{% endblock %}
 {% block right_column %}{% endblock %}

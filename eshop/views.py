@@ -333,7 +333,7 @@ class EShopList(ListView,JSONTemplateResponse):
         qs = super(EShopList,self).get_queryset().filter(eshop=True)
         search = self.request.GET.get('search',None)
         if search:
-            qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search))
+            qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search) |Q(barcode=search))
         mediaType__name = self.request.GET.get('mediaType',None)
         if mediaType__name and mediaType__name != 'all':
             qs = qs.filter(mediaType__name = mediaType__name)
@@ -343,7 +343,7 @@ class EShopList(ListView,JSONTemplateResponse):
         qs = Article.objects.all().filter(eshop=True).order_by('to_shop')
         search = self.request.GET.get('search',None)
         if search:
-            qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search))
+            qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search) | Q(barcode=search))
         mediaType__name = self.request.GET.get('mediaType',None)
         if mediaType__name:
             qs = qs.filter(mediaType__name = mediaType__name)
@@ -710,7 +710,7 @@ def get_order_pdf(request,*args,**kwargs):
         'object' : Order.objects.get(pk=kwargs['pk'])
     })
     return render_to_pdf_response('eshop/invoice.html', 
-                                  pdfname='invoice-%s' % (context['object'].id,), 
+                                  pdfname='invoice-%s.pdf' % (context['object'].id,), 
                                   context=context)
 
 def sendTransitionEmail(subject, text, contact_email, order):
