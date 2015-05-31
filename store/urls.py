@@ -20,10 +20,13 @@ urlpatterns = patterns('',
                        url(r'^item/(?P<pk>\d+)/edit/(?P<field>\w+)/$',    ItemFieldUpdateView.as_view()),
                        url(r'^item/$',                     ItemList.as_view()),
                        url(r'^article/(?P<pk>\d+)/edit/$', ArticleUpdateView.as_view(success_url="/store/article/")),
-                       url(r'^article/(?P<pk>\d+)/$',      DetailView.as_view(model=Article)),
+                       url(r'^article/(?P<pk>\d+)/load-picture/$', ArticlePictureLoadView.as_view()),
+
+                       url(r'^article/(?P<pk>\d+)/$',      ArticleDetailView.as_view()),
                        url(r'^article/add/$',              ArticleCreateView.as_view()),
                        url(r'^article/$',                  ArticleList.as_view()),
                        url(r'^mediatype/add/$',            MediaTypeCreateView.as_view(success_url="/store/item/")),
                        url(r'^picture/(?P<pk>\d+)/$',      DetailView.as_view(model=Picture)),
                        url(r'^picture/$',                  ListView.as_view(model=Picture, paginate_by=50)),
                        )
+                       

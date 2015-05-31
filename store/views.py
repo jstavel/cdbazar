@@ -55,6 +55,11 @@ class ArticleUpdateView(UpdateView,JSONTemplateResponse):
     page_includes = ['store/article_form/form.html','store/article_form/js.js']
     render_to_response = prepare_render_to_response(JSONTemplateResponse, CreateView)
     
+class ArticleDetailView(DetailView,JSONTemplateResponse):
+    model = Article
+    page_includes = ['store/article_detail/detail.html',]
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)
+
 class ArticleList(ListView,JSONTemplateResponse):
     model=Article
     paginate_by = 30
@@ -431,8 +436,9 @@ class BuyoutLoadDetailView(TemplateView,JSONTemplateResponse):
                                       tracklist = detail.tracklists,
                                       origPrice = detail.price,
                                       barcode = detail.ean,
-                                      pictureSource = "<img src='%s'>picture</img>" % (detail.imgUrl,),
-                                      )
+                                      pictureSource = detail.imgUrl,
+                                      picture = Picture.loadFromURL(detail.imgUrl),
+                                  )
                     article.save()
                     context['result'] = u"načteno"
             except:
@@ -493,7 +499,6 @@ class ItemFieldUpdateView(TemplateView, JSONTemplateResponse):
                      'store/item_field_update/form-body.html',
                      'store/item_field_update/js.js']
     template_name = 'store/item_field_update.html'
-    success_template_name = 'store/item_field_update/success.html'
 
     def get(self, *args, **kwargs):
         field = kwargs['field']
@@ -513,6 +518,34 @@ class ItemFieldUpdateView(TemplateView, JSONTemplateResponse):
             form.success = True
             fieldName = form.fields.items()[0][0]
             form.value = getattr(form.instance,fieldName)
+
+        return self.render_to_response(self.get_context_data(form=form))
+
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, TemplateView)
+
+
+ArticlePictureLoadForm = forms.models.modelform_factory(Article, fields=['pictureSource'])
+
+#  http://www.audio3.cz/goods.asp?stat=25&gid=1470770#
+class ArticlePictureLoadView(TemplateView, JSONTemplateResponse):
+    page_includes = ['store/article_load_picture/form-header.html',
+                     'store/article_load_picture/form-body.html',
+                     'store/article_load_picture/js.js']
+    template_name = 'store/article_load_picture.html'
+
+    def get(self, *args, **kwargs):
+        article = Article.objects.get(pk=kwargs['pk'])
+        return self.render_to_response(self.get_context_data(form=ArticlePictureLoadForm(instance=article)))
+
+    def post(self, *args, **kwargs):
+        article = Article.objects.get(pk=kwargs['pk'])
+        form = ArticlePictureLoadForm(instance=article, data=self.request.POST)
+        if form.is_valid():
+            form.save()
+            form.success = True
+            form.redirect_to = "/store/article/%d/" % (article.pk)
+            form.instance.picture = Picture.loadFromURL(form.cleaned_data['pictureSource'])
+            form.instance.save()
 
         return self.render_to_response(self.get_context_data(form=form))
 

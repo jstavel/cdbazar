@@ -6,7 +6,10 @@ from history.models import HistoricalRecords
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django_extensions.db.models import TimeStampedModel
-
+import re
+import os
+from cdbazar.settings import MEDIA_ROOT
+import urllib
 # Create your models here.
 
 ARTICLE_TYPES = (
@@ -42,6 +45,26 @@ class Picture(models.Model):
 
     def __unicode__(self):
         return unicode(self.img)
+
+    @staticmethod
+    def loadFromURL(url):
+        """
+        http://www.audio3.cz/images/goods_galery/1969818/1969818__1.jpg
+        """
+        from hashlib import md5
+        import magic
+
+        img = urllib.urlopen(url).read()
+        imgBaseName = md5(url).hexdigest()
+        mime = magic.from_buffer(img, mime=True)
+        extension = 'jpeg' in mime and 'jpg' or 'png'
+        imgName = os.path.join('img','articles', imgBaseName + "." + extension )
+        absImagePath = os.path.join(MEDIA_ROOT, imgName)
+        file(absImagePath,'wb').write(img)
+        (picture,created) = Picture.objects.get_or_create(img=imgName)
+        if created:
+            picture.save()
+        return picture
         
 class ForEShopManager(models.Manager):
     def get_queryset(self):
@@ -61,7 +84,7 @@ class Article(models.Model):
     tracklist = models.TextField(_("Tracklist"), blank=True, null=True)
     origPrice = models.DecimalField(_("Original price"),max_digits=7, decimal_places=2, blank=True, default=0.0)
     barcode = models.CharField(max_length=32, db_index=True, blank=True, null=True)
-    pictureSource = models.TextField(_("Picture source"), blank=True, null=True)
+    pictureSource = models.TextField(u"URL k obrázku", blank=True, null=True)
     picture = models.ForeignKey(Picture, blank=True, null=True)
     slug = models.SlugField(max_length=126,blank=True,null=True) # will be created aftersave
     eshop = models.BooleanField(_("For E-Shop?"), 
@@ -106,7 +129,7 @@ class Article(models.Model):
             count += 1
         self.slug=newslug
 
-    def save(self,*args, **kwargs):
+    def save(self, *args, **kwargs):
         self.slug = self._createSlug()
         super(Article,self).save(*args,**kwargs)
 
