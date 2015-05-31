@@ -1,0 +1,83 @@
+{% load i18n thumbnail %}
+<div class="article span5 well" my:article-id="{{article.id}}"
+     title='{% trans "article" %}' id="article_detail_{{ article.id }}">
+  {% thumbnail article.picture "170x170" as im %}
+  <span class="picture" my:article-id="{{article.id}}" my:href="{{ request.path }}{{ article.id }}/load-picture/">
+    <img class="picture img-polaroid" 
+         my:article-id="{{article.id}}"
+         src="/media/{{im.url}}" width="{{ im.width }}" height="{{ im.height }}"></img></span>
+  {% endthumbnail %}
+  <span class="tools">
+    <a class="edit btn btn-secondary btn-small pull-right" href="{{request.path}}{{ article.id }}/edit/">{% trans 'edit' %}</a>
+    <a class="btn btn-secondary btn-small pull-right" href="/store/item/?article_id={{ article.id }}">{% trans 'related goods' %} <span class="icon-forward"></span></a>
+    <!-- <span><a class="load-picture btn btn-secondary btn-small pull-right" -->
+    <!--    href="{{ request.path }}{{ article.id }}/load-picture/"  -->
+    <!--    my:article-id="{{ article.id }}" >načíst obrázek</a> -->
+    <!-- </span> -->
+  </span>
+  <div class="detail" title='{% trans "detail" %}'>
+    <h4 class="header">{{ article }}</h4>
+    <table class="table table-condensed">
+      <tbody>
+	<tr class="interpret">
+	  <th class="label">{% trans "interpret" %}</th>
+	  <td class="value">{{ article.interpret }}</td>
+	</tr>
+	<tr class="title">
+	  <th class="label">{% trans "title" %}</th>
+	  <td class="value">{{ article.title }}</td>
+	</tr>
+	<tr class="year">
+	  <th class="label">{% trans "year" %}</th>
+	  <td class="value">{{ article.year|default:"" }}</td>
+	</tr>
+	<tr class="publisher">
+	  <th class="label">{% trans "publisher" %}</th>
+	  <td class="value">{{ article.publisher }}</td>
+	</tr>
+	<tr class="media-type">
+	  <th class="label">{% trans "media type" %}</th>
+	  <td class="value">{{ article.mediaType.name }}</td>
+	</tr>
+	<tr class="barcode">
+	  <th class="label">{% trans "barcode" %}</th>
+	  <td class="value">{{ article.barcode }}</td>
+	</tr>
+	<tr class="packnumber">
+	  <th class="label">{% trans "packnumber" %}</th>
+	  <td class="value">{{ article.packnumber }}</td>
+	</tr>
+	<tr class="price">
+	  <th class="label">{% trans "price" %}</th>
+	  <td class="value">{{ article.price }}</td>
+	</tr>
+	<tr class="last-sold-price">
+	  <th class="label">{% trans "last sold price" %}</th>
+	  <td class="value">{{ article.lastSold }}</td>
+	</tr>
+      </tbody>
+    </table>
+  </div>
+  {% autoescape off %}
+  <p>
+    <h5>{% trans "specification" %}</h5>
+    {{ article.specification }}
+  </p>
+  <p>
+    <h5>{% trans "tracklist" %}</h5>
+    {{ article.tracklist }}
+  </p>
+  {% endautoescape %}
+  <!-- <table class="table table-condensed"> -->
+    <!--   <tbody> -->
+    <!-- 	<tr class="specification"> -->
+    <!-- 	  <th class="label">{% trans "specification" %}</th> -->
+    <!-- 	  <td class="value">{{ article.specification }}</td> -->
+    <!-- 	</tr> -->
+    <!-- 	<tr class="tracklist"> -->
+    <!-- 	  <th class="label">{% trans "tracklist" %}</th> -->
+    <!-- 	  <td class="value">{{ article.tracklist }}</td> -->
+    <!-- 	</tr> -->
+    <!--   </tbody> -->
+    <!-- </table> -->
+</div>

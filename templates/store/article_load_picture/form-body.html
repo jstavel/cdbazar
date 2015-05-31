@@ -1,0 +1,16 @@
+{% if form.success %}
+{{ form.value }}
+{% else %}
+<form class="article-load-picture" title='Načíst obrázek' action="{{ request.path }}" method="post">
+  {% csrf_token %}
+  <table>
+    <tbody>
+      {{ form }}
+    </tbody>
+  </table>
+  <p>
+    <input class="btn btn-small btn-success" type="submit" value="Načíst"></input>
+    <input class="btn btn-small btn-secondary" type="submit" value="storno"></input> 
+  </p>
+</form>
+{% endif %}

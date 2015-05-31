@@ -34,6 +34,24 @@ $(".article_list .tools a.add").click(function(){
 	});
 	return false;
 });
+//$(".article_list .tools a.load-picture").click(function(){
+$(".article img.picture").click(function(){
+        //var picture = $(this).closest('div.article').find('span.picture');
+        var picture = $(this).closest('span.picture');
+        var href = $(picture).attr('my:href');
+	$.ajax({
+		type: 'GET',
+		url: href,
+		success: function(data){ 
+                        $(picture).html(data['store/article_load_picture/form-body.html']);
+                        eval(data['store/article_load_picture/js.js']);
+                        $(picture).find('textarea').val("");
+                        setTimeout(function(){ $(picture).find('textarea').focus();});
+		},
+	});
+	return false;
+});
+
 // $(".article .tools").each(function(){
 // 	var parent = $(this).closest(".article");
 // 	$(this).position({ my: "right bottom", at: "right bottom", of: parent  });
