@@ -2,12 +2,12 @@
 
     @font-face {
         font-family: DejaSans;
-        src: url(/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf);
+        src: url(/usr/X11R6/lib/X11/fonts/truetype/DejaVuSans.ttf);
     }
 
     @font-face {
         font-family: code2000;
-        src: url(/opt/cdbazar/project/cdbazar/templates/eshop/font/CODE2000.TTF);
+        src: url(/srv/www/cdbazar2/project/cdbazar/templates/eshop/font/CODE2000.TTF);
     }
 
    @page {

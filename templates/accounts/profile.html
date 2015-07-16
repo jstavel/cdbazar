@@ -10,13 +10,17 @@
     {% csrf_token %}
     <ul class="nav nav-tabs">
       <li class="active"><a href="#form_authentication" data-toggle="pill">{% trans "User" %}</a></li>
-      <li><a href="#form_invoicing" data-toggle="tab">{% trans "Invoicing Address" %}</a></li>
-      <li><a href="#form_delivery" data-toggle="tab">{% trans "Delivery Address" %}</a></li>
-      <li><a href="#form_payment" data-toggle="tab">{% trans "Payment" %}</a></li>
+      <li><a href="#form_contact" data-toggle="tab">Kontakt</a></li>
+      <li><a href="#form_invoicing" data-toggle="tab">Fakturační adresa</a></li>
+      <li><a href="#form_delivery" data-toggle="tab">Doručovací adresa</a></li>
+      <li><a href="#form_payment" data-toggle="tab">Způsob placení</a></li>
     </ul>
     <div class="tab-content">
       <div class="tab-pane active" id="form_authentication">
 	{{ form_authentication | as_bootstrap }}
+      </div>
+      <div class="tab-pane" id="form_contact">
+	{{ form_contact | as_bootstrap }}
       </div>
       <div class="tab-pane" id="form_invoicing">
 	{{ form_invoicing | as_bootstrap }}
@@ -29,7 +33,7 @@
       </div>
       <div class="form-actions">
 	<button type="submit" class="btn" value="cancel">{% trans "Cancel" %}</button>
-	<button type="submit" class="btn btn-success" value="submit">{% trans "Submit" %}</button>
+	<button type="submit" class="btn btn-success" value="submit">Odeslat</button>
       </div>
     </div>
   </form>

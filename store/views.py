@@ -131,7 +131,8 @@ class ItemList(ListView, JSONTemplateResponse):
         if mediaType__name:
             qs = qs.filter(article__mediaType__name = mediaType__name)
 
-        return qs.select_related()
+        order_by = self.get_order_by()
+        return qs.order_by(order_by).select_related()
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
     
@@ -140,7 +141,29 @@ class ItemList(ListView, JSONTemplateResponse):
         context['basket'] = Basket(self.request)
         context['mediatypes'] = MediaType.objects.all()
         context['mediatype'] = self.request.GET.get('mediaType',None)
+        context['pagestate_form'] = getattr(self,'pagestate_form', ItemListPageState(initial={'sort_by':'by-newest'}))
         return context
+
+    def get_order_by(self):
+        pagestate = getattr(self,'pagestate_form',None)
+        if pagestate and pagestate.is_valid():
+            return pagestate.cleaned_data['sort_by'] or "id"
+        return "id"
+
+    def get_page(self):
+        pagestate = getattr(self,'pagestate_form',None)
+        if pagestate and pagestate.is_valid():
+            return pagestate.cleaned_data['page']
+        return self.request.GET.get('page',1)
+
+    def post(self, request, *args, **kwargs):
+        self.pagestate_form = ItemListPageState(request.POST)
+        self.kwargs['page'] = self.get_page()
+        self.object_list = self.get_queryset()
+        kwargs.update({'object_list': self.object_list})
+        return self.render_to_response(self.get_context_data(**kwargs))
+
+    render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
 
 class ItemDataset(ListView):
     model=Item
@@ -215,7 +238,10 @@ class BuyoutView(TemplateView):
         context['basket'] = Basket(self.request)
         context['form'] = self.form
         context['barcode'] = self.form.is_bound and self.form.cleaned_data['barcode']
-        context['items'] = self.form.is_bound and Item.objects.filter(barcode=self.form.cleaned_data['barcode'])
+        context['items'] = self.form.is_bound and Item.objects.filter(barcode=self.form.cleaned_data['barcode'])\
+                           .filter(state__in=(Item.state_for_sale,Item.state_at_stock))
+        context['sold_items'] = self.form.is_bound and Item.objects.filter(barcode=self.form.cleaned_data['barcode'])\
+                                .filter(state__in=(Item.state_expedited,Item.state_sold))
         return context
 
     def post(self,request,*args,**kwargs):
@@ -253,6 +279,8 @@ class BuyoutToStockView(TemplateView):
         context['form'] = self.form
         context['form2'] = self.form2
         context['form2_message'] = self.form2_message
+        context['article_form'] = self.article_form
+        context['item_form'] = self.item_form
         context['barcode'] = self.barcode
         context['items'] = self.barcode and Item.objects.filter(barcode=self.barcode)
         if context['form']:
@@ -260,24 +288,26 @@ class BuyoutToStockView(TemplateView):
         return context
 
     def post(self,request,*args,**kwargs):
-        self.form = None
+        self.form = BuyoutForm(request.POST)
         self.form2 = None
         self.form2_message = None
+        self.article_form = ArticleForm(request.POST)
+        self.item_form = ItemForm(request.POST)
         self.barcode = None
-
+        
         if request.POST.get('form-ok',None):
-            form = BuyoutForm(request.POST)
-            if form.is_valid():
-                self.barcode = form.cleaned_data['barcode']
-                articles = Article.objects.filter(barcode=self.barcode)
+            if self.form.is_valid():
+                self.barcode = self.form.cleaned_data['barcode']
+                barcode = self.barcode
+                articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
                 self.form2 = BuyoutToStockForm( initial={'barcode':self.barcode} )
                 self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
-            else:
-                self.form = form
+                if len(articles) == 1:
+                    self.form2.initial['article_id'] = articles[0].id
         if request.POST.get('form2-ok',None):
             self.form2 = BuyoutToStockForm(request.POST)
             barcode = request.POST.get('barcode',None)
-            articles = Article.objects.filter(barcode=barcode)
+            articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
             self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
             if self.form2.is_valid():
                 self.form2.save()
@@ -292,6 +322,8 @@ class BuyoutToStockView(TemplateView):
         self.form2 = None
         self.form2_message = None
         self.barcode = None
+        self.article_form = ArticleForm()
+        self.item_form = ItemForm()
         return TemplateView.get(self,request,*args,**kwargs)
 
 class BuyoutToStoreView(TemplateView):
@@ -305,6 +337,8 @@ class BuyoutToStoreView(TemplateView):
         context['form'] = self.form
         context['form2'] = self.form2
         context['form2_message'] = self.form2_message
+        context['article_form'] = self.article_form
+        context['item_form'] = self.item_form
         context['barcode'] = self.barcode
         context['items'] = self.barcode and Item.objects.filter(barcode=self.barcode)
         if context['form']:
@@ -312,26 +346,31 @@ class BuyoutToStoreView(TemplateView):
         return context
 
     def post(self,request,*args,**kwargs):
-        self.form = None
+        self.form = BuyoutForm(request.POST)
         self.form2 = None
         self.form2_message = None
         self.barcode = None
-
+        self.article_form = ArticleForm(request.POST)
+        self.item_form = ItemForm(request.POST)
+        
         if request.POST.get('form-ok',None):
-            form = BuyoutForm(request.POST)
-            if form.is_valid():
-                self.barcode = form.cleaned_data['barcode']
-                articles = Article.objects.filter(barcode=self.barcode)
+            if self.form.is_valid():
+                self.barcode = self.form.cleaned_data['barcode']
+                barcode = self.barcode
+                articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
                 self.form2 = BuyoutToStoreForm( initial={'barcode':self.barcode} )
                 self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
+                if len(articles) == 1:
+                    self.form2.initial['article_id'] = articles[0].id
             else:
                 self.form = form
         if request.POST.get('form2-ok',None):
             self.form2 = BuyoutToStoreForm(request.POST)
             barcode = request.POST.get('barcode',None)
-            articles = Article.objects.filter(barcode=barcode)
+            articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
             self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
             if self.form2.is_valid():
+                print "form2 is valid"
                 self.form2.save()
                 self.form2 = None
                 self.form2_message = "Hotovo, zbozi je na sklade"
@@ -344,6 +383,8 @@ class BuyoutToStoreView(TemplateView):
         self.form2 = None
         self.form2_message = None
         self.barcode = None
+        self.article_form = ArticleForm()
+        self.item_form = ItemForm()
         return TemplateView.get(self,request,*args,**kwargs)
 
 class BuyoutToCleanView(TemplateView):
@@ -364,24 +405,27 @@ class BuyoutToCleanView(TemplateView):
         return context
 
     def post(self,request,*args,**kwargs):
-        self.form = None
+        self.form = BuyoutForm(request.POST)
         self.form2 = None
         self.form2_message = None
         self.barcode = None
 
         if request.POST.get('form-ok',None):
-            form = BuyoutForm(request.POST)
-            if form.is_valid():
-                self.barcode = form.cleaned_data['barcode']
-                articles = Article.objects.filter(barcode=self.barcode)
+            if self.form.is_valid():
+                self.barcode = self.form.cleaned_data['barcode']
+                barcode = self.barcode
+                articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
                 self.form2 = BuyoutToCleanForm( initial={'barcode':self.barcode} )
                 self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
+                if len(articles) == 1:
+                    self.form2.initial['article_id'] = articles[0].id
+
             else:
                 self.form = form
         if request.POST.get('form2-ok',None):
             self.form2 = BuyoutToCleanForm(request.POST)
             barcode = request.POST.get('barcode',None)
-            articles = Article.objects.filter(barcode=barcode)
+            articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
             self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
             if self.form2.is_valid():
                 self.form2.save()
@@ -432,8 +476,8 @@ class BuyoutLoadDetailView(TemplateView,JSONTemplateResponse):
                                       year = detail.year,
                                       publisher = detail.publisher,
                                       mediaType = mediaType and mediaType[0],
-                                      specification = detail.detail,
-                                      tracklist = detail.tracklists,
+                                      specification = "", #detail.detail,
+                                      tracklist = "", #detail.tracklists,
                                       origPrice = detail.price,
                                       barcode = detail.ean,
                                       pictureSource = detail.imgUrl,
@@ -442,7 +486,8 @@ class BuyoutLoadDetailView(TemplateView,JSONTemplateResponse):
                     article.save()
                     context['result'] = u"načteno"
             except:
-                context['error'] = "chyba komunikace s audio3, %s" (sys.exc_info()[0],)
+                #context['error'] = "chyba komunikace s audio3, %s" (sys.exc_info()[0],)
+                context['error'] = "chyba komunikace s audio3"
         return context
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, TemplateView)

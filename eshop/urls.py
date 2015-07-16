@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from cdbazar.eshop.views import *
+from django.contrib.auth.decorators import login_required, permission_required
+p = permission_required('store.add_item')
 
 # Uncomment the next two lines to enable the admin:
 urlpatterns = patterns('',
@@ -18,6 +20,6 @@ urlpatterns = patterns('',
                        url(r'^basket/update/$',                    BasketView.as_view()),
                        url(r'^order/(?P<pk>\d+)/$',                OrderView.as_view()),
                        url(r'^order/(?P<pk>\d+)/pdf/$',            get_order_pdf),
-                       url(r'^ajax/emailmessage/(?P<pk>\d+)/$',                EmailMessageView.as_view()),
-                       url(r'^order/$',              OrderList.as_view()),
-)
+                       url(r'^ajax/emailmessage/(?P<pk>\d+)/$',    EmailMessageView.as_view()),
+                       url(r'^order/$',              p(OrderList.as_view())),
+                       )

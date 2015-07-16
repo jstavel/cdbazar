@@ -95,6 +95,7 @@ class Article(models.Model):
                                    help_text=_("Has discount?"), 
                                    default=False)
     
+    last_modified = models.DateTimeField(_("Last modified"), auto_now=True)
     #history = HistoricalRecords()
 
     objects = models.Manager()
@@ -186,7 +187,7 @@ class Item(models.Model):
     article = models.ForeignKey(Article)
     commentary = models.CharField(_('Commentary'), max_length=128, blank=True)
     barcode = models.CharField(_('Barcode'), max_length=128, blank=True, db_index=True)
-    packnumber = models.CharField(_('Pack number'), max_length=128, blank=True,db_index=True)
+    packnumber = models.CharField(u"Číslo obálky", max_length=128, blank=True,db_index=True)
     price = models.DecimalField(_('Price'), max_digits=7,decimal_places=2, blank=True, default=0.0)
     state = models.PositiveSmallIntegerField(_("State"), choices=STATES, default=1)
     last_modified = models.DateTimeField(_("Last modified"), auto_now=True)

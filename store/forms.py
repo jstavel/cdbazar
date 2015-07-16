@@ -4,6 +4,20 @@ from django.utils.translation import ugettext as _
 
 import django.forms as forms
 
+SORTS = (('to_store',u"Od nejnovějšího"),
+         ('article__mediaType',u"Typ media"),
+         ('article__interpret',u"Interpret"),
+         ('article__title',u"Titul"),
+         ('article__year',u"Rok"),
+         ('barcode',u"EAN"),
+         ('packnumber',u"EAN"))
+
+class ItemListPageState(forms.Form):
+    sort_by = forms.ChoiceField(choices = SORTS, required=False, widget=forms.HiddenInput)
+    page = forms.IntegerField( required=False, widget=forms.HiddenInput )
+    query = forms.CharField(max_length=128, required=False, widget=forms.HiddenInput)
+    
+
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
@@ -41,8 +55,10 @@ class BuyoutToStockForm(forms.Form):
     
     def save(self):
         article = Article.objects.get(id=self.cleaned_data['article_id'])
+        article.eshop=True
         item = article.item_set.create(price = article.lastSold[0], barcode=article.barcode, state = Item.state_at_stock)
-
+        article.save()
+        
 # to store:
 # cislo obalky - povinne, 
 # cena - povinna, 
@@ -71,12 +87,14 @@ class BuyoutToStoreForm(forms.Form):
     
     def save(self):
         article = Article.objects.get(id=self.cleaned_data['article_id'])
+        article.eshop=True
         item = article.item_set.create(price = self.cleaned_data['price'],
                                        packnumber = self.cleaned_data['packnumber'],
                                        barcode=article.barcode, 
                                        state = Item.state_for_sale,
                                        commentary=self.cleaned_data['commentary']
                                        )
+        article.save()
 
 # to clean:
 # cislo obalky - nepovinne, 

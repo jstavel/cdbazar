@@ -27,17 +27,18 @@ table thead tr th {
 <table class="table table-condensed table-bordered table-hover">
   <thead>
     <tr>
-      <th>{% trans "Interpret" %}</th>
-      <th>{% trans "Title" %}</th>
-      <th>{% trans "Year" %}</th>
-      <th>{% trans "Media Type" %}</th>
+      <th class="sortable" my:sort_key="article__interpret">{% trans "Interpret" %}</th>
+      <th class="sortable" my:sort_key="article__title">{% trans "Title" %}</th>
+      <th class="sortable" my:sort_key="article__year">{% trans "Year" %}</th>
+      <th class="sortable" my:sort_key="article__mediaType">{% trans "Media Type" %}</th>
       <th></th>
-      <th>{% trans "Barcode" %}</th>
-      <th>Obálka</th>
-      <th>Naskladněno</th>
+      <th class="sortable" my:sort_key="barcode">{% trans "Barcode" %}</th>
+      <th class="sortable" my:sort_key="packnumber">Obálka</th>
+      <th class="sortable" my:sort_key="to_store">Naskladněno</th>
       <th>{% trans "At home page" %}</th>
       <th>{% trans "Commentary" %}</th>
       <th>{% trans "Price" %}</th>
+      <!-- <th></th> -->
       <th></th>
       <th></th>
     </tr>
@@ -49,13 +50,17 @@ table thead tr th {
       <td class="field title" my:field="title"><span>{{ item.article.title }}</span></td>
       <td class="field year" my:field="year"><span>{{ item.article.year|default:"" }}</span></td>
       <td class="field mediatype" my:field="mediaType"><span>{{ item.article.mediaType.name }}</span></td>
-      <td><a class="to-basket btn btn-secondary btn-small" href="/store/item/{{ item.id }}/to-basket/">{% trans "sell" %}</a></td>
+      <td>{% if item.state == 1 or item.state == 3 %}
+      <a class="to-basket btn btn-secondary btn-small" href="/store/item/{{ item.id }}/to-basket/">{% trans "sell" %}</a>
+      {% endif %}
+      </td>
       <td class="field barcode" my:field="barcode"><span>{{ item.barcode }}</span></td>
       <td class="field packnumber" my:field="packnumber"><span>{{ item.packnumber }}</span></td>
       <td class="to_store">{{ item.to_store|date:"d.m.Y" }}</td>
       <td class="field home_page" my:field="home_page"><span>{{ item.home_page }}</span></td>
       <td class="field commentary" my:field="commentary"><span>{{ item.commentary }}</span></td>
       <td class="field price" my:field="price"><span>{{ item.price }}</span></td>
+      <!-- <td><span>{{item.state_name}}</span></td> -->
       <td>
         {% if item.has_tradeaction %}
         <a class="add-tradeaction btn btn-primary btn-small"

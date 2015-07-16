@@ -240,11 +240,11 @@ class ArticleList(ListView,JSONTemplateResponse):
         sort = self.get_sort()
         print "sort: ", sort
         values = {
-            'by-newest' : '-id',
+            'by-newest' : '-last_modified',
             'by-cheaper': 'origPrice',
             'by-abc': 'title'
         }
-        return values.get(sort,'-id')
+        return values.get(sort,'-last_modified')
 
     def get_queryset(self):
         qs = super(ArticleList,self).get_queryset().filter(eshop=True)

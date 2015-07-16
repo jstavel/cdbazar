@@ -5,7 +5,7 @@
   <legend>{{ form.legend }}</legend>
   {% csrf_token %}
   {{ form|as_bootstrap }}
-  <input class="btn" type="submit" name="form-ok" value="ok"></input>
+  <input class="btn" type="hidden" name="form-ok" value="ok"></input>
 </form>
 {% endif %}
 
@@ -19,20 +19,10 @@
 <legend>{{ form2.legend }}</legend>
 {{ form2|as_bootstrap }}
 <div class="form-actions">
-  <input class="btn" type="submit" name="form2-cancel" value="cancel"></input>
   <input class="btn btn-primary" type="submit" name="form2-ok" value="ok"></input>
+  <input class="btn" type="submit" name="form2-cancel" value="cancel"></input>
 </div>
 </form>
-{% endif %}
-
-{% if items %}
-<h4>Přehled zboží</h4>
-{% for item  in items %}
-{% endfor %}
-{% else %}
-{% if barcode %}
-<p class="text-info">Zboží se ještě neprodávalo</p>
-{% endif %}
 {% endif %}
 
 {% if barcode %}
@@ -43,3 +33,36 @@
 </div>
 {% endif %}
 
+{% if barcode %}
+<h4>Přehled zboží na prodejne</h4>
+{% if items %}
+{% with object_list=items %}
+{% include "store/item_list/list.html" %}
+{% endwith %}
+{% else %}
+<p class="text-info">Zboží nemáme</p>
+{% endif %}
+
+<h4>Přehled prodaného zboží</h4>
+{% if sold_items %}
+{% with object_list=sold_items %}
+{% include "store/item_list/list.html" %}
+{% endwith %}
+{% else %}
+<p class="text-info">Zboží se ještě neprodávalo</p>
+{% endif %}
+
+{% endif %}
+
+{% if article_form %}
+<form class="article-form well form-horizontal" title="Nový artikl" action="{{ request.path }}" method="post">
+{% csrf_token %}
+<legend>Nový artikl</legend>
+{{ article_form|as_bootstrap }}
+{{ item_form|as_bootstrap }}
+<div class="form-actions">
+  <input class="btn btn-primary" type="submit" name="article-form-ok" value="ok"></input>
+  <input class="btn" type="submit" name="article-form-cancel" value="cancel"></input>
+</div>
+</form>
+{% endif %}

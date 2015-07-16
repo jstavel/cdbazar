@@ -117,7 +117,7 @@ User.numOfPaidOrders = numOfPaidOrders
 
 class NewUserAdmin(UserAdmin):
     inlines = (UserDiscountInline,)
-    list_display = UserAdmin.list_display + ('getUserDiscount',)
+    list_display = UserAdmin.list_display + ('is_active','getUserDiscount',)
 
     def response_post_save_change(self, request, obj):
         """

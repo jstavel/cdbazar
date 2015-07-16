@@ -1,14 +1,36 @@
-$("a.paginate").click(function(){
-	$.ajax({
-		type: 'GET',
-		url: $(this).attr('href'),
+function updatePage(){
+        var data = {};
+        $(".pagestate").serializeArray().map(function(x){data[x.name] = x.value;});
+    	$.ajax({
+		type: 'POST',
+		url: "/store/item/",
+                data: data,
 		success: function(data){ 
-			$('.pagination').html(data['paginator.html']);
-			$('.item_list .list').html(data['store/item_list/list.html']); 
+			$('div.item_list .pagination').html(data['paginator.html']); 
+			$('div.item_list .list').html(data['store/item_list/list.html']); 
 			eval(data['store/item_list/js.js']);
 		},
 	});
+};
+
+$("a.paginate").click(function(){
+        var href = $(this).attr('href');
+        var pageNumber = pageNumberFromHREF(href);
+        /*
+          $('#id_action option').removeAttr('selected').filter('[value="page"]').attr('selected',true);
+        */
+        $('#id_action').attr('value','page');
+        $('#id_page').attr('value',pageNumber);
+        updatePage();
 	return false;
+});
+
+$('th.sortable').click(function(){
+        var from_item = $(this);
+        var sort_key = $(this).attr('my:sort_key');
+	$('#id_sort_by').attr('value', sort_key);
+	updatePage();
+ 	return false;
 });
 
 $("a.edit").click(function(){

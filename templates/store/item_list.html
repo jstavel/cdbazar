@@ -9,9 +9,7 @@ $(function(){
 });
 </script>
 {% endblock %}
-{% block navigation %}
-{% include "store/basket.html" %}
-{% endblock %}
+{% block navigation %}{% include "store/basket.html" %}{% endblock %}
 {% block content %}
 <div class="item_edit modal hide fade">
   <div class="modal-header">
@@ -23,6 +21,11 @@ $(function(){
 
 <form method="get" action="/store/item/">
 <input type="text" class="search-query" placeholder="Hledani" name="search"></input>
+</form>
+
+<form class="pagestate" action="" method="post">
+  {% csrf_token %}
+  {{ pagestate_form }}
 </form>
 
 <h2>{% trans "Goods" %}</h2>

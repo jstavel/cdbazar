@@ -13,7 +13,6 @@ class UserProfileAuthenticationForm(forms.Form):
                                 help_text = _("Enter the same password as above, for verification."))
     
     def clean_password2(self):
-        #import pdb; pdb.set_trace()
         password1 = self.cleaned_data.get("password1", "")
         password2 = self.cleaned_data["password2"]
         if password1 != password2:
@@ -23,7 +22,6 @@ class UserProfileAuthenticationForm(forms.Form):
 
     
     def save(self, commit=True):
-        #import pdb; pdb.set_trace()
         if self.cleaned_data['with_registration']:
             user = super(UserForm, self).save(commit=False)
             user.set_password(self.cleaned_data["password1"])
