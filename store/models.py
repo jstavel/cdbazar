@@ -28,7 +28,8 @@ ARTICLE_TYPES = (
 class MediaType(models.Model):
     name = models.CharField(_("Name"), max_length=16, db_index=True, unique=True)
     desc = models.CharField(_("Description"), max_length=48, blank=True)
-    
+    order  = models.SmallIntegerField(u"Pořadí", default=1, blank=True)
+
     def normalized_key (self):
         return slugify(self.key)
 
