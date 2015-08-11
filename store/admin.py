@@ -9,6 +9,7 @@ admin.site.register(Item, ItemAdmin)
 
 class MediaAdmin(admin.ModelAdmin):
     list_display = ("name","desc","order")
+    ordering = ('order','name')
 admin.site.register(MediaType, MediaAdmin)
 
 admin.site.register(Article)
