@@ -80,7 +80,7 @@ class ArticleList(ListView,JSONTemplateResponse):
         context = super(ArticleList,self).get_context_data(**kwargs)
         basket = Basket(self.request)
         context['basket'] = basket
-        context['mediatypes'] = MediaType.objects.all()
+        context['mediatypes'] = MediaType.objects.all().order_by('order')
         context['mediatype'] = self.request.GET.get('mediaType',None)
         context['tradeaction_banner_list'] = TradeAction.objects.all().order_by("?")[:20]
         context['new_articles_banner_list'] = Article.objects.all().order_by("to_store")[:20]
@@ -139,7 +139,7 @@ class ItemList(ListView, JSONTemplateResponse):
     def get_context_data(self,**kwargs):
         context = super(ItemList,self).get_context_data(**kwargs)
         context['basket'] = Basket(self.request)
-        context['mediatypes'] = MediaType.objects.all()
+        context['mediatypes'] = MediaType.objects.all().order_by('order')
         context['mediatype'] = self.request.GET.get('mediaType',None)
         context['pagestate_form'] = getattr(self,'pagestate_form', ItemListPageState(initial={'sort_by':'by-newest'}))
         return context
@@ -208,7 +208,7 @@ class ToBasketView(DetailView, JSONTemplateResponse):
         basket = Basket(self.request)
         basket.addItem(context['item'])
         context['basket'] = basket
-        context['mediatypes'] = MediaType.objects.all()
+        context['mediatypes'] = MediaType.objects.all().order_by('order')
         return context
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)
@@ -224,7 +224,7 @@ class FromBasketView(DetailView, JSONTemplateResponse):
         basket = Basket(self.request)
         basket.removeItem(context['item'])
         context['basket'] = basket
-        context['mediatypes'] = MediaType.objects.all()
+        context['mediatypes'] = MediaType.objects.all().order_by('order')
         return context
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, DetailView)
@@ -509,7 +509,7 @@ class BasketView(TemplateView, JSONTemplateResponse):
         context = TemplateView.get_context_data(self,**kwargs)
         basket = Basket(self.request)
         context['basket'] = basket
-        context['mediatypes'] = MediaType.objects.all()
+        context['mediatypes'] = MediaType.objects.all().order_by('order')
         return context
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, TemplateView)
@@ -525,7 +525,7 @@ class SellView(TemplateView):
         basket.sell()
         basket._update()
         context['basket'] = basket
-        context['mediatypes'] = MediaType.objects.all()
+        context['mediatypes'] = MediaType.objects.all().order_by('order')
         return context
 
 ArticleFormFactory = partial(forms.models.modelform_factory, Article)
