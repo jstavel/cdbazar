@@ -133,7 +133,6 @@ class ItemList(ListView, JSONTemplateResponse):
 
         order_by = self.get_order_by()
         order_desc = self.get_order_desc()
-        print order_desc
         return qs.order_by((order_desc=='asc' and "-" or "") + order_by).select_related()
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
@@ -143,7 +142,8 @@ class ItemList(ListView, JSONTemplateResponse):
         context['basket'] = Basket(self.request)
         context['mediatypes'] = MediaType.objects.all().order_by('order')
         context['mediatype'] = self.request.GET.get('mediaType',None)
-        context['pagestate_form'] = getattr(self,'pagestate_form', ItemListPageState(initial={'sort_by':'to_store','sort_desc':'desc'}))
+        context['pagestate_form'] = getattr(self,'pagestate_form', ItemListPageState(
+            initial={'sort_by':'to_store','sort_order':'desc'}))
         return context
 
     def get_order_by(self):
@@ -155,7 +155,7 @@ class ItemList(ListView, JSONTemplateResponse):
     def get_order_desc(self):
         pagestate = getattr(self,'pagestate_form',None)
         if pagestate and pagestate.is_valid():
-            return pagestate.cleaned_data['sort_desc'] or "asc"
+            return pagestate.cleaned_data['sort_order'] or "desc"
         return "asc"
 
     def get_page(self):

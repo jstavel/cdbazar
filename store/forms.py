@@ -12,12 +12,12 @@ SORTS = (('to_store',u"Od nejnovějšího"),
          ('barcode',u"EAN"),
          ('packnumber',u"EAN"))
 
-SORT_DESC = (('desc','od nejmensiho'),
-             ('asc','od nejvetsiho'))
+SORT_ORDER = (('desc','od nejmensiho'),
+              ('asc','od nejvetsiho'))
 
 class ItemListPageState(forms.Form):
     sort_by = forms.ChoiceField(choices = SORTS, required=False, widget=forms.HiddenInput)
-    sort_desc = forms.ChoiceField(choices = SORT_DESC, required=False, widget=forms.HiddenInput)
+    sort_order = forms.ChoiceField(choices = SORT_ORDER, required=False, widget=forms.HiddenInput)
     page = forms.IntegerField( required=False, widget=forms.HiddenInput )
     query = forms.CharField(max_length=128, required=False, widget=forms.HiddenInput)
     
