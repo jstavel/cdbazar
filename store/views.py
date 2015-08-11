@@ -300,7 +300,9 @@ class BuyoutToStockView(TemplateView):
                 self.barcode = self.form.cleaned_data['barcode']
                 barcode = self.barcode
                 articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
-                self.form2 = BuyoutToStockForm( initial={'barcode':self.barcode} )
+                initial = dict( [('barcode', self.barcode),] \
+                              + ((len(articles) == 1) and [('article_id',articles[0].id)] or []))
+                self.form2 = BuyoutToStockForm(initial=initial)  
                 self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
                 if len(articles) == 1:
                     self.form2.initial['article_id'] = articles[0].id
@@ -358,7 +360,9 @@ class BuyoutToStoreView(TemplateView):
                 self.barcode = self.form.cleaned_data['barcode']
                 barcode = self.barcode
                 articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
-                self.form2 = BuyoutToStoreForm( initial={'barcode':self.barcode} )
+                initial = dict( [('barcode',barcode),] \
+                                + ((len(articles) == 1) and [('article_id',articles[0].id)] or []))
+                self.form2 = BuyoutToStoreForm( initial=initial )
                 self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
                 if len(articles) == 1:
                     self.form2.initial['article_id'] = articles[0].id
@@ -415,7 +419,9 @@ class BuyoutToCleanView(TemplateView):
                 self.barcode = self.form.cleaned_data['barcode']
                 barcode = self.barcode
                 articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
-                self.form2 = BuyoutToCleanForm( initial={'barcode':self.barcode} )
+                initial = dict( [('barcode',self.barcode),] \
+                                + ((len(articles) == 1) and [('article_id',articles[0].id)] or []))
+                self.form2 = BuyoutToCleanForm( initial = initial )
                 self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
                 if len(articles) == 1:
                     self.form2.initial['article_id'] = articles[0].id
