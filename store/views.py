@@ -132,7 +132,9 @@ class ItemList(ListView, JSONTemplateResponse):
             qs = qs.filter(article__mediaType__name = mediaType__name)
 
         order_by = self.get_order_by()
-        return qs.order_by(order_by).select_related()
+        order_desc = self.get_order_desc()
+        print order_desc
+        return qs.order_by((order_desc=='asc' and "-" or "") + order_by).select_related()
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
     
@@ -141,14 +143,20 @@ class ItemList(ListView, JSONTemplateResponse):
         context['basket'] = Basket(self.request)
         context['mediatypes'] = MediaType.objects.all().order_by('order')
         context['mediatype'] = self.request.GET.get('mediaType',None)
-        context['pagestate_form'] = getattr(self,'pagestate_form', ItemListPageState(initial={'sort_by':'by-newest'}))
+        context['pagestate_form'] = getattr(self,'pagestate_form', ItemListPageState(initial={'sort_by':'to_store','sort_desc':'desc'}))
         return context
 
     def get_order_by(self):
         pagestate = getattr(self,'pagestate_form',None)
         if pagestate and pagestate.is_valid():
-            return pagestate.cleaned_data['sort_by'] or "id"
-        return "id"
+            return pagestate.cleaned_data['sort_by'] or "to_store"
+        return "to_store"
+
+    def get_order_desc(self):
+        pagestate = getattr(self,'pagestate_form',None)
+        if pagestate and pagestate.is_valid():
+            return pagestate.cleaned_data['sort_desc'] or "asc"
+        return "asc"
 
     def get_page(self):
         pagestate = getattr(self,'pagestate_form',None)

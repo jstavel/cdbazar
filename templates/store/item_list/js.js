@@ -80,3 +80,19 @@ $('td.field').click(function(){
                 },
         });
 });
+
+function getSortedTH(){
+        return $('th.sortable').filter(function(index){
+                var sort_by = $('#id_sort_by').attr('value');
+                return ($(this).attr('my:sort_key') == sort_by);
+        });
+};
+
+function setSortedIcons(){
+        $('th.sortable').removeClass('sorted').removeClass('desc').removeClass('asc');
+        var th = getSortedTH();
+        var sort_order = $('#id_sort_desc').attr('value');
+        $(th).addClass('sorted');
+        $(th).addClass(sort_order);
+};
+setSortedIcons();
