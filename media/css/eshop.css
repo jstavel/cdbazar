@@ -14,41 +14,12 @@ div.banners { padding-top: 12px }
 div.news-banner hr { margin: 6px; }
 .row-fluid > span.article-label {  color: gray;    }
 .row-fluid > span.article-field {  font-size:110%; }
-
-table thead th.sortable:hover {
-    background: white url(/static/admin/img/nav-bg-reverse.gif) 0 -5px repeat-x;
-}
-
-table thead th.sorted .sortoptions a.sortremove {
-    background: url(/static/admin/img/sorting-icons.gif) -4px -5px no-repeat;
-}
-
-table thead th.sorted .sortoptions a.sortremove:hover {
-    background: url(/static/admin//img/sorting-icons.gif) -4px -27px no-repeat;
-}
-
-table thead th.sorted .sortoptions a.ascending {
-    background: url(/static/admin/img/sorting-icons.gif) -5px -50px no-repeat;
-}
-
-table thead th.sorted .sortoptions a.ascending:hover {
-    background: url(/static/admin/img/sorting-icons.gif) -5px -72px no-repeat;
-}
-
-table thead th.sorted .sortoptions a.descending {
-    background: url(/static/admin/img/sorting-icons.gif) -5px -94px no-repeat;
-}
-
-table thead th.sorted .sortoptions a.descending:hover {
-    background: url(/static/admin/img/sorting-icons.gif) -5px -115px no-repeat;
-}
-
-
-
-
-
-
-
-
-
-
+table thead th.sortable:hover {background: white url(/static/admin/img/nav-bg-reverse.gif) 0 -5px repeat-x;}
+th.sortable.sorted.asc {background: url(/static/admin/img/sorting-icons.gif) -5px -50px no-repeat;}
+th.sortable.sorted.asc:hover {background: url(/static/admin/img/sorting-icons.gif) -5px -72px no-repeat;}
+th.sotrable.sorted.desc {background: url(/static/admin/img/sorting-icons.gif) -5px -94px no-repeat;}
+th.sortable.sorted.desc:hover {background: url(/static/admin/img/sorting-icons.gif) -5px -115px no-repeat;}
+th.sortable {white-space: nowrap !important;}
+th div.icon.sorted {display: inline-block;height: 10px;width: 20px;}
+th div.icon.sorted.asc {background: transparent url("/static/admin/img/sorting-icons.gif") no-repeat scroll 4px -71px !important;}
+th div.icon.sorted.desc {background: transparent url("/static/admin/img/sorting-icons.gif") no-repeat scroll 4px -114px !important;}

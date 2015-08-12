@@ -26,11 +26,11 @@ $("a.paginate").click(function(){
 });
 
 $('th.sortable').click(function(){
-        var from_item = $(this);
-        var sort_key = $(this).attr('my:sort_key');
-        toggleSortOrder(this);
+        var th = $(this);
+        var sort_key = th.attr('my:sort_key');
+        toggleSortOrder(th);
 	$('#id_sort_by').attr('value', sort_key);
-	$('#id_sort_order').attr('value', getSortOrder(from_item));
+	$('#id_sort_order').attr('value', getSortOrder(th));
 	updatePage();
  	return false;
 });
@@ -90,24 +90,21 @@ function getSortedTH(){
         });
 };
 function setSortedIcons(){
-        $('th.sortable').removeClass('sorted').removeClass('desc').removeClass('asc');
+        $('th.sortable div.icon').removeClass('sorted').removeClass('desc').removeClass('asc');
         var th = getSortedTH();
         var sort_order = $('#id_sort_order').attr('value');
-        $(th).addClass('sorted');
-        $(th).addClass(sort_order);
+        $(th).find('div.icon').addClass('sorted').addClass(sort_order);
 };
 
-function getSortOrder(el){
-        var classAttr = $(el).attr('class');
+function getSortOrder(th){
+        var classAttr = $(th).find('div.icon').attr('class');
         return ((classAttr.indexOf('desc') > -1) ? 'desc': 'asc');
 };
 
-function toggleSortOrder(el){
-        var el = $(el);
-        var oldSortOrder = getSortOrder(el);
-        el.removeClass('desc').removeClass('asc');
-        var newSortOrder = (oldSortOrder == 'desc') ? 'asc': 'desc';
-        $(el).addClass(newSortOrder);
+function toggleSortOrder(th){
+        var div = $(th).find('div.icon');
+        var newSortOrder = (getSortOrder(th) == 'desc') ? 'asc': 'desc';
+        div.removeClass('desc').removeClass('asc').addClass(newSortOrder);
 };
 
 setSortedIcons();

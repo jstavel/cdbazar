@@ -24,6 +24,7 @@ from django.template import RequestContext, loader, Context
 from decimal import Decimal, getcontext, ROUND_HALF_UP, localcontext
 from itertools import chain
 import re
+import functools
 from .forms import *
 from .models import (
     Order, 
@@ -45,6 +46,8 @@ from django.contrib import messages
 from django_xhtml2pdf.utils import render_to_pdf_response
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login,logout
+from django.contrib.auth.decorators import user_passes_test
+
 
 class AddTradeActionView(TemplateView, JSONTemplateResponse):
     template_name = "eshop/tradeaction_add.html"
@@ -467,13 +470,17 @@ class ToBasketView(DetailView, JSONTemplateResponse):
     def get_context_data(self,**kwargs):
         context = super(DetailView,self).get_context_data(**kwargs)
         basket = Basket(self.request)
-        context['items_to_basket'] = context['article'].item_set.filter(state=Item.state_for_sale)
+        context['items_to_basket'] = context['article'].item_set.filter(state__in = [
+            Item.state_for_sale,
+            Item.state_at_stock
+        ])
 
         self.more_items = False
         self.form = None
 
         #if len(context['items_to_basket']) == 1:
-        basket.addItem(context['items_to_basket'][0])
+        if context['items_to_basket']:
+            basket.addItem(context['items_to_basket'][0])
         #else:
         #    self.more_items = True
         #    self.form = ChooseItemForm()
@@ -561,7 +568,6 @@ class BasketView(TemplateView,JSONTemplateResponse):
         pass
 
     def post(self, request, *args, **kwargs):
-        print "post"
         self.order_login_form = AuthenticationForm(data=request.POST)
         if 'login' in request.POST:
             if self.order_login_form.is_valid():
@@ -730,9 +736,29 @@ def sendTransitionEmail(subject, text, contact_email, order):
                                      bcc=['stavel.jan@gmail.com',])
     message.attach_alternative(text.encode('utf8'), 'text/plain')
     message.attach_alternative(htmlCode.encode('utf8'),'text/html')
-    #print message.message().as_string()
     return message.send(fail_silently=False)
+
     
+def check_user_permissions_for_object(f):
+    @functools.wraps(f)
+    def wrapper(self, request, *args, **kwargs):
+        obj = self.get_object()
+        user = self.request.user
+        if obj and (not user.is_superuser and user != obj.user):
+            return redirect("/accounts/login/?next=%s" % self.request.path)
+        return f(self, request, obj=obj, *args, **kwargs)
+
+    return wrapper
+
+def user_is_superuser(f):
+    @functools.wraps(f)
+    def wrapper(self, request, *args, **kwargs):
+        if not self.request.user.is_superuser:
+            return redirect("/accounts/login/?next=%s" % self.request.path)
+        return f(self, request, *args, **kwargs)
+
+    return wrapper
+
 class OrderView(DetailView, JSONTemplateResponse):
     model = Order
     template_name = "eshop/order_detail.html"
@@ -744,15 +770,16 @@ class OrderView(DetailView, JSONTemplateResponse):
 
     def get_context_data(self,**kwargs):
         context = super(OrderView,self).get_context_data(**kwargs)
+        context['my_orders'] = Order.objects.filter(user=self.request.user)
         context['form'] = getattr(self,'form',OrderTransitionForm())
         context['form'].fields['transition'].choices = [(0,'--- vyber si ---'),] + \
                                                        map(lambda tr: (tr,_(tr)), self.object.available_transitions())
         return context
-
-    def get(self, request, *args, **kwargs):
+    
+    @check_user_permissions_for_object
+    def get(self, request, obj=None, *args, **kwargs):
+        order = obj
         if request.REQUEST.get('update_user_discount',None):
-            #import sys,pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
-            order = self.get_object()
             for additionalItem in filter(lambda item: item.meta=="by-order:user-discount", order.orderadditionalitem_set.all()):
                 additionalItem.delete()
                 pass
@@ -767,10 +794,11 @@ class OrderView(DetailView, JSONTemplateResponse):
             pass
         return super(OrderView,self).get(request,*args,**kwargs)
 
+    @user_is_superuser
     def post(self, request, *args, **kwargs):
+        order = self.get_object()
         self.success_url_form = SuccessURLForm(self.request.POST)
         self.form = OrderTransitionForm(request.POST)
-        order = self.get_object()
         self.form.fields['transition'].choices = [(0,'--- vyber si ---'),] + \
                                                  map(lambda tr: (tr,_(tr)), order.available_transitions())
         if request.POST.get('submit',"") == u"načíst šablonu":

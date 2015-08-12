@@ -16,11 +16,36 @@ class UserProfileView(TemplateView):
 
     def get_context_data(self,**kwargs):
         user = self.request.user
+        userProfile, created = UserProfile.objects.get_or_create(user=user)  
+        if created:
+            userProfile.save()
+
         context = TemplateView.get_context_data(self,**kwargs)
         context['my_orders'] = Order.objects.filter(user=user)
-        context['form_authentication'] = UserProfileAuthenticationForm()
-        context['form_contact'] = UserProfileContactForm()
-        context['form_invoicing'] = UserProfileInvoicingForm()
-        context['form_delivery'] = UserProfileDeliveryForm()
-        context['form_payment'] = UserProfilePaymentForm()
+        context['form_authentication'] = getattr(self,'form_authentication',
+                                                 UserProfileAuthenticationForm())
+        context['form_contact'] = getattr(self,'form_contact',
+                                          UserProfileContactForm(instance=userProfile))
+        context['form_invoicing'] = getattr(self,'form_invoicing',
+                                            UserProfileInvoicingForm(instance=userProfile))
+        context['form_delivery'] = getattr(self,'form_delivery',
+                                           UserProfileDeliveryForm(instance=userProfile))
+        context['form_payment'] = getattr(self,'form_payment',
+                                          UserProfilePaymentForm(instance=userProfile))
         return context
+
+    def post(self,request, *args, **kwargs):
+        self.form_authentication =UserProfileAuthenticationForm(request.POST)
+
+        if self.form_authentication.is_valid():
+            self.form_authentication.save(user=self.request.user)
+
+        for form_name, form in (('form_contact',UserProfileContactForm(request.POST)),
+                                ('form_invoicing',UserProfileInvoicingForm(request.POST)),
+                                ('form_delivery',UserProfileDeliveryForm(request.POST)),
+                                ('form_payment',UserProfilePaymentForm(request.POST))):
+            if form.is_valid():
+                form.save()
+            setattr(self,form_name,form)
+
+        return self.get(request, *args, **kwargs)

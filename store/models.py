@@ -2,7 +2,6 @@
 from django.db import models, transaction, connection
 from django.utils.translation import ugettext_lazy as _, ugettext
 from datetime import datetime
-from history.models import HistoricalRecords
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django_extensions.db.models import TimeStampedModel
@@ -97,7 +96,6 @@ class Article(models.Model):
                                    default=False)
     
     last_modified = models.DateTimeField(_("Last modified"), auto_now=True)
-    #history = HistoricalRecords()
 
     objects = models.Manager()
     objectsForEShop = ForEShopManager()
@@ -195,8 +193,6 @@ class Item(models.Model):
     to_store = models.DateTimeField(_("To store date"), auto_now=True)
     home_page = models.BooleanField(_("Show at home page"), default=False)
 
-    #history = HistoricalRecords()
-    
     # def changeState(self,previous_state=None,target_state=None,**kwargs):
     #     ItemAction( item=self, action=ItemAction.STATES['change state'],  **kwargs).save()
     #     self.state = target_state

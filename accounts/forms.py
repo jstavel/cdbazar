@@ -21,14 +21,13 @@ class UserProfileAuthenticationForm(forms.Form):
         return password2
 
     
-    def save(self, commit=True):
-        if self.cleaned_data['with_registration']:
-            user = super(UserForm, self).save(commit=False)
-            user.set_password(self.cleaned_data["password1"])
+    def save(self, commit=True, user=None):
+        password = self.cleaned_data['password1']
+        if password:
+            user.set_password(password)
             if commit:
                 user.save()
-            return user
-        return None
+        return user
 
 class UserProfileInvoicingForm(forms.ModelForm):
     class Meta:

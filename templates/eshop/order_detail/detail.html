@@ -32,7 +32,11 @@
                 {% if order.user %}
                 <table class="user-info" style="">
                   <tbody>
+                    {% if request.user.is_superuser %}
                     <tr style=""><td colspan="2"><a href="/admin/auth/user/{{ order.user.id }}/?post_url=/eshop/order/{{ order.id }}/&post_url_arg=update_user_discount=yes">{{ order.user }}</a></td></tr>
+                    {% else %}
+                    <tr style=""><td colspan="2"><a href="/accounts/profile">{{ order.user }}</a></td></tr>
+                    {% endif %}
                     <tr><th>Storn. obj.</th><td align="right">{{ order.user.numOfCancelledOrders }} </td></tr>
                     <tr><th>Zapl. obj.</th><td align="right">{{ order.user.numOfPaidOrders }} </td></tr>
                     <tr><th>Věrn. sleva</th><td align="right" style="padding-left:1em">{{ order.user.getUserDiscount }}%</td></tr>
@@ -99,7 +103,7 @@
       </thead>
       {% for item in object.orderitem_set.all %}
       <tr>
-        <td><a href="/eshop/">{{ item.item.article }}</a></td>
+        <td><a href="/eshop/article/{{item.item.article.id}}">{{ item.item.article }}</a></td>
         <td>{{ item.item.barcode }}</td>
         <td>{{ item.item.commentary }}</td>
         <td align="right">{{ item.item.price }} Kč</td>
