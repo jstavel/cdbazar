@@ -771,6 +771,7 @@ class OrderView(DetailView, JSONTemplateResponse):
     def get_context_data(self,**kwargs):
         context = super(OrderView,self).get_context_data(**kwargs)
         context['my_orders'] = Order.objects.filter(user=self.request.user)
+        context['order_id'] = context['object'].id
         context['form'] = getattr(self,'form',OrderTransitionForm())
         context['form'].fields['transition'].choices = [(0,'--- vyber si ---'),] + \
                                                        map(lambda tr: (tr,_(tr)), self.object.available_transitions())
@@ -792,7 +793,7 @@ class OrderView(DetailView, JSONTemplateResponse):
                                                           price = additionalItem.price)
                 orderAdditionalItem.save()
             pass
-        return super(OrderView,self).get(request,*args,**kwargs)
+        return super(OrderView,self).get(request, *args, **kwargs)
 
     @user_is_superuser
     def post(self, request, *args, **kwargs):
