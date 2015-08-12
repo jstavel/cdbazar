@@ -27,14 +27,28 @@ table thead tr th {
 <table class="table table-condensed table-bordered table-hover">
   <thead>
     <tr>
-      <th class="sortable" my:sort_key="article__interpret">{% trans "Interpret" %}</th>
-      <th class="sortable" my:sort_key="article__title">{% trans "Title" %}</th>
-      <th class="sortable" my:sort_key="article__year">{% trans "Year" %}</th>
-      <th class="sortable" my:sort_key="article__mediaType">{% trans "Media Type" %}</th>
+      <th class="sortable" my:sort_key="article__interpret">
+        {% trans "Interpret" %} <div class="icon"></div>
+      </th>
+      <th class="sortable" my:sort_key="article__title">
+        {% trans "Title" %}<div class="icon"></div>
+      </th>
+      <th class="sortable" my:sort_key="article__year">
+        {% trans "Year" %}<div class="icon"></div>
+      </th>
+      <th class="sortable" my:sort_key="article__mediaType">
+        {% trans "Media Type" %}<div class="icon"></div>
+      </th>
       <th></th>
-      <th class="sortable" my:sort_key="barcode">{% trans "Barcode" %}</th>
-      <th class="sortable" my:sort_key="packnumber">Obálka</th>
-      <th class="sortable" my:sort_key="to_store">Naskladněno</th>
+      <th class="sortable" my:sort_key="barcode">
+        {% trans "Barcode" %}<div class="icon"></div>
+      </th>
+      <th class="sortable" my:sort_key="packnumber">
+        Obálka<div class="icon"></div>
+      </th>
+      <th class="sortable" my:sort_key="to_store">
+        Naskladněno<div class="icon"></div>
+      </th>
       <th>{% trans "At home page" %}</th>
       <th>{% trans "Commentary" %}</th>
       <th>{% trans "Price" %}</th>
