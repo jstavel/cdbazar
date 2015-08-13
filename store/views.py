@@ -356,6 +356,7 @@ class BuyoutToStoreView(TemplateView):
         return context
 
     def post(self,request,*args,**kwargs):
+        print request.POST
         self.form = BuyoutForm(request.POST.get('form-ok',None) and request.POST)
         self.form2 = None
         self.form2_message = None
@@ -389,6 +390,7 @@ class BuyoutToStoreView(TemplateView):
             if self.article_form.is_valid() and self.item_form.is_valid():
                 article = self.article_form.save()
                 item = self.item_form.save(article=article, state=Item.state_for_sale)
+                item.save()
                 self.article_form = ArticleForm()
                 self.item_form = ItemForm()
                 self.form2_message = "Hotovo, zbozi je na sklade"

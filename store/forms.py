@@ -30,7 +30,7 @@ class ArticleForm(forms.ModelForm):
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        exclude = ('article','state')
+        exclude = ('article','state','barcode')
 
     def save(self, **kwargs):
         self.cleaned_data.update(kwargs)
@@ -62,7 +62,7 @@ CHOICES = (('1', 'First',), ('2', 'Second',))
 #
 
 class BuyoutToStockForm(forms.Form):
-    legend = u"Vyberte zboží na sklad"
+    #legend = u"Vyberte zboží na sklad"
     barcode = forms.CharField(max_length=120, widget=forms.HiddenInput)
     article_id = forms.ChoiceField(label=u"Zboží", widget=forms.RadioSelect, choices = CHOICES)
 
@@ -82,7 +82,7 @@ class BuyoutToStockForm(forms.Form):
 # komentar - nepovinny
 
 class BuyoutToStoreForm(forms.Form):
-    legend = _("Choose an item to store")
+    #legend = _("Choose an item to store")
     barcode = forms.CharField(max_length=120, widget=forms.HiddenInput)
     article_id = forms.ChoiceField(label=_("Goods"), widget=forms.RadioSelect, choices = CHOICES)
     packnumber = forms.CharField(label=_("Packnumber"), max_length=32)
@@ -116,6 +116,7 @@ class BuyoutToStoreForm(forms.Form):
                                        commentary=self.cleaned_data['commentary']
                                        )
         article.save()
+        item.save()
 
 # to clean:
 # cislo obalky - nepovinne, 
@@ -123,7 +124,7 @@ class BuyoutToStoreForm(forms.Form):
 # komentar - nepovinny
 
 class BuyoutToCleanForm(forms.Form):
-    legend = _("Choose an item to clean")
+    #legend = _("Choose an item to clean")
     barcode = forms.CharField(max_length=120, widget=forms.HiddenInput)
     article_id = forms.ChoiceField(label=_("Goods"), widget=forms.RadioSelect, choices = CHOICES)
     packnumber = forms.CharField(label=_("Packnumber"), max_length=32, required=False)
