@@ -359,8 +359,8 @@ class BuyoutToStoreView(TemplateView):
         self.form = BuyoutForm(request.POST.get('form-ok',None) and request.POST)
         self.form2 = None
         self.form2_message = None
-        self.barcode = None
-        self.article_form = ArticleForm(request.POST.get('article-form-ok',None) and request.POST)
+        self.barcode = request.POST.get('barcode',None)
+        self.article_form = ArticleForm(request.POST.get('article-form-ok',None) and request.POST, initial={'barcode': self.barcode})
         self.item_form = ItemForm(request.POST.get('article-form-ok',None) and request.POST)
         
         if request.POST.get('form-ok',None):
@@ -387,8 +387,12 @@ class BuyoutToStoreView(TemplateView):
 
         if request.POST.get('article-form-ok',None):
             if self.article_form.is_valid() and self.item_form.is_valid():
+                barcode = request.POST.get('barcode',None)
                 article = self.article_form.save()
-                item = self.item_form.save(article=article, state=Item.state_for_sale)
+                item = self.item_form.save(article=article, 
+                                           state=Item.state_for_sale,
+                                           barcode=barcode,
+                )
                 self.article_form = ArticleForm()
                 self.item_form = ItemForm()
                 self.form2_message = "Hotovo, zbozi je na sklade"

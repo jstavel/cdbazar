@@ -30,7 +30,7 @@ class ArticleForm(forms.ModelForm):
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        exclude = ('article','state')
+        exclude = ('article','state','barcode')
 
     def save(self, **kwargs):
         self.cleaned_data.update(kwargs)
