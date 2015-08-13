@@ -273,7 +273,6 @@ class ArticleList(ListView,JSONTemplateResponse):
                                                 'page': 1,
                                             },))
         context['mediatype'] = self.get_mediatype()
-        print 'mediatype: ', context['mediatype']
         return context
 
     def post(self, request, *args, **kwargs):
@@ -282,7 +281,14 @@ class ArticleList(ListView,JSONTemplateResponse):
         self.kwargs['page'] = self.get_page()
         print self.kwargs
         self.object_list = self.get_queryset()
-        kwargs.update({'object_list': self.object_list})
+        kwargs.update({'object_list': self.object_list,
+                       'reservation_form': ReservationForm(initial=\
+                                                           {'query':
+                                                            self.request.GET.get('search',"")
+                                                            }
+                                                           )
+                       })
+        
         return self.render_to_response(self.get_context_data(**kwargs))
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)
@@ -419,22 +425,25 @@ class EShopList(ListView,JSONTemplateResponse):
         return context
 
     def post(self, request, *args, **kwargs):
-        self.pagestate_form = ArticleListPageState(request.POST)
-        self.pagestate_form.is_valid()
-        pstate = self.pagestate_form.cleaned_data
-
-        if self.request.is_ajax() and self.pagestate_form.is_valid():
-            action = pstate['action']
-            page_includes = getattr(self,'page_includes_for_action_%s'%( action,))
-            get_context_data = getattr(self,'get_context_data_for_action_%s'%( action,))
-            self.page_includes = page_includes()
-            return self.render_to_response(get_context_data(**kwargs))
+#         self.pagestate_form = ArticleListPageState(request.POST)
+#         self.pagestate_form.is_valid()
+#         pstate = self.pagestate_form.cleaned_data
+#         print "post"
+#         if self.request.is_ajax() and self.pagestate_form.is_valid():
+#             action = pstate['action']
+#             print "action: ", action
+#             page_includes = getattr(self,'page_includes_for_action_%s'%( action,))
+#             get_context_data = getattr(self,'get_context_data_for_action_%s'%( action,))
+#             self.page_includes = page_includes()
+#             return self.render_to_response(get_context_data(**kwargs))
 
         self.object_list = self.get_queryset()
         kwargs.update({'object_list': self.object_list})
         self.reservation_form = ReservationForm(request.POST)
         if self.reservation_form.is_valid():
             self.reservation_form.save()
+            messages.add_message(request, messages.INFO, u'Uložil jsem rezervaci.')
+
         return self.render_to_response(self.get_context_data(**kwargs))
 
     render_to_response = prepare_render_to_response(JSONTemplateResponse, ListView)

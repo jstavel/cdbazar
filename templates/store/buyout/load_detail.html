@@ -1,6 +1,6 @@
 {% if error %}
-error: {{ error }}
+<span class="load-detail-error">error: {{ error }}</span>
 {% else %}
-{{ result }}
+<span class="load-detail-success">{{ result }}</span>
 {% endif %}
 
