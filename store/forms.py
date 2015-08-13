@@ -35,6 +35,7 @@ class ItemForm(forms.ModelForm):
     def save(self, **kwargs):
         self.cleaned_data.update(kwargs)
         item = Item(**self.cleaned_data)
+	item.save()
         return item
 
 class ArticleItemForm(forms.ModelForm):
