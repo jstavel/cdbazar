@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from .models import Article, Picture, Item
 from django.utils.translation import ugettext as _
-
+from functools import partial
 import django.forms as forms
 
 SORTS = (('to_store',u"Od nejnovějšího"),
@@ -30,8 +30,13 @@ class ArticleForm(forms.ModelForm):
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        exclude = ('article',)
-        
+        exclude = ('article','state')
+
+    def save(self, **kwargs):
+        self.cleaned_data.update(kwargs)
+        item = Item(**self.cleaned_data)
+        return item
+
 class ArticleItemForm(forms.ModelForm):
     class Meta:
         model = Article
@@ -40,6 +45,10 @@ class ArticleItemForm(forms.ModelForm):
 class BuyoutForm(forms.Form):
     legend = u"Výkup"
     barcode = forms.CharField(max_length=120)
+
+    def __init__(self,*args,**kwargs):
+        kwargs.update({'prefix':'buyout'})
+        return super(BuyoutForm,self).__init__(*args, **kwargs)
 
 
 CHOICES = (('1', 'First',), ('2', 'Second',))
@@ -56,6 +65,10 @@ class BuyoutToStockForm(forms.Form):
     legend = u"Vyberte zboží na sklad"
     barcode = forms.CharField(max_length=120, widget=forms.HiddenInput)
     article_id = forms.ChoiceField(label=u"Zboží", widget=forms.RadioSelect, choices = CHOICES)
+
+    def __init__(self,*args,**kwargs):
+        kwargs.update({'prefix':'choose-article'})
+        return super(BuyoutToStockForm,self).__init__(*args, **kwargs)
     
     def save(self):
         article = Article.objects.get(id=self.cleaned_data['article_id'])
@@ -75,6 +88,10 @@ class BuyoutToStoreForm(forms.Form):
     packnumber = forms.CharField(label=_("Packnumber"), max_length=32)
     price = forms.FloatField(label=_("Price"))
     commentary = forms.CharField(label=_("Commentary"), max_length=48, required=False)
+
+    def __init__(self,*args,**kwargs):
+        kwargs.update({'prefix':'choose-article'})
+        return super(BuyoutToStoreForm,self).__init__(*args, **kwargs)
     
     def clean(self):
         article = Article.objects.get(id=self.cleaned_data['article_id'])
@@ -113,6 +130,10 @@ class BuyoutToCleanForm(forms.Form):
     price = forms.FloatField(label=_("Price"))
     commentary = forms.CharField(label=_("Commentary"), max_length=48, required=False)
 
+    def __init__(self,*args,**kwargs):
+        kwargs.update({'prefix':'choose-article'})
+        return super(BuyoutToCleanForm,self).__init__(*args, **kwargs)
+
     def clean(self):
         article = Article.objects.get(id=self.cleaned_data['article_id']) 
         packnumber = self.cleaned_data['packnumber']
@@ -136,6 +157,10 @@ class ItemToCleanForm(forms.Form):
     packnumber = forms.CharField(label=_("Pack number"), required=False)
     price = forms.FloatField(label=_("Price"), required=True, initial=0.0)
     commentary = forms.CharField(label=_("Commentary"), required=False)
+
+    def __init__(self,*args,**kwargs):
+        kwargs.update({'prefix':'choose-item'})
+        return super(ItemToCleanForm,self).__init__(*args, **kwargs)
 
     """ zkontrolovat packnumber, ze neni v prodeji """
     def clean(self):

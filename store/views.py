@@ -253,12 +253,12 @@ class BuyoutView(TemplateView):
         return context
 
     def post(self,request,*args,**kwargs):
-        self.form = BuyoutForm(request.POST)
+        self.form = BuyoutFormFactory(request.POST)
         self.form.is_valid()
         return TemplateView.get(self,request,*args,**kwargs)
 
     def get(self,request,*args,**kwargs):
-        self.form = BuyoutForm()
+        self.form = BuyoutFormFactory()
         return TemplateView.get(self,request,*args,**kwargs)
 
 
@@ -296,7 +296,7 @@ class BuyoutToStockView(TemplateView):
         return context
 
     def post(self,request,*args,**kwargs):
-        self.form = BuyoutForm(request.POST)
+        self.form = BuyoutFormFactory(request.POST)
         self.form2 = None
         self.form2_message = None
         self.article_form = ArticleForm(request.POST)
@@ -356,12 +356,12 @@ class BuyoutToStoreView(TemplateView):
         return context
 
     def post(self,request,*args,**kwargs):
-        self.form = BuyoutForm(request.POST)
+        self.form = BuyoutForm(request.POST.get('form-ok',None) and request.POST)
         self.form2 = None
         self.form2_message = None
         self.barcode = None
-        self.article_form = ArticleForm(request.POST)
-        self.item_form = ItemForm(request.POST)
+        self.article_form = ArticleForm(request.POST.get('article-form-ok',None) and request.POST)
+        self.item_form = ItemForm(request.POST.get('article-form-ok',None) and request.POST)
         
         if request.POST.get('form-ok',None):
             if self.form.is_valid():
@@ -374,19 +374,25 @@ class BuyoutToStoreView(TemplateView):
                 self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
                 if len(articles) == 1:
                     self.form2.initial['article_id'] = articles[0].id
-            else:
-                self.form = form
+
         if request.POST.get('form2-ok',None):
             self.form2 = BuyoutToStoreForm(request.POST)
             barcode = request.POST.get('barcode',None)
             articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
             self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
             if self.form2.is_valid():
-                print "form2 is valid"
                 self.form2.save()
                 self.form2 = None
                 self.form2_message = "Hotovo, zbozi je na sklade"
-                self.form = BuyoutForm()
+
+        if request.POST.get('article-form-ok',None):
+            if self.article_form.is_valid() and self.item_form.is_valid():
+                article = self.article_form.save()
+                item = self.item_form.save(article=article, state=Item.state_for_sale)
+                self.article_form = ArticleForm()
+                self.item_form = ItemForm()
+                self.form2_message = "Hotovo, zbozi je na sklade"
+            pass
 
         return TemplateView.get(self,request,*args,**kwargs)
 

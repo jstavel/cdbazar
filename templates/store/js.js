@@ -18,5 +18,6 @@ $('a.load-detail').click(function(){
 			eval(data['store/buyout/js.js']);
 		},
 	});
+        element.fadeOut();
 	return false;
 });
