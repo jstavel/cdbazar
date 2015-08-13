@@ -357,7 +357,7 @@ class BuyoutToStoreView(TemplateView):
 
     def post(self,request,*args,**kwargs):
         print request.POST
-        self.barcode = request.POST.get('barcode',None)
+        self.barcode = request.POST.get('buyout-barcode',None)
         self.form = BuyoutForm(request.POST.get('form-ok',None) and request.POST, initial={'barcode':self.barcode})
         self.form2 = None
         self.form2_message = None
@@ -384,19 +384,19 @@ class BuyoutToStoreView(TemplateView):
             if self.form2.is_valid():
                 self.form2.save()
                 self.form2 = None
-                self.form2_message = "Hotovo, zbozi je na sklade"
+                self.form2_message = "Hotovo, zbozi je na prodejne"
 
         if request.POST.get('article-form-ok',None):
             if self.article_form.is_valid() and self.item_form.is_valid():
-                barcode = request.POST.get('barcode',None)
+                #barcode = request.POST.get('barcode',None)
                 article = self.article_form.save()
                 item = self.item_form.save(article=article, 
                                            state=Item.state_for_sale,
-                                           barcode=barcode,
+                                           barcode=article.barcode,
                 )
                 self.article_form = ArticleForm()
                 self.item_form = ItemForm()
-                self.form2_message = "Hotovo, zbozi je na sklade"
+                self.form2_message = "Hotovo, zbozi je na prodejne"
             pass
 
         return TemplateView.get(self,request,*args,**kwargs)

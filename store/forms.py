@@ -25,7 +25,7 @@ class ItemListPageState(forms.Form):
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
-        exclude = ('picture',)
+        exclude = ('picture','eshop','slug')
 
 class ItemForm(forms.ModelForm):
     class Meta:
@@ -35,6 +35,8 @@ class ItemForm(forms.ModelForm):
     def save(self, **kwargs):
         self.cleaned_data.update(kwargs)
         item = Item(**self.cleaned_data)
+        item.article.eshop=True
+        item.article.save()
 	item.save()
         return item
 
