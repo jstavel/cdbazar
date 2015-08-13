@@ -492,25 +492,33 @@ class BuyoutLoadDetailView(TemplateView,JSONTemplateResponse):
         if gid:
             try:
                 detail = cdbazar.audio3.Detail(gid)
+                mediaType = MediaType.objects.all().filter(name=detail.type)
+                articleData = dict(title = detail.title,
+                                   interpret = detail.interpret,
+                                   year = detail.year,
+                                   publisher = detail.publisher,
+                                   mediaType = mediaType and mediaType[0],
+                                   specification = "", #detail.detail,
+                                   tracklist = "", #detail.tracklists,
+                                   origPrice = detail.price,
+                                   barcode = detail.ean,
+                                   pictureSource = detail.imgUrl,
+                                   picture = Picture.loadFromURL(detail.imgUrl),
+                               )
                 if Article.objects.all().filter(barcode=detail.ean).count():
-                    context['result'] = u"artikl s ean: %s už existuje. Přeskakuji." % (detail.ean,)
+                    context['result'] = u"artikl s ean: %s už existuje. Přepisuji." % (detail.ean,)
+                    for article in Article.objects.all().filter(barcode=detail.ean):
+                        for key,value in articleData.items():
+                            setattr(article,key,value)
+                        pass
                 else:
-                    mediaType = MediaType.objects.all().filter(name=detail.type)
-                    article = Article(title = detail.title,
-                                      interpret = detail.interpret,
-                                      year = detail.year,
-                                      publisher = detail.publisher,
-                                      mediaType = mediaType and mediaType[0],
-                                      specification = "", #detail.detail,
-                                      tracklist = "", #detail.tracklists,
-                                      origPrice = detail.price,
-                                      barcode = detail.ean,
-                                      pictureSource = detail.imgUrl,
-                                      picture = Picture.loadFromURL(detail.imgUrl),
-                                  )
+                    article = Article(**articleData)
                     article.save()
                     context['result'] = u"načteno"
             except:
+                import traceback
+                import sys
+                traceback.print_exc(file=sys.stdout)
                 #context['error'] = "chyba komunikace s audio3, %s" (sys.exc_info()[0],)
                 context['error'] = "chyba komunikace s audio3"
         return context
