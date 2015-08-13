@@ -339,7 +339,7 @@ class EShopList(ListView,JSONTemplateResponse):
         return ['eshop/article_list.html',]
 
     def get_queryset(self):
-        qs = super(EShopList,self).get_queryset().filter(eshop=True)
+        qs = super(EShopList,self).get_queryset().filter(eshop=True).order_by('-to_store')
         search = self.request.GET.get('search',None)
         if search:
             qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search) |Q(barcode=search))
@@ -349,7 +349,7 @@ class EShopList(ListView,JSONTemplateResponse):
         return qs.select_related()
 
     def get_queryset_for_new_articles(self):
-        qs = Article.objects.all().filter(eshop=True).order_by('to_shop')
+        qs = Article.objects.all().filter(eshop=True).order_by('-to_shop')
         search = self.request.GET.get('search',None)
         if search:
             qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search) | Q(barcode=search))
@@ -359,7 +359,7 @@ class EShopList(ListView,JSONTemplateResponse):
         return qs
 
     def get_queryset_for_articles_with_tradeaction(self):
-        qs = Article.objects.all().filter(discount=True)
+        qs = Article.objects.all().filter(discount=True).order_by('-to_shop')
         search = self.request.GET.get('search',None)
         if search:
             qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search))
@@ -409,13 +409,13 @@ class EShopList(ListView,JSONTemplateResponse):
                                                 'page': 1 },))
         context['object_list_by_cheaper'] = context.get('object_list',[])
         context['articles_with_tradeaction'] = self.get_queryset_for_articles_with_tradeaction()
-        context['news_list'] = News.objects.all().order_by('created')[:5]
+        context['news_list'] = News.objects.all().order_by('-created')[:5]
         context['new_articles'] = self.get_queryset_for_new_articles()
         context['basket'] = basket
         context['mediatypes'] = MediaType.objects.all()
         context['mediatype'] = self.request.GET.get('mediaType',None)
         context['tradeaction_banner_list'] = TradeAction.objects.all().order_by("?")[:20]
-        context['new_articles_banner_list'] = Article.objects.all().order_by("to_store")[:20]
+        context['new_articles_banner_list'] = Article.objects.all().order_by("-to_store")[:20]
         context['reservation_form'] = getattr(self, 'reservation_form',\
                                               ReservationForm(initial=\
                                                               {'query':

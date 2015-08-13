@@ -67,7 +67,7 @@ class ArticleList(ListView,JSONTemplateResponse):
     page_includes = ['paginator.html','store/article_list/list.html','store/article_list/js.js']
 
     def get_queryset(self):
-        qs = super(ArticleList,self).get_queryset()
+        qs = super(ArticleList,self).get_queryset().order_by('-last_modified')
         search = self.request.GET.get('search',None)
         if search:
             qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search) | Q(barcode=search))
@@ -357,17 +357,17 @@ class BuyoutToStoreView(TemplateView):
 
     def post(self,request,*args,**kwargs):
         print request.POST
-        self.form = BuyoutForm(request.POST.get('form-ok',None) and request.POST)
+        self.barcode = request.POST.get('barcode',None)
+        self.form = BuyoutForm(request.POST.get('form-ok',None) and request.POST, initial={'barcode':self.barcode})
         self.form2 = None
         self.form2_message = None
-        self.barcode = request.POST.get('barcode',None)
         self.article_form = ArticleForm(request.POST.get('article-form-ok',None) and request.POST, initial={'barcode': self.barcode})
         self.item_form = ItemForm(request.POST.get('article-form-ok',None) and request.POST)
         
         if request.POST.get('form-ok',None):
             if self.form.is_valid():
                 self.barcode = self.form.cleaned_data['barcode']
-                barcode = self.barcode
+                barcode=self.barcode
                 articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
                 initial = dict( [('barcode',barcode),] \
                                 + ((len(articles) == 1) and [('article_id',articles[0].id)] or []))
@@ -378,7 +378,7 @@ class BuyoutToStoreView(TemplateView):
 
         if request.POST.get('form2-ok',None):
             self.form2 = BuyoutToStoreForm(request.POST)
-            barcode = request.POST.get('barcode',None)
+            barcode = request.POST.get('choose-article-barcode',None)
             articles = Article.objects.filter(Q(title__icontains=barcode) | Q(interpret__icontains=barcode) | Q(barcode=barcode))
             self.form2.fields['article_id'].choices=[(aa.id,str(aa)) for aa in articles]
             if self.form2.is_valid():
