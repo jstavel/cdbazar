@@ -6,6 +6,7 @@ $("a.to-basket").click(function(){
 			$('.basket').hide().html(data['eshop/basket/summary.html']).fadeIn();
 			eval(data['eshop/to_basket/js.js']);
 			eval(data['eshop/basket/js.js']);
+                        $('.article_detail').modal('hide');
 		},
 	});
 	return false;
