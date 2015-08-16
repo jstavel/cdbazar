@@ -252,6 +252,7 @@ class ArticleList(ListView,JSONTemplateResponse):
     def get_queryset(self):
         qs = super(ArticleList,self).get_queryset().filter(eshop=True)
         search = self.get_search()
+        print "search: ", search
         if search:
             qs = qs.filter(Q(title__icontains=search) | Q(interpret__icontains=search))
         mediaType__name = self.get_mediatype()
@@ -276,15 +277,16 @@ class ArticleList(ListView,JSONTemplateResponse):
         return context
 
     def post(self, request, *args, **kwargs):
-        print request.POST
+        print "post: ", request.POST
         self.pagestate_form = ArticleListPageState(request.POST)
         self.kwargs['page'] = self.get_page()
-        print self.kwargs
+        print "kwargs: ", self.kwargs
         self.object_list = self.get_queryset()
         kwargs.update({'object_list': self.object_list,
                        'reservation_form': ReservationForm(initial=\
                                                            {'query':
-                                                            self.request.GET.get('search',"")
+                                                            self.request.GET.get('search',"") or
+                                                            self.request.POST.get('query',"")
                                                             }
                                                            )
                        })

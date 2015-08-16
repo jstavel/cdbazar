@@ -8,6 +8,17 @@ $(function(){
 {% include "eshop/article_list/js.js" %}
 {% include "eshop/article_list/js-shortly.js" %}
 {% include "eshop/article_list/js-tradeaction.js" %}
+$("form.navbar-search").submit(function(){
+        var query = $('input.search-query').val();
+        $('#id_query').attr('value',query);
+        $('#id_action').attr('value','view');
+
+        var view = $('#id_view').val();
+        if( view == 'articles'){ updatePage(); };
+        if( view == 'tabular-view'){ updatePageShortly(); };
+        if( view == 'tradeaction'){ updatePageTradeaction(); };
+        return false;
+});
 });
 </script>
 {% endblock %}

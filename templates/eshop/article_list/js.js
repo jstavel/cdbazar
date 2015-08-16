@@ -66,18 +66,9 @@ $("#list a.paginate").click(function(){
 $('.mediatype-list li a').click(function(){
         var href = $(this).attr('href');
         var mediatype = href.match(/mediaType=([^&]+)/)[1];
-
         $('#id_action').attr('value','view');
         $('#id_mediatype').attr('value',mediatype);
         $('#id_page').attr('value',1);
-        updatePage();
-        return false;
-});
-
-$("form.navbar-search").submit(function(){
-        var query = $('input.search-query').val();
-        $('#id_action').attr('value','view');
-        $('#id_query').attr('value',query);
         updatePage();
         return false;
 });
@@ -86,7 +77,7 @@ $(".list-with-goods a.article-link").click(function(){
 	$.ajax({
 		type: 'GET',
 		url: $(this).attr('href'),
-		success: function(data){ 
+		success: function(data){
 			$('.article_detail .modal-body').html(data['eshop/article_detail/detail.html']);
 			$('.article_detail').modal().on('shown',function(){
 			        eval(data['eshop/article_detail/js.js']);

@@ -73,3 +73,17 @@ $('.mediatype-list li a').click(function(){
         updatePageShortly();
         return false;
 });
+$("a.to-basket").click(function(){
+	var from_item = $(this);
+	$.ajax({
+		type: 'GET',
+		url: $(this).attr('href'),
+		success: function(data){ 
+			$('.basket').hide().html(data['eshop/basket/summary.html']).fadeIn();
+			eval(data['eshop/to_basket/js.js']);
+			eval(data['eshop/basket/js.js']);
+			$(from_item).closest('tr').fadeOut();
+		},
+	});
+	return false;
+});
