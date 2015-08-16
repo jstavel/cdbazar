@@ -253,12 +253,12 @@ class BuyoutView(TemplateView):
         return context
 
     def post(self,request,*args,**kwargs):
-        self.form = BuyoutFormFactory(request.POST)
+        self.form = BuyoutForm(request.POST)
         self.form.is_valid()
         return TemplateView.get(self,request,*args,**kwargs)
 
     def get(self,request,*args,**kwargs):
-        self.form = BuyoutFormFactory()
+        self.form = BuyoutForm()
         return TemplateView.get(self,request,*args,**kwargs)
 
 
@@ -296,7 +296,7 @@ class BuyoutToStockView(TemplateView):
         return context
 
     def post(self,request,*args,**kwargs):
-        self.form = BuyoutFormFactory(request.POST)
+        self.form = BuyoutForm(request.POST)
         self.form2 = None
         self.form2_message = None
         self.article_form = ArticleForm(request.POST)
