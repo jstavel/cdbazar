@@ -74,6 +74,14 @@ $('.mediatype-list li a').click(function(){
         return false;
 });
 
+$("form.navbar-search").submit(function(){
+        var query = $('input.search-query').val();
+        $('#id_action').attr('value','view');
+        $('#id_query').attr('value',query);
+        updatePage();
+        return false;
+});
+
 $(".list-with-goods a.article-link").click(function(){
 	$.ajax({
 		type: 'GET',
@@ -88,3 +96,4 @@ $(".list-with-goods a.article-link").click(function(){
 	});
 	return false;
 });
+
