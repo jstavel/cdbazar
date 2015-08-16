@@ -9,7 +9,7 @@ def getMenu(request):
                                                              (u"Na prodejnu","","/store/buyout/to-store/",()),
                                                              (u"K čištění","","/store/buyout/to-clean/",()),
                                                              )),
-            (u'Artikly', "articles", "/store/article/", ()),
+            (u'Popisky', "articles", "/store/article/", ()),
             (u'Zboží', "items", "/store/item/", ()),
             (u'Akce',"actions", "/eshop/tradeaction/", ()),
             (u'Objednávky', "orders", "/eshop/order/", ()),
