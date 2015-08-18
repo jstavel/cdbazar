@@ -1,7 +1,6 @@
 {% if form.success %}
 var articleId = {{ form.instance.pk }};
 var articleDetailId = "#article_detail_" + articleId;
-console.log("{{form.redirect_to}}");
 $.ajax({ type: 'GET',
          url: "{{ form.redirect_to }}",
          success: function(data){

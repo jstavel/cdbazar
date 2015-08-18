@@ -23,3 +23,4 @@ th.sortable {white-space: nowrap !important;}
 th div.icon.sorted {display: inline-block;height: 10px;width: 20px;}
 th div.icon.sorted.asc {background: transparent url("/static/admin/img/sorting-icons.gif") no-repeat scroll 4px -71px !important;}
 th div.icon.sorted.desc {background: transparent url("/static/admin/img/sorting-icons.gif") no-repeat scroll 4px -114px !important;}
+label.control-label { padding-right: 1em; }

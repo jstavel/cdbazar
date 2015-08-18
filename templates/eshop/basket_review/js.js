@@ -23,15 +23,16 @@ function updateDeliveryAddressInputs(){
 		};
 		return id.substring(0,matchString.length) === matchString;
 	});
-	var deliveryAddressIsTheSame = typeof $('#id_delivery_is_the_same_as_invoicing').attr('checked') !== 'undefined';
+	var deliveryAddressIsTheSame = $('#id_delivery_is_the_same_as_invoicing').prop('checked');
 	if( deliveryAddressIsTheSame ){
-		deliveryElements.slice(1).fadeOut();
+		deliveryElements.slice(2).fadeOut();
 	} else {
-		deliveryElements.slice(1).fadeIn();
+		deliveryElements.slice(2).fadeIn();
 	};
 };
-//$('#id_delivery_is_the_same_as_invoicing').change(updateDeliveryAddressInputs);
-//updateDeliveryAddressInputs();
+
+$('#id_delivery_is_the_same_as_invoicing').change(updateDeliveryAddressInputs);
+updateDeliveryAddressInputs();
 
 function basketUpdate(){
 	partDetail = new Object();

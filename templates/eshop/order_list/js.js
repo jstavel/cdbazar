@@ -37,7 +37,6 @@ if( $('#id_transition')[0].value == '0'){
 $('#submit-load-emailmessage').hide();
 $('input[name="all"]').change(function(){
         var checkedAll = $(this)[0].checked;
-        console.log('checked: ' + checkedAll);
         $('input.order-id-checkbox').each(function(){
                 $(this)[0].checked = checkedAll;
         });
