@@ -508,7 +508,12 @@ class ToBasketView(DetailView, JSONTemplateResponse):
 class FromBasketView(DetailView, JSONTemplateResponse):
     model = Item
     template_name = "eshop/from_basket.html"
-    page_includes = ['eshop/basket/summary.html','eshop/from_basket/done.html', 'eshop/from_basket/js.js', 'eshop/basket/js.js', 'eshop/basket_review/review.html', 'eshop/basket_review/js.js']
+    page_includes = ['eshop/basket/summary.html',
+                     'eshop/from_basket/done.html', 
+                     'eshop/from_basket/js.js', 
+                     'eshop/basket/js.js', 
+                     'eshop/basket_review/review.html', 
+                     'eshop/basket_review/js.js']
     
     def get_context_data(self,**kwargs):
         context = super(DetailView,self).get_context_data(**kwargs)

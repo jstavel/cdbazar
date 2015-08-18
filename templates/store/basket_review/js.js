@@ -4,8 +4,10 @@ $("a.from-basket").click(function(){
 		type: 'GET',
 		url: $(this).attr('href'),
 		success: function(data){ 
-			$('.basket-review').hide().html(data['store/basket_review/list.html']).fadeIn();
-			eval(data['store/basket_review/js.js']);
+			$('.basket-review')
+                                .hide()
+                                .html(data['store/basket_review/list.html'])
+                                .fadeIn(400,function(){eval(data['store/basket_review/js.js']);});
 		},
 	});
 	return false;

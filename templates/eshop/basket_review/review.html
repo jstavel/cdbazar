@@ -5,7 +5,7 @@
   {% for item in basket.items %}
   <tbody>
   <tr>
-    <td><a class="from-basket" href="/eshop/item/{{item.id}}/from-basket/"><img src="/media/img/admin/icon_deletelink.gif"></img></a></td>
+    <td><a class="from-basket icon-trash" href="/eshop/item/{{item.id}}/from-basket/"></a></td>
     <td>{{ item.article }}</td>
     <td style="text-align:right">{{ item.price|floatformat }} </td>
     <td>Kč</td>
