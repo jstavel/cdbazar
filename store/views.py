@@ -510,7 +510,7 @@ class BuyoutLoadDetailView(TemplateView,JSONTemplateResponse):
                     for article in Article.objects.all().filter(barcode=detail.ean):
                         for key,value in articleData.items():
                             setattr(article,key,value)
-                        pass
+                        article.save()
                 else:
                     article = Article(**articleData)
                     article.save()
