@@ -5,7 +5,7 @@
 <li class="span2">
   <div class="thumbnail">
     {% thumbnail article.picture "310x310" as im %}
-    <a href="/eshop/article/{{article.id}}/">
+    <a class="article-link" href="/eshop/article/{{article.id}}/">
       <img class="picture" src="/media/{{im.url}}" width="{{ im.width }}" height="{{ im.height }}"></img>
     </a>
     {% endthumbnail %}

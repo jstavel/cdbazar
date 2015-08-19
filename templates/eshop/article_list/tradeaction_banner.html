@@ -2,10 +2,10 @@
 <ul class="thumbnails">
 <div class="row-fluid">
   {% for item in request.tradeActions %}
-  <li class="span2">
+  <li class="span2 tradeaction">
     <div class="thumbnail">
       {% thumbnail item.item.article.picture "60x60" as im %}
-      <a href="/eshop/article/{{ item.item.article.id }}/">
+      <a class="article-link" href="/eshop/article/{{ item.item.article.id }}/">
         <img class="picture img-polaroid" src="/media/{{im.url}}"
              width="{{ im.width }}" height="{{ im.height }}"></img>
       </a>
