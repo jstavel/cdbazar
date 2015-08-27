@@ -9,6 +9,9 @@ import re
 import os
 from cdbazar.settings import MEDIA_ROOT
 import urllib
+from hashlib import md5
+import magic, sh
+
 # Create your models here.
 
 ARTICLE_TYPES = (
@@ -46,14 +49,16 @@ class Picture(models.Model):
     def __unicode__(self):
         return unicode(self.img)
 
+    def delete(self):
+        sh.rm("-f",self.img.path)
+        super(Picture,self).delete()
+        pass
+    
     @staticmethod
     def loadFromURL(url):
         """
         http://www.audio3.cz/images/goods_galery/1969818/1969818__1.jpg
         """
-        from hashlib import md5
-        import magic
-
         img = urllib.urlopen(url).read()
         imgBaseName = md5(url).hexdigest()
         mime = magic.from_buffer(img, mime=True)
@@ -62,6 +67,21 @@ class Picture(models.Model):
         absImagePath = os.path.join(MEDIA_ROOT, imgName)
         file(absImagePath,'wb').write(img)
         (picture,created) = Picture.objects.get_or_create(img=imgName)
+        if created:
+            picture.save()
+        return picture
+
+    @staticmethod
+    def loadFromFile(path):
+        imgBaseName = md5(path).hexdigest()
+        dirPath= re.search('(..)(..)(..)',imgBaseName).groups()
+        relImgPath = "img/articles/" + "/".join(dirPath)
+        imgPath= os.path.join(MEDIA_ROOT,relImgPath)
+        sh.mkdir("-p",imgPath)
+        extension = 'jpeg' in magic.from_file(path, mime=True) and 'jpg' or 'png'
+        imgName = imgBaseName + "." + extension
+        sh.cp(path, os.path.join(imgPath,imgName))
+        (picture, created) = Picture.objects.get_or_create(img=os.path.join(relImgPath,imgName))
         if created:
             picture.save()
         return picture

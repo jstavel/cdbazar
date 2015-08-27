@@ -21,7 +21,7 @@ DATABASES = {
         'PASSWORD': 'Shoon9',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
+   }
 }
 
 import django.conf.global_settings as DEFAULT_SETTINGS
@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     'cdbazar.eshop',
     'cdbazar.accounts',
     'cdbazar.flatpages',
+    'cdbazar.migrace',
     'sorl.thumbnail',
     #'rosetta',
     'history',
