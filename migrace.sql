@@ -2,6 +2,8 @@ show tables;
 
 describe auth_user;
 
+select * from auth_user limit 2;
+
 select * from auth_user limit 10;
 select * from workflow_instance limit 10;
 
